@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>New Thread - Threads 100</title>
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+  <div id="navbar"></div>
+  <main>
+    <h1>Post a New Thread</h1>
+    <form id="post-form">
+      <textarea id="content" rows="5" placeholder="What's happening?" maxlength="280" required></textarea>
+      <button type="submit">Post</button>
+      <div id="post-error"></div>
+    </form>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/post.js"></script>
+</body>
+</html>
