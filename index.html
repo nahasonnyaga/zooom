@@ -1,3 +1,97 @@
-<!-- ... -->
-<aside id="trending-hashtags"></aside>
-<!-- ... -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Threads 100 Clone - Feed</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/feed.css">
+  <link rel="stylesheet" href="css/reply-card.css">
+  <link rel="stylesheet" href="css/auth.css">
+  <style>
+    /* Minimal styling for demo */
+    body { margin: 0; font-family: system-ui, sans-serif; background: #f7f7fa; }
+    .feed { max-width: 540px; margin: 2rem auto; }
+    .thread-card, .reply-card { background: #fff; margin-bottom: 1rem; padding: 1rem; border-radius: 8px; box-shadow: 0 1px 8px #0001; }
+    .thread-actions { margin-top: 0.5rem; }
+    .reply-section { margin-left: 1.5rem; }
+    .thread-card a { color: inherit; text-decoration: none; }
+    .thread-card small { color: #888; }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav style="background:#fff;border-bottom:1px solid #eee;padding:0.5rem 1rem;display:flex;gap:1rem;">
+    <a href="index.html">Feed</a>
+    <a href="profile.html">Profile</a>
+    <a href="post.html">New Thread</a>
+  </nav>
+
+  <div class="feed">
+
+    <!-- MOCK THREAD 1 -->
+    <div class="thread-card">
+      <a href="thread.html?id=1">
+        <p>What’s your favorite open source project this year? 🚀</p>
+      </a>
+      <small>Posted by alice • 2h ago</small>
+      <div class="thread-actions">
+        <button class="action-btn like-btn" title="Like">&#10084;</button>
+        <span class="like-count">5</span>
+        <button class="action-btn retweet-btn" title="Retweet">&#128257;</button>
+        <span class="retweet-count">2</span>
+        <button class="action-btn bookmark-btn" title="Bookmark">&#128278;</button>
+      </div>
+      <!-- Replies to Thread 1 -->
+      <div class="reply-section">
+        <div class="reply-card">
+          <p>I love Supabase! Super easy to use! 🔥</p>
+          <small>bob • 1h ago</small>
+        </div>
+        <div class="reply-card">
+          <p>Definitely Astro, it’s a game changer for web dev.</p>
+          <small>charlie • 30m ago</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOCK THREAD 2 -->
+    <div class="thread-card">
+      <a href="thread.html?id=2">
+        <p>Just shipped my first project using this template. Thanks for making it so simple!</p>
+      </a>
+      <small>Posted by dana • 30m ago</small>
+      <div class="thread-actions">
+        <button class="action-btn like-btn" title="Like">&#10084;</button>
+        <span class="like-count">9</span>
+        <button class="action-btn retweet-btn" title="Retweet">&#128257;</button>
+        <span class="retweet-count">1</span>
+        <button class="action-btn bookmark-btn" title="Bookmark">&#128278;</button>
+      </div>
+      <!-- Replies to Thread 2 -->
+      <div class="reply-section">
+        <div class="reply-card">
+          <p>Congrats! Would love to see your project.</p>
+          <small>alice • 10m ago</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOCK THREAD 3 -->
+    <div class="thread-card">
+      <a href="thread.html?id=3">
+        <p>Any tips for learning CSS Grid quickly?</p>
+      </a>
+      <small>Posted by emma • 10m ago</small>
+      <div class="thread-actions">
+        <button class="action-btn like-btn" title="Like">&#10084;</button>
+        <span class="like-count">3</span>
+        <button class="action-btn retweet-btn" title="Retweet">&#128257;</button>
+        <span class="retweet-count">0</span>
+        <button class="action-btn bookmark-btn" title="Bookmark">&#128278;</button>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
