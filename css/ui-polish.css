@@ -1,0 +1,37 @@
+.hashtag {
+  color: #0077ff;
+  text-decoration: none;
+  font-weight: bold;
+}
+.mention {
+  color: #e0245e;
+  text-decoration: none;
+  font-weight: bold;
+}
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #eee;
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}
+.action-btn {
+  background: none;
+  border: none;
+  color: #555;
+  cursor: pointer;
+  margin-right: 1rem;
+  font-size: 1.15rem;
+  vertical-align: middle;
+}
+.action-btn.liked {
+  color: #e0245e;
+}
+.action-btn.retweeted {
+  color: #17bf63;
+}
+.action-btn.bookmarked {
+  color: #f5c518;
+}
