@@ -1,0 +1,14 @@
+.thread-card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px #0001;
+  margin-bottom: 1rem;
+  padding: 1rem;
+}
+.thread-card a {
+  font-size: 1.1rem;
+}
+.thread-card small {
+  color: #888;
+  font-size: 0.9rem;
+}
