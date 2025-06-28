@@ -1,0 +1,16 @@
+.notification {
+  background: #fffbe6;
+  padding: 0.7rem 1rem;
+  border-left: 4px solid #f5c518;
+  margin-bottom: 0.5rem;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+.notification-msg {
+  color: #555;
+}
+.notification-date {
+  float: right;
+  color: #aaa;
+  font-size: 0.9rem;
+}
