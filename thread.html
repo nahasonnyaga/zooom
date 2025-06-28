@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Thread - Threads 100</title>
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+  <div id="navbar"></div>
+  <main>
+    <div id="thread-container"></div>
+    <h2>Replies</h2>
+    <section id="replies-list"></section>
+    <form id="reply-form">
+      <textarea id="reply-content" rows="3" placeholder="Reply..." maxlength="280" required></textarea>
+      <button type="submit">Reply</button>
+      <div id="reply-error"></div>
+    </form>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/thread.js"></script>
+</body>
+</html>
