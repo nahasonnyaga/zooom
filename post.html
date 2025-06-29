@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>New Thread - Threads 100</title>
   <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/auth.css">
   <style>
     html, body {
       height: 100%;
@@ -15,6 +16,7 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      background: #f6f8fa;
     }
     main {
       width: 100vw;
@@ -27,6 +29,10 @@
       max-width: 100vw;
       margin: 0;
       box-sizing: border-box;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 8px #0001;
+      padding: 1rem;
     }
     #content {
       width: 100%;
@@ -36,11 +42,23 @@
       box-sizing: border-box;
       resize: vertical;
       display: block;
+      border-radius: 4px;
+      border: 1px solid #ddd;
+      margin-bottom: 10px;
     }
     #post-form button {
       font-size: 1.1em;
       padding: 10px 28px;
       margin-top: 10px;
+      background: #0057e7;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    #post-form button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
     }
     #must-login {
       padding: 18px;
@@ -65,6 +83,20 @@
       cursor: pointer;
       margin-top: 10px;
     }
+    #media-preview img, #media-preview video {
+      max-width: 140px;
+      max-height: 100px;
+      margin-right: 8px;
+      border-radius: 4px;
+      margin-bottom: 5px;
+      display: inline-block;
+    }
+    #post-error {
+      color: #d00;
+      margin-top: 1rem;
+      text-align: center;
+      min-height: 1.2em;
+    }
     @media (min-width: 601px) {
       main {
         max-width: 900px;
@@ -77,36 +109,92 @@
       #must-login {
         max-width: 600px;
       }
+      #thread-feed {
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+    }
+    .thread-card {
+      margin-bottom: 16px;
+      padding: 12px;
+      border: 1px solid #eee;
+      border-radius: 6px;
+      background: #fff;
+      box-shadow: 0 1px 4px #0001;
+      transition: box-shadow 0.2s;
+    }
+    .thread-card:hover {
+      box-shadow: 0 2px 8px #0002;
+    }
+    .thread-card a {
+      text-decoration: none;
+      color: inherit;
+      font-weight: 500;
+    }
+    .thread-actions {
+      display: flex;
+      gap: 18px;
+      margin-top: 8px;
+    }
+    .action-btn {
+      background: none;
+      border: none;
+      font-size: 1.25em;
+      cursor: pointer;
+      color: #666;
+      transition: color 0.2s;
+    }
+    .action-btn:hover {
+      color: #0057e7;
+    }
+    .like-count, .retweet-count {
+      font-size: 0.95em;
+      color: #444;
+      margin-right: 8px;
     }
   </style>
 </head>
 <body>
   <div id="navbar"></div>
   <main>
-    <h1>Post a New Thread</h1>
+    <h1 style="text-align:center;">Post a New Thread</h1>
     <div id="must-login" style="display:none;">
       <span>You must be logged in to post a new thread.</span><br/>
       <button class="login-btn" id="login-btn">Log In</button>
       <span>or</span>
       <button class="login-btn" id="signup-btn">Create Account</button>
     </div>
-    <form id="post-form" style="display:none;">
+    <form id="post-form" style="display:none;" autocomplete="off">
       <textarea id="content" rows="5" placeholder="What's happening?" maxlength="280" required></textarea>
       <input type="file" id="media" accept="image/*,video/*" multiple style="display:block;margin-top:10px;" />
       <div id="media-preview" style="margin-top:10px;"></div>
       <button type="submit">Post</button>
       <div id="post-error"></div>
     </form>
-    <!-- Thread feed inserted below the post creation box as requested -->
     <div id="thread-feed" style="margin-top: 32px;"></div>
   </main>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="js/supabase.js"></script>
   <script src="js/post.js"></script>
   <script>
+    // --- NAVBAR LOAD ---
+    async function loadNavbar() {
+      const nav = document.getElementById('navbar');
+      // Use fetch to load navbar.html from /components
+      if (nav) {
+        try {
+          const res = await fetch('components/navbar.html');
+          nav.innerHTML = await res.text();
+        } catch (e) {
+          nav.innerHTML = '<nav><a href="index.html">Feed</a> <a href="profile.html">Profile</a> <a href="post.html">New Thread</a></nav>';
+        }
+      }
+    }
+    loadNavbar();
+
     // --- AUTH CHECK AND FORM DISPLAY ---
     async function checkAuthAndToggleForm() {
-      // Assumes "supabase" client is initialized in js/supabase.js
       let user = null;
       try {
         const { data: { user: loggedInUser } } = await supabase.auth.getUser();
@@ -114,7 +202,6 @@
       } catch (e) {
         user = null;
       }
-      // Show/hide form and must-login message
       if (user) {
         document.getElementById('must-login').style.display = 'none';
         document.getElementById('post-form').style.display = '';
@@ -131,19 +218,42 @@
       const loginBtn = document.getElementById('login-btn');
       if (loginBtn) {
         loginBtn.addEventListener('click', () => {
-          window.location.href = 'login.html'; // Change as needed
+          window.location.href = 'login.html';
         });
       }
       // Sign-up button
       const signupBtn = document.getElementById('signup-btn');
       if (signupBtn) {
         signupBtn.addEventListener('click', () => {
-          window.location.href = 'signup.html'; // Change as needed
+          window.location.href = 'signup.html';
         });
       }
     });
 
-    // Thread feed logic inserted as requested
+    // --- MEDIA PREVIEW LOGIC ---
+    document.getElementById('media').addEventListener('change', function(e) {
+      const mediaPreview = document.getElementById('media-preview');
+      mediaPreview.innerHTML = '';
+      const files = e.target.files;
+      if (!files) return;
+      Array.from(files).forEach(file => {
+        const url = URL.createObjectURL(file);
+        if (file.type.startsWith('image/')) {
+          const img = document.createElement('img');
+          img.src = url;
+          img.alt = "";
+          mediaPreview.appendChild(img);
+        } else if (file.type.startsWith('video/')) {
+          const vid = document.createElement('video');
+          vid.src = url;
+          vid.controls = true;
+          vid.style.maxWidth = "140px";
+          mediaPreview.appendChild(vid);
+        }
+      });
+    });
+
+    // --- THREAD FEED LOGIC (using thread-card and thread-actions components) ---
     async function loadThreads() {
       const feed = document.getElementById('thread-feed');
       if (!feed) return;
@@ -169,14 +279,63 @@
         return;
       }
 
-      feed.innerHTML = threads.map(t =>
-        `<div class="thread" style="margin-bottom:16px;padding:12px;border:1px solid #eee;border-radius:6px;">
-          <p>${t.content}</p>
-          <small>${new Date(t.created_at).toLocaleString()}</small>
-        </div>`
-      ).join('');
+      // Fetch thread-card and thread-actions HTML
+      const [cardRes, actionsRes] = await Promise.all([
+        fetch('components/thread-card.html'),
+        fetch('components/thread-actions.html')
+      ]);
+      const cardTemplate = await cardRes.text();
+      const actionsTemplate = await actionsRes.text();
+
+      feed.innerHTML = threads.map(t => {
+        let card = cardTemplate;
+        card = card.replace('<!-- thread content -->', escapeHtml(t.content));
+        card = card.replace('<!-- timestamp -->', new Date(t.created_at).toLocaleString());
+        // Optionally link to thread.html?thread_id=
+        card = card.replace('<a href="#">', `<a href="thread.html?thread_id=${t.id}">`);
+        // Insert actions
+        card = card.replace('</div>', actionsTemplate + '</div>');
+        return card;
+      }).join('');
     }
+
+    // --- Escape HTML helper ---
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/[&<>"']/g, function(m) {
+        return ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#39;'
+        })[m];
+      });
+    }
+
     document.addEventListener('DOMContentLoaded', loadThreads);
+
+    // --- Optional: Notification system (using notification component) ---
+    function showNotification(message, duration = 2500) {
+      fetch('components/notification.html')
+        .then(res => res.text())
+        .then(template => {
+          const div = document.createElement('div');
+          div.innerHTML = template;
+          div.querySelector('.notification-msg').textContent = message;
+          div.querySelector('.notification-date').textContent = new Date().toLocaleTimeString();
+          div.style.position = "fixed";
+          div.style.top = "24px";
+          div.style.left = "50%";
+          div.style.transform = "translateX(-50%)";
+          div.style.zIndex = 9999;
+          document.body.appendChild(div);
+          setTimeout(() => div.remove(), duration);
+        });
+    }
+
+    // --- OPTIONAL: Expose showNotification to post.js if needed ---
+    window.showNotification = showNotification;
   </script>
 </body>
 </html>
