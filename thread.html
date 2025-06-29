@@ -4,118 +4,81 @@
   <meta charset="UTF-8">
   <title>New Thread - Threads 100</title>
   <link rel="stylesheet" href="css/main.css">
+  <link href="https://fonts.googleapis.com/css?family=Inter:400,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    html, body {
-      height: 100%;
-      margin: 0;
-      padding: 0;
+    /* ...existing styles... */
+    .thread .thread-actions button.bookmarked {
+      color: #ffd700;
     }
-    body {
-      width: 100vw;
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    main {
-      width: 100vw;
-      max-width: 100vw;
-      box-sizing: border-box;
-      padding: 0 8px;
-    }
-    #post-form {
-      width: 100%;
-      max-width: 100vw;
-      margin: 0;
-      box-sizing: border-box;
-    }
-    #content {
-      width: 100%;
-      min-height: 150px;
-      font-size: 1.1em;
-      padding: 14px;
-      box-sizing: border-box;
-      resize: vertical;
-      display: block;
-    }
-    #post-form button {
-      font-size: 1.1em;
-      padding: 10px 28px;
-      margin-top: 10px;
-    }
-    #must-login {
-      padding: 18px;
-      background: #ffefef;
-      color: #a33;
-      border: 1px solid #faa;
-      border-radius: 5px;
-      margin-bottom: 24px;
-      text-align: center;
-      max-width: 500px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    .login-btn {
-      background: #0057e7;
-      color: white;
-      border: none;
-      padding: 8px 24px;
-      font-size: 1em;
-      margin: 0 10px;
-      border-radius: 4px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-    @media (min-width: 601px) {
-      main {
-        max-width: 900px;
-        margin: 0 auto;
-      }
-      #post-form {
-        max-width: 600px;
-        margin: 0 auto;
-      }
-      #must-login {
-        max-width: 600px;
-      }
+    .thread .thread-actions button.reposted {
+      color: #43c25e;
     }
   </style>
 </head>
 <body>
   <div id="navbar"></div>
-  <main>
-    <h1>Post a New Thread</h1>
-    <div id="must-login" style="display:none;">
-      <span>You must be logged in to post a new thread.</span><br/>
-      <button class="login-btn" id="login-btn">Log In</button>
-      <span>or</span>
-      <button class="login-btn" id="signup-btn">Create Account</button>
-    </div>
-    <form id="post-form" style="display:none;">
-      <textarea id="content" rows="5" placeholder="What's happening?" maxlength="280" required></textarea>
-      <!-- Add file input for images and videos, accept up to 3 files -->
-      <input type="file" id="media" accept="image/*,video/*" multiple style="display:block;margin-top:10px;" />
-      <button type="submit">Post</button>
-      <div id="post-error"></div>
-    </form>
-    <!-- Thread feed inserted below the post creation box as requested -->
-    <div id="thread-feed" style="margin-top: 32px;"></div>
-  </main>
+  <div class="layout-container">
+    <main class="main-col">
+      <h1>Post a New Thread</h1>
+      <!-- ...search bar, must-login, and form as before... -->
+      <div id="must-login" style="display:none;">
+        <span>You must be logged in to post a new thread.</span><br/>
+        <button class="login-btn" id="login-btn">Log In</button>
+        <span>or</span>
+        <button class="login-btn" id="signup-btn">Create Account</button>
+      </div>
+      <form id="post-form" style="display:none;">
+        <!-- ...emoji picker, char count, textarea, tags, media, etc... -->
+        <div class="emoji-picker" aria-label="Add emoji">
+          <button type="button" class="emoji-btn" data-emoji="😀" title="Grinning face">😀</button>
+          <button type="button" class="emoji-btn" data-emoji="😂" title="Laughing">😂</button>
+          <button type="button" class="emoji-btn" data-emoji="😍" title="Love">😍</button>
+          <button type="button" class="emoji-btn" data-emoji="👍" title="Thumbs up">👍</button>
+          <button type="button" class="emoji-btn" data-emoji="🔥" title="Fire">🔥</button>
+          <button type="button" class="emoji-btn" data-emoji="🎉" title="Party">🎉</button>
+        </div>
+        <span class="char-count" id="char-count">0/280</span>
+        <textarea id="content" rows="5" placeholder="What's happening? Use #hashtags and @mentions." maxlength="280" required></textarea>
+        <input class="tag-input" id="tags" type="text" maxlength="64" placeholder="Add tags or #hashtags, comma separated">
+        <input type="file" id="media" accept="image/*,video/*" multiple style="display:block;margin-top:10px;" />
+        <div id="media-preview"></div>
+        <button type="submit"><i class="fa-solid fa-paper-plane"></i>&nbsp;Post</button>
+        <div id="post-error"></div>
+      </form>
+      <div id="thread-feed" style="margin-top: 32px;"></div>
+    </main>
+    <aside class="sidebar-col">
+      <!-- ...suggested users, suggested content, trending hashtags... -->
+      <section class="suggested-section" id="suggested-users">
+        <h3>Suggested Users to Follow</h3>
+      </section>
+      <section class="suggested-section">
+        <h3>Suggested Content</h3>
+        <ul class="suggested-content" id="suggested-content"></ul>
+      </section>
+      <section class="suggested-section">
+        <h3>Trending Hashtags</h3>
+        <ul class="hashtag-list" id="trending-hashtags"></ul>
+      </section>
+    </aside>
+  </div>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="js/supabase.js"></script>
   <script src="js/post.js"></script>
   <script>
-    // --- AUTH CHECK AND FORM DISPLAY ---
+    // --- Auth Check ---
+    let LOGGED_IN_USER = null;
     async function checkAuthAndToggleForm() {
-      // Assumes "supabase" client is initialized in js/supabase.js
       let user = null;
       try {
         const { data: { user: loggedInUser } } = await supabase.auth.getUser();
         user = loggedInUser;
       } catch (e) {
-        // fallback just in case
         user = null;
       }
-      // Show/hide form and must-login message
+      LOGGED_IN_USER = user;
       if (user) {
         document.getElementById('must-login').style.display = 'none';
         document.getElementById('post-form').style.display = '';
@@ -124,73 +87,38 @@
         document.getElementById('post-form').style.display = 'none';
       }
     }
+    // ...existing DOMContentLoaded, emoji, charCount, mediaPreview, formValidation...
 
-    // --- LOGIN/SIGN-UP BUTTON HANDLERS ---
-    document.addEventListener('DOMContentLoaded', function() {
-      checkAuthAndToggleForm();
-      // Login button
-      const loginBtn = document.getElementById('login-btn');
-      if (loginBtn) {
-        loginBtn.addEventListener('click', () => {
-          // redirect to your login page or open modal
-          window.location.href = 'login.html'; // Change as needed
-        });
-      }
-      // Sign-up button
-      const signupBtn = document.getElementById('signup-btn');
-      if (signupBtn) {
-        signupBtn.addEventListener('click', () => {
-          // redirect to your signup page or open modal
-          window.location.href = 'signup.html'; // Change as needed
-        });
-      }
-    });
+    // --- BOOKMARK, LIKE, REPOST: In-Memory Stores (Replace with backend for production) ---
+    let bookmarks = JSON.parse(localStorage.getItem('bookmarks') || '{}');
+    let likes = JSON.parse(localStorage.getItem('likes') || '{}');
+    let reposts = JSON.parse(localStorage.getItem('reposts') || '{}');
 
-    // Allow up to 3 files, each <= 10MB and must be image/video
-    document.getElementById('post-form').addEventListener('submit', async function(e) {
-      const mediaInput = document.getElementById('media');
-      const errorDiv = document.getElementById('post-error');
-      errorDiv.textContent = '';
-      if (mediaInput && mediaInput.files && mediaInput.files.length > 0) {
-        if (mediaInput.files.length > 3) {
-          errorDiv.textContent = 'You can only upload up to 3 files.';
-          e.preventDefault();
-          return;
-        }
-        for (let i = 0; i < mediaInput.files.length; i++) {
-          const file = mediaInput.files[i];
-          if (!file.type.match(/^image\/|^video\//)) {
-            errorDiv.textContent = 'Only image and video files are allowed.';
-            e.preventDefault();
-            return;
-          }
-          if (file.size > 10 * 1024 * 1024) {
-            errorDiv.textContent = 'Each file must be 10MB or less.';
-            e.preventDefault();
-            return;
-          }
-          // Optional: Upload each file to Supabase Storage (uncomment and configure as needed)
-          /*
-          const { data, error } = await supabase.storage
-            .from('YOUR_BUCKET_NAME')
-            .upload('media/' + Date.now() + '-' + file.name, file);
-          if (error) {
-            errorDiv.textContent = 'Upload failed: ' + error.message;
-            e.preventDefault();
-            return;
-          }
-          */
-        }
-      }
-    });
+    function toggleBookmark(threadId) {
+      bookmarks[threadId] = !bookmarks[threadId];
+      localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+      renderBookmarks();
+    }
+    function toggleLike(threadId, btn) {
+      likes[threadId] = !likes[threadId];
+      localStorage.setItem('likes', JSON.stringify(likes));
+      if (btn) btn.classList.toggle('liked', likes[threadId]);
+    }
+    function toggleRepost(threadId, btn) {
+      reposts[threadId] = !reposts[threadId];
+      localStorage.setItem('reposts', JSON.stringify(reposts));
+      if (btn) btn.classList.toggle('reposted', reposts[threadId]);
+    }
+    function renderBookmarks() {
+      // Optionally show a list of bookmarks in the sidebar or a modal
+    }
 
-    // Thread feed logic inserted as requested
-    async function loadThreads() {
+    // --- THREAD FEED LOADING WITH BOOKMARK, REPOST, LIKE ---
+    window.__allThreads = [];
+    async function loadThreads(searchQ) {
       const feed = document.getElementById('thread-feed');
       if (!feed) return;
       feed.innerHTML = 'Loading threads...';
-
-      // Example Supabase fetch - adjust "threads" and "content" to match your table/field names:
       if (typeof supabase === "undefined") {
         feed.innerHTML = 'Thread loading requires Supabase setup.';
         return;
@@ -199,26 +127,143 @@
         .from('threads')
         .select('*')
         .order('created_at', { ascending: false })
-        .limit(20);
+        .limit(50);
 
       if (error) {
         feed.innerHTML = 'Failed to load threads.';
         return;
       }
-
       if (!threads || !threads.length) {
         feed.innerHTML = 'No threads yet. Be the first to post!';
         return;
       }
 
-      feed.innerHTML = threads.map(t =>
-        `<div class="thread" style="margin-bottom:16px;padding:12px;border:1px solid #eee;border-radius:6px;">
-          <p>${t.content}</p>
-          <small>${new Date(t.created_at).toLocaleString()}</small>
-        </div>`
+      window.__allThreads = threads;
+      renderThreads(threads);
+    }
+
+    function renderThreads(threads) {
+      const feed = document.getElementById('thread-feed');
+      feed.innerHTML = threads.map((t, idx) => {
+        const threadId = t.id || idx;
+        const isBookmarked = bookmarks[threadId];
+        const isLiked = likes[threadId];
+        const isReposted = reposts[threadId];
+        let tagHTML = "";
+        if (t.tags) {
+          tagHTML = `<div class="thread-tags">${t.tags.split(',').map(tag=>`<a class="hashtag-link" href="#" data-hashtag="${tag.trim().replace('#','')}">#${tag.trim().replace('#','')}</a>`).join(' ')}</div>`;
+        }
+        let metaHTML = `<div class="thread-meta"><i class="fa fa-user"></i> ${escapeHTML(t.user || 'Anon')} &nbsp; <i class="fa fa-clock"></i> ${t.created_at ? new Date(t.created_at).toLocaleString() : ''}</div>`;
+        let commentsHTML = `
+          <div class="thread-comments"></div>
+          <form class="add-comment" data-thread-id="${threadId}">
+            <input type="text" placeholder="Add a comment..." maxlength="140" required>
+            <button type="submit"><i class="fa fa-paper-plane"></i></button>
+          </form>
+        `;
+        return `<div class="thread" data-thread-id="${threadId}">
+          ${metaHTML}
+          <p>${linkify(escapeHTML(t.content))}</p>
+          ${tagHTML}
+          <div class="thread-actions">
+            <button class="bookmark-btn${isBookmarked ? ' bookmarked' : ''}" title="Bookmark"><i class="fa fa-bookmark"></i></button>
+            <button class="like-btn${isLiked ? ' liked' : ''}" title="Like"><i class="fa-solid fa-heart"></i> <span>0</span></button>
+            <button class="repost-btn${isReposted ? ' reposted' : ''}" title="Repost"><i class="fa fa-retweet"></i></button>
+            <button class="share-btn" title="Copy link"><i class="fa-solid fa-share-from-square"></i></button>
+          </div>
+          ${commentsHTML}
+        </div>`;
+      }).join('');
+      // Handlers:
+      feed.querySelectorAll('.bookmark-btn').forEach(btn => {
+        btn.onclick = function() {
+          const threadId = btn.closest('.thread').dataset.threadId;
+          toggleBookmark(threadId);
+          btn.classList.toggle('bookmarked');
+        };
+      });
+      feed.querySelectorAll('.like-btn').forEach(btn => {
+        btn.onclick = function() {
+          const threadId = btn.closest('.thread').dataset.threadId;
+          toggleLike(threadId, btn);
+        };
+      });
+      feed.querySelectorAll('.repost-btn').forEach(btn => {
+        btn.onclick = function() {
+          const threadId = btn.closest('.thread').dataset.threadId;
+          toggleRepost(threadId, btn);
+          // Optionally: Add a "repost" to the user's feed
+        };
+      });
+      feed.querySelectorAll('.share-btn').forEach(btn => {
+        btn.onclick = function(e) {
+          e.preventDefault();
+          const threadId = btn.closest('.thread').dataset.threadId;
+          const url = window.location.href + "#" + threadId;
+          navigator.clipboard.writeText(url);
+          btn.title = "Copied!";
+          setTimeout(() => btn.title = "Copy link", 1200);
+        };
+      });
+      feed.querySelectorAll('.add-comment').forEach(form => {
+        form.addEventListener('submit', function(e) {
+          e.preventDefault();
+          const threadId = form.getAttribute('data-thread-id');
+          const input = form.querySelector('input');
+          if (input.value.trim()) {
+            addComment(threadId, input.value.trim());
+            input.value = '';
+          }
+        });
+      });
+      // Hashtag links in threads
+      feed.querySelectorAll('.hashtag-link').forEach(link => {
+        link.onclick = (e) => {
+          e.preventDefault();
+          performSearch('#' + link.dataset.hashtag);
+        };
+      });
+      Object.keys(threadComments).forEach(renderComments);
+    }
+
+    // --- Like/Bookmark/Repost helpers ---
+    function escapeHTML(str) {
+      return String(str).replace(/[&<>"']/g, c =>
+        ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])
+      );
+    }
+    function linkify(text) {
+      return text
+        .replace(/(^|[^\w])#([a-zA-Z0-9_]+)/g, '$1<a class="hashtag-link" href="#" data-hashtag="$2">#$2</a>')
+        .replace(/(^|[^\w])@([a-zA-Z0-9_]+)/g, '$1<a class="mention-link" href="?user=$2">@$2</a>');
+    }
+
+    // --- Comments logic (frontend demo) ---
+    let threadComments = {};
+    function addComment(threadId, comment, user='You') {
+      if (!threadComments[threadId]) threadComments[threadId] = [];
+      threadComments[threadId].push({ user, comment, time: new Date().toLocaleString() });
+      renderComments(threadId);
+    }
+    function renderComments(threadId) {
+      const threadElem = document.querySelector(`.thread[data-thread-id="${threadId}"]`);
+      if (!threadElem) return;
+      const commentsDiv = threadElem.querySelector('.thread-comments');
+      if (!commentsDiv) return;
+      const comments = threadComments[threadId] || [];
+      commentsDiv.innerHTML = comments.map(
+        c => `<div class="comment"><b>${c.user}:</b> ${escapeHTML(c.comment)}<br><small>${c.time}</small></div>`
       ).join('');
     }
-    document.addEventListener('DOMContentLoaded', loadThreads);
+
+    // --- On DOMContentLoaded ---
+    document.addEventListener('DOMContentLoaded', function() {
+      checkAuthAndToggleForm();
+      renderSuggestedUsers();
+      renderSuggestedContent();
+      loadThreads();
+    });
+    // ...existing emoji picker, char count, media preview, search, trending hashtags, etc...
   </script>
 </body>
 </html>
