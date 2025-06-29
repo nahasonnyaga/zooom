@@ -129,6 +129,8 @@
       <div class="notfound-feedback" id="feedbackMsg">Thank you! We'll look into this.</div>
     </div>
   </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="js/supabase.js"></script>
   <script>
     // Navbar include (compatible with your file structure)
     fetch('components/navbar.html')
@@ -137,15 +139,45 @@
         document.getElementById('navbar-placeholder').innerHTML = html;
       });
 
-    // Contact button: send feedback about broken link (demo only)
+    // Contact button: report broken link using Supabase
     document.addEventListener('DOMContentLoaded', function () {
       const btn = document.getElementById('contactBtn');
       const feedback = document.getElementById('feedbackMsg');
       if (btn) {
-        btn.addEventListener('click', function () {
-          feedback.style.display = 'block';
+        btn.addEventListener('click', async function () {
           btn.disabled = true;
           btn.style.opacity = 0.7;
+          feedback.textContent = "Sending feedback...";
+          feedback.style.display = 'block';
+
+          // Try to insert feedback record in a 'feedback' table
+          let success = false;
+          try {
+            // Try get user (optional)
+            let user = null;
+            if (window.supabaseApi && window.supabaseApi.getUser) {
+              user = await window.supabaseApi.getUser();
+            }
+            const pageUrl = window.location.href;
+            const message = "404: " + pageUrl;
+            // Insert feedback to Supabase feedback table
+            if (window.supabaseApi && window.supabaseApi.supabase) {
+              const { error } = await window.supabaseApi.supabase
+                .from('feedback')
+                .insert([{
+                  message,
+                  page_url: pageUrl,
+                  user_id: user ? user.id : null,
+                  created_at: new Date().toISOString()
+                }]);
+              if (!error) success = true;
+            }
+          } catch (e) {
+            // Ignore
+          }
+          feedback.textContent = success
+            ? "Thank you! We'll look into this."
+            : "Thank you! We'll look into this.";
           setTimeout(() => {
             feedback.style.display = 'none';
             btn.disabled = false;
