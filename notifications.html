@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Notifications - Zooom</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/feed.css" />
+  <script src="js/notifications.js" defer></script>
+</head>
+<body>
+  <!-- Navbar -->
+  <div id="navbar"></div>
+  <main class="main-container">
+    <h2>Notifications</h2>
+    <section id="notification-list">
+      <!-- Dynamically loaded notifications, e.g. use components/notification.html -->
+    </section>
+  </main>
+  <script>
+    // Load navbar component
+    fetch('components/navbar.html').then(r => r.text()).then(html => {
+      document.getElementById('navbar').innerHTML = html;
+    });
+
+    // Placeholder: Load notifications (implement in js/notifications.js)
+    // Example: fetchNotifications();
+  </script>
+</body>
+</html>
