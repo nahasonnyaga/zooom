@@ -107,7 +107,7 @@
     </div>
 
     <div class="terms-section">
-      <h2>Your Content & Conduct</h2>
+      <h2>Your Content &amp; Conduct</h2>
       <ul>
         <li>You retain rights to your content but grant Zooom a license to display it on the platform.</li>
         <li>Zooom may remove content that violates these terms without notice.</li>
@@ -123,7 +123,7 @@
     </div>
 
     <div class="terms-section">
-      <h2>Contact & Questions</h2>
+      <h2>Contact &amp; Questions</h2>
       <p>
         For questions, contact us at <a href="mailto:support@zooom.com">support@zooom.com</a>.
       </p>
@@ -138,8 +138,8 @@
   <script>
     // Navbar include (consistent with your repo)
     fetch('components/navbar.html')
-      .then(r => r.text())
-      .then(html => { document.getElementById('navbar-placeholder').innerHTML = html; });
+      .then(function(r) { return r.text(); })
+      .then(function(html) { document.getElementById('navbar-placeholder').innerHTML = html; });
 
     // Feedback/contact demo (shows feedback message)
     document.addEventListener('DOMContentLoaded', function() {
