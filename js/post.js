@@ -136,6 +136,31 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
 
+    // ==============================
+    // ENHANCED VALUE ADDITIONS BELOW
+    // ==============================
+
+    // 1. Require a description if any media is attached (video/photo cannot be posted without description)
+    if ((files.length > 0) && !content) {
+      errorDiv.textContent = 'You must add a description when attaching photos or videos.';
+      return;
+    }
+
+    // 2. Require at least one image or video if posting text (text-only not allowed)
+    if ((content) && files.length === 0) {
+      errorDiv.textContent = 'You must add at least one image or video. Text-only posts are not allowed.';
+      return;
+    }
+
+    // 3. Optionally, check for both image/video present (if you want at least one of each)
+    // (Commented out, as not strictly required)
+    // let hasImage = files.some(f => f.type.startsWith('image/'));
+    // let hasVideo = files.some(f => f.type.startsWith('video/'));
+    // if (!hasImage && !hasVideo) {
+    //   errorDiv.textContent = 'Attach at least one image or video.';
+    //   return;
+    // }
+
     // Example: Supabase or backend upload logic
     // Uncomment and adapt for Supabase:
     /*
