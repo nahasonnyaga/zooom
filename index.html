@@ -40,6 +40,24 @@
       margin: 4rem 0 2rem 0;
       font-size: 1.18rem;
     }
+    /* Thread media styling */
+    .thread-media {
+      margin-top: 0.7em;
+      margin-bottom: 0.5em;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .thread-media img,
+    .thread-media video {
+      max-width: 96%;
+      border-radius: 6px;
+      background: #eee;
+      margin-bottom: 4px;
+    }
+    .thread-media video {
+      max-height: 260px;
+    }
   </style>
 </head>
 <body style="background:#f7f7fa;">
@@ -62,6 +80,14 @@
       </div>
       <a href="thread.html?id=1" style="text-decoration:none;color:inherit;">
         <p style="font-size:1.22rem;font-weight:500;margin-top:0.1em;">What’s your favorite open source project this year? 🚀</p>
+        <!-- MEDIA UPDATE: Example images/videos for demo only, replace with dynamic rendering in real app -->
+        <div class="thread-media">
+          <img src="assets/demo1.jpg" alt="thread image">
+          <video controls>
+            <source src="assets/demo1.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </div>
       </a>
       <!-- Include thread actions component -->
       <div class="thread-actions" aria-label="actions">
@@ -103,6 +129,10 @@
       </div>
       <a href="thread.html?id=2" style="text-decoration:none;color:inherit;">
         <p style="font-size:1.18rem;font-weight:500;margin-top:0.1em;">Just shipped my first project using this template. Thanks for making it so simple!</p>
+        <!-- MEDIA UPDATE: Example image for demo only, replace with dynamic rendering in real app -->
+        <div class="thread-media">
+          <img src="assets/demo2.jpg" alt="thread image">
+        </div>
       </a>
       <div class="thread-actions" aria-label="actions">
         <button class="action-btn like-btn" title="Like" aria-label="Like">&#10084;</button>
@@ -134,6 +164,13 @@
       </div>
       <a href="thread.html?id=3" style="text-decoration:none;color:inherit;">
         <p style="font-size:1.18rem;font-weight:500;margin-top:0.1em;">Any tips for learning CSS Grid quickly?</p>
+        <!-- MEDIA UPDATE: Example video for demo only, replace with dynamic rendering in real app -->
+        <div class="thread-media">
+          <video controls>
+            <source src="assets/demo2.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </div>
       </a>
       <div class="thread-actions" aria-label="actions">
         <button class="action-btn like-btn" title="Like" aria-label="Like">&#10084;</button>
@@ -232,5 +269,28 @@
       .floating-new-thread-btn { right: 1rem; bottom: 1rem; width: 2.6rem; height: 2.6rem; font-size:1.3rem; }
     }
   </style>
+  <!-- DYNAMIC THREAD MEDIA RENDERING SCRIPT (VALUE ADD) -->
+  <script>
+    // If you later fetch threads from the backend, use this function to render their media:
+    function renderThreadMedia(imageUrls = [], videoUrls = []) {
+      let html = '';
+      if (Array.isArray(imageUrls)) {
+        html += imageUrls.map(url =>
+          `<img src="${url}" alt="thread image">`
+        ).join('');
+      }
+      if (Array.isArray(videoUrls)) {
+        html += videoUrls.map(url =>
+          `<video controls>
+             <source src="${url}" type="video/mp4">
+             Your browser does not support the video tag.
+           </video>`
+        ).join('');
+      }
+      return html ? `<div class="thread-media">${html}</div>` : "";
+    }
+    // Example usage:
+    // document.querySelector('.thread-card .thread-media').innerHTML = renderThreadMedia(["img1.jpg"], ["vid1.mp4"]);
+  </script>
 </body>
 </html>
