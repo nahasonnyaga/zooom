@@ -1,3 +1,4 @@
+/* Avatar styles for profile and thread cards */
 .avatar {
   width: 40px;
   height: 40px;
@@ -6,4 +7,30 @@
   border: 1px solid #eee;
   margin-right: 0.5rem;
   vertical-align: middle;
+  background: #f3f3f3;
+  display: inline-block;
+}
+
+/* If you want avatar to appear inline with username/content */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Example usage (add this to your HTML):
+<div class="user-info">
+  <img class="avatar" src="assets/default-avatar.png" alt="avatar">
+  <span>@username</span>
+</div>
+*/
+
+/* Optionally, add a default avatar background for missing images */
+.avatar[src=""], .avatar:not([src]) {
+  background: #e0e7ef;
+  color: #bbb;
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
