@@ -5,230 +5,232 @@
   <title>Threads 100 Clone - Feed</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- Move styles to css/feed.css in real project, but keep here for compatibility -->
+  <link rel="stylesheet" href="css/feed.css">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
-    body {
-      margin: 0;
-      font-family: system-ui, sans-serif;
-      background: #f7f7fa;
-      color: #20232a;
-    }
-    .feed {
-      width: 100vw;
-      max-width: 100vw;
-      margin: 0 auto;
-      padding: 1rem 0.5rem 2rem 0.5rem;
-      box-sizing: border-box;
-      display: flex;
-      flex-direction: column;
-      gap: 2.5rem;
-    }
-    .thread-card, .reply-card {
-      background: #fff;
-      margin-bottom: 1rem;
-      padding: 2.1rem 1.4rem;
-      border-radius: 14px;
-      box-shadow: 0 1px 12px #0001;
-      font-size: 2.1rem;
-      line-height: 1.8;
-      transition: box-shadow 0.15s;
-    }
-    .thread-card:hover, .reply-card:hover {
-      box-shadow: 0 4px 20px #0002;
-    }
-    .thread-card a {
-      color: inherit;
-      text-decoration: none;
-      font-weight: 700;
-      word-break: break-word;
-      font-size: 2.2rem;
-    }
-    .thread-card small, .reply-card small {
-      color: #888;
-      font-size: 1.2rem;
-      display: block;
-      margin-top: 0.2em;
-      margin-bottom: 0.7em;
-      letter-spacing: 0.2px;
-    }
-    .thread-actions {
-      display: flex;
-      align-items: center;
-      gap: 1.2rem;
-      margin-top: 0.85rem;
-      font-size: 1.2rem;
-      padding: 0 0.3rem;
-    }
-    .action-btn {
-      background: none;
+    /* Extra: Loader & new thread floating button for more value */
+    .floating-new-thread-btn {
+      position: fixed;
+      bottom: 2.1rem;
+      right: 2.1rem;
+      z-index: 200;
+      background: linear-gradient(90deg,#3b82f6 35%,#60a5fa 100%);
+      color: #fff;
       border: none;
-      box-shadow: none;
-      padding: 0.25rem 0.6rem;
-      font-size: 1.45rem;
-      color: #606770;
       border-radius: 50%;
-      transition: background 0.13s, color 0.17s;
+      width: 3.5rem;
+      height: 3.5rem;
       display: flex;
       align-items: center;
       justify-content: center;
-      min-width: 2.1em;
-      min-height: 2.1em;
-    }
-    .action-btn:active,
-    .action-btn:focus,
-    .action-btn:hover {
-      background: #f0f2f5;
-      color: #222;
+      font-size: 2.1rem;
+      box-shadow: 0 2px 16px #3b82f522;
+      cursor: pointer;
       outline: none;
+      transition: background 0.13s, box-shadow 0.13s;
     }
-    .like-btn.liked {
-      color: #e74c3c;
+    .floating-new-thread-btn:hover {
+      background: linear-gradient(90deg,#2563eb 25%,#60a5fa 100%);
+      box-shadow: 0 6px 24px #3b82f540;
     }
-    .bookmark-btn.bookmarked {
-      color: #222;
-    }
-    .retweet-btn.retweeted {
-      color: #27ae60;
-    }
-    .like-count, .retweet-count {
+    .feed-empty {
+      color: #aaa;
+      text-align: center;
+      margin: 4rem 0 2rem 0;
       font-size: 1.18rem;
-      color: #606770;
-      margin: 0 0.18em 0 0.18em;
-      font-weight: 400;
-      letter-spacing: 0;
-      min-width: unset;
-      display: inline;
-      text-align: left;
-      vertical-align: middle;
-    }
-    .reply-section {
-      margin-left: 0;
-      margin-top: 1.6rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1.2rem;
-    }
-    .reply-card {
-      background: #f7f7fa;
-      border: 1px solid #eee;
-      font-size: 1.45rem;
-      padding: 1.2em 1.9em;
-      border-radius: 11px;
-      margin-bottom: 0;
-      box-shadow: none;
-    }
-    .thread-card:focus-within, .reply-card:focus-within {
-      outline: 2px solid #3742fa;
-      outline-offset: 2px;
-    }
-    @media (max-width: 600px) {
-      .feed {
-        padding: 0.6rem 0.1rem 1.2rem 0.1rem;
-        gap: 1.7rem;
-      }
-      .thread-card, .reply-card {
-        padding: 1.1rem 0.6rem;
-        font-size: 1.35rem;
-        border-radius: 10px;
-      }
-      .reply-card {
-        padding: 0.7em 1.1em;
-        font-size: 1.1rem;
-        border-radius: 8px;
-      }
-      .thread-card a {
-        font-size: 1.5rem;
-      }
-      .thread-actions {
-        font-size: 1.06rem;
-        gap: 0.7rem;
-      }
-      .action-btn {
-        font-size: 1.1rem;
-        padding: 0.08rem 0.32rem;
-        min-width: 1.6em;
-        min-height: 1.6em;
-      }
-      .like-count, .retweet-count {
-        font-size: 0.95rem;
-      }
-    }
-    @media (hover: none) and (pointer: coarse) {
-      .action-btn {
-        padding: 0.75em 1.3em;
-      }
     }
   </style>
 </head>
-<body>
-  <!-- Navbar include -->
-  <nav style="background:#fff;border-bottom:1px solid #eee;padding:0.5rem 1rem;display:flex;gap:1rem;">
-    <a href="index.html">Feed</a>
-    <a href="profile.html">Profile</a>
-    <a href="post.html">New Thread</a>
-  </nav>
+<body style="background:#f7f7fa;">
+  <!-- Navbar include (modern Threads-like from components/navbar.html) -->
+  <div id="navbar-include"></div>
+  <script>
+    // Inject navbar.html from /components/navbar.html
+    fetch('components/navbar.html').then(r=>r.text()).then(html=>{
+      document.getElementById('navbar-include').innerHTML = html;
+    });
+  </script>
 
   <main class="feed" aria-label="Threads feed">
-
     <!-- MOCK THREAD 1 -->
     <section class="thread-card" tabindex="0" aria-label="Thread by alice: What’s your favorite open source project this year?">
-      <a href="thread.html?id=1">
-        <p>What’s your favorite open source project this year? 🚀</p>
+      <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.45rem;">
+        <img src="assets/avatar.png" alt="alice avatar" style="width:2.2rem;height:2.2rem;border-radius:50%;border:1px solid #eee;background:#f4f4f4;object-fit:cover;">
+        <span style="font-weight:600;color:#3b82f6;">@alice</span>
+        <small style="color:#888;margin-left:auto;">2h ago</small>
+      </div>
+      <a href="thread.html?id=1" style="text-decoration:none;color:inherit;">
+        <p style="font-size:1.22rem;font-weight:500;margin-top:0.1em;">What’s your favorite open source project this year? 🚀</p>
       </a>
-      <small>Posted by alice • 2h ago</small>
+      <!-- Include thread actions component -->
       <div class="thread-actions" aria-label="actions">
         <button class="action-btn like-btn" title="Like" aria-label="Like">&#10084;</button>
         <span class="like-count" aria-label="5 likes">5</span>
         <button class="action-btn retweet-btn" title="Repost" aria-label="Repost">&#128257;</button>
         <span class="retweet-count" aria-label="2 reposts">2</span>
         <button class="action-btn bookmark-btn" title="Bookmark" aria-label="Bookmark">&#128278;</button>
+        <button class="action-btn" title="Reply" aria-label="Reply"><i class="fa-solid fa-reply"></i></button>
+        <button class="action-btn" title="Share" aria-label="Share"><i class="fa-solid fa-share-nodes"></i></button>
       </div>
       <div class="reply-section" aria-label="Replies">
-        <div class="reply-card" tabindex="0" aria-label="Reply by bob">
-          <p>I love Supabase! Super easy to use! 🔥</p>
-          <small>bob • 1h ago</small>
+        <!-- Include reply-card.html style -->
+        <div class="reply-card" tabindex="0" aria-label="Reply by bob" style="margin-top:1rem;">
+          <div style="display:flex;align-items:center;gap:0.5rem;">
+            <img src="assets/avatar.png" alt="bob avatar" style="width:1.5rem;height:1.5rem;border-radius:50%;background:#f2f2f2;">
+            <span style="font-weight:600;color:#374151;">@bob</span>
+            <small style="color:#aaa;margin-left:auto;">1h ago</small>
+          </div>
+          <p style="margin:0.6em 0 0.2em 0;">I love Supabase! Super easy to use! 🔥</p>
         </div>
         <div class="reply-card" tabindex="0" aria-label="Reply by charlie">
-          <p>Definitely Astro, it’s a game changer for web dev.</p>
-          <small>charlie • 30m ago</small>
+          <div style="display:flex;align-items:center;gap:0.5rem;">
+            <img src="assets/avatar.png" alt="charlie avatar" style="width:1.5rem;height:1.5rem;border-radius:50%;background:#f2f2f2;">
+            <span style="font-weight:600;color:#374151;">@charlie</span>
+            <small style="color:#aaa;margin-left:auto;">30m ago</small>
+          </div>
+          <p style="margin:0.6em 0 0.2em 0;">Definitely Astro, it’s a game changer for web dev.</p>
         </div>
       </div>
     </section>
 
     <!-- MOCK THREAD 2 -->
     <section class="thread-card" tabindex="0" aria-label="Thread by dana: Just shipped my first project using this template.">
-      <a href="thread.html?id=2">
-        <p>Just shipped my first project using this template. Thanks for making it so simple!</p>
+      <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.45rem;">
+        <img src="assets/avatar.png" alt="dana avatar" style="width:2.2rem;height:2.2rem;border-radius:50%;border:1px solid #eee;background:#f4f4f4;object-fit:cover;">
+        <span style="font-weight:600;color:#3b82f6;">@dana</span>
+        <small style="color:#888;margin-left:auto;">30m ago</small>
+      </div>
+      <a href="thread.html?id=2" style="text-decoration:none;color:inherit;">
+        <p style="font-size:1.18rem;font-weight:500;margin-top:0.1em;">Just shipped my first project using this template. Thanks for making it so simple!</p>
       </a>
-      <small>Posted by dana • 30m ago</small>
       <div class="thread-actions" aria-label="actions">
         <button class="action-btn like-btn" title="Like" aria-label="Like">&#10084;</button>
         <span class="like-count" aria-label="9 likes">9</span>
         <button class="action-btn retweet-btn" title="Repost" aria-label="Repost">&#128257;</button>
         <span class="retweet-count" aria-label="1 repost">1</span>
         <button class="action-btn bookmark-btn" title="Bookmark" aria-label="Bookmark">&#128278;</button>
+        <button class="action-btn" title="Reply" aria-label="Reply"><i class="fa-solid fa-reply"></i></button>
+        <button class="action-btn" title="Share" aria-label="Share"><i class="fa-solid fa-share-nodes"></i></button>
       </div>
       <div class="reply-section" aria-label="Replies">
         <div class="reply-card" tabindex="0" aria-label="Reply by alice">
-          <p>Congrats! Would love to see your project.</p>
-          <small>alice • 10m ago</small>
+          <div style="display:flex;align-items:center;gap:0.5rem;">
+            <img src="assets/avatar.png" alt="alice avatar" style="width:1.5rem;height:1.5rem;border-radius:50%;background:#f2f2f2;">
+            <span style="font-weight:600;color:#374151;">@alice</span>
+            <small style="color:#aaa;margin-left:auto;">10m ago</small>
+          </div>
+          <p style="margin:0.6em 0 0.2em 0;">Congrats! Would love to see your project.</p>
         </div>
       </div>
     </section>
 
     <!-- MOCK THREAD 3 -->
     <section class="thread-card" tabindex="0" aria-label="Thread by emma: Any tips for learning CSS Grid quickly?">
-      <a href="thread.html?id=3">
-        <p>Any tips for learning CSS Grid quickly?</p>
+      <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.45rem;">
+        <img src="assets/avatar.png" alt="emma avatar" style="width:2.2rem;height:2.2rem;border-radius:50%;border:1px solid #eee;background:#f4f4f4;object-fit:cover;">
+        <span style="font-weight:600;color:#3b82f6;">@emma</span>
+        <small style="color:#888;margin-left:auto;">10m ago</small>
+      </div>
+      <a href="thread.html?id=3" style="text-decoration:none;color:inherit;">
+        <p style="font-size:1.18rem;font-weight:500;margin-top:0.1em;">Any tips for learning CSS Grid quickly?</p>
       </a>
-      <small>Posted by emma • 10m ago</small>
       <div class="thread-actions" aria-label="actions">
         <button class="action-btn like-btn" title="Like" aria-label="Like">&#10084;</button>
         <span class="like-count" aria-label="3 likes">3</span>
         <button class="action-btn retweet-btn" title="Repost" aria-label="Repost">&#128257;</button>
         <span class="retweet-count" aria-label="0 reposts">0</span>
         <button class="action-btn bookmark-btn" title="Bookmark" aria-label="Bookmark">&#128278;</button>
+        <button class="action-btn" title="Reply" aria-label="Reply"><i class="fa-solid fa-reply"></i></button>
+        <button class="action-btn" title="Share" aria-label="Share"><i class="fa-solid fa-share-nodes"></i></button>
       </div>
     </section>
+
+    <!-- Empty feed message example -->
+    <!-- <div class="feed-empty">No threads yet. Start a conversation!</div> -->
   </main>
+
+  <!-- Floating new-thread button -->
+  <button class="floating-new-thread-btn" title="New Thread" onclick="window.location.href='post.html'">
+    <i class="fa-solid fa-plus"></i>
+  </button>
+
+  <!-- Notification component example (hidden by default, can be shown via JS) -->
+  <div id="modern-notification-area" style="position:fixed;top:1.7rem;right:1.6rem;z-index:205;"></div>
+  <script>
+    // Simple notification example (for demo)
+    function showNotification(msg, date = 'Now') {
+      fetch('components/notification.html').then(r=>r.text()).then(html=>{
+        let div = document.createElement('div');
+        div.innerHTML = html;
+        div.querySelector('.notification-msg').textContent = msg;
+        div.querySelector('.notification-date').textContent = date;
+        document.getElementById('modern-notification-area').appendChild(div);
+        setTimeout(()=>{div.style.display='none';}, 3500);
+      });
+    }
+    // Uncomment for demo: showNotification('Welcome to Zooom! 🚀','just now');
+  </script>
+
+  <!-- Thread actions interactivity from /components/thread-actions.html -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Like button logic
+      document.querySelectorAll('.like-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          let countSpan = btn.nextElementSibling;
+          let count = parseInt(countSpan.textContent, 10) || 0;
+          btn.classList.toggle('liked');
+          if (btn.classList.contains('liked')) {
+            count++;
+            btn.style.color = '#e11d48';
+          } else {
+            count = Math.max(0, count - 1);
+            btn.style.color = '';
+          }
+          countSpan.textContent = count;
+        });
+      });
+
+      // Retweet button logic
+      document.querySelectorAll('.retweet-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          let countSpan = btn.nextElementSibling;
+          let count = parseInt(countSpan.textContent, 10) || 0;
+          btn.classList.toggle('retweeted');
+          if (btn.classList.contains('retweeted')) {
+            count++;
+            btn.style.color = '#22d3ee';
+          } else {
+            count = Math.max(0, count - 1);
+            btn.style.color = '';
+          }
+          countSpan.textContent = count;
+        });
+      });
+
+      // Bookmark button logic
+      document.querySelectorAll('.bookmark-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          btn.classList.toggle('bookmarked');
+          if (btn.classList.contains('bookmarked')) {
+            btn.style.color = '#fbbf24';
+          } else {
+            btn.style.color = '';
+          }
+        });
+      });
+    });
+  </script>
+  <style>
+    /* Visual feedback for actions, matching components/thread-actions.html */
+    .action-btn.liked { color: #e11d48 !important; }
+    .action-btn.retweeted { color: #22d3ee !important; }
+    .action-btn.bookmarked { color: #fbbf24 !important; }
+    /* Responsive: hide floating button on very small screens */
+    @media (max-width: 500px) {
+      .floating-new-thread-btn { right: 1rem; bottom: 1rem; width: 2.6rem; height: 2.6rem; font-size:1.3rem; }
+    }
+  </style>
 </body>
 </html>
