@@ -5,12 +5,73 @@
   margin-bottom: 0.5rem;
   border-radius: 6px;
   font-size: 1rem;
+  box-shadow: 0 1px 4px #0001;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  animation: fadeIn 0.6s;
+  position: relative;
+  transition: background 0.18s, box-shadow 0.18s;
 }
+
+.notification:hover {
+  background: #fff7c2;
+  box-shadow: 0 2px 8px #0002;
+}
+
 .notification-msg {
   color: #555;
+  flex: 1;
+  word-break: break-word;
 }
+
 .notification-date {
-  float: right;
   color: #aaa;
   font-size: 0.9rem;
+  margin-left: 1rem;
+  white-space: nowrap;
+}
+
+.notification .close-btn {
+  background: none;
+  border: none;
+  color: #aaa;
+  font-size: 1.2rem;
+  cursor: pointer;
+  margin-left: 0.5rem;
+  transition: color 0.15s;
+  position: absolute;
+  top: 0.5rem;
+  right: 0.8rem;
+}
+
+.notification .close-btn:hover {
+  color: #d00;
+}
+
+/* Notification type modifiers */
+.notification.success {
+  background: #eaffea;
+  border-left-color: #21ba45;
+}
+.notification.error {
+  background: #ffeaea;
+  border-left-color: #d00;
+}
+.notification.info {
+  background: #eaf6ff;
+  border-left-color: #1e90ff;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-12px);}
+  to { opacity: 1; transform: translateY(0);}
+}
+
+/* Responsive: Ensure notification is readable on small screens */
+@media (max-width: 500px) {
+  .notification {
+    font-size: 0.98rem;
+    padding: 0.6rem 0.5rem;
+  }
 }
