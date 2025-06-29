@@ -1,0 +1,21 @@
+{
+  "name": "Zooom - Threads 100 Clone",
+  "short_name": "Zooom",
+  "description": "A minimal, hackable text-based social web app.",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3b82f6",
+  "icons": [
+    {
+      "src": "assets/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
