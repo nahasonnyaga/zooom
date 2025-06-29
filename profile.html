@@ -89,10 +89,29 @@
       font-size: 1em;
       color: #222;
       margin-bottom: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
     }
     .profile-follow-row span {
       font-weight: bold;
       margin-right: 3px;
+    }
+    .profile-stats-row {
+      font-size: 1em;
+      color: #222;
+      margin-bottom: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 23px;
+      align-items: center;
+    }
+    .profile-stats-row span {
+      font-weight: bold;
+      margin-right: 2px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
     .profile-actions {
       display: flex;
@@ -163,7 +182,13 @@
         </div>
         <div class="profile-follow-row">
           <span id="profile-following">0</span> Following
-          <span id="profile-followers" style="margin-left:18px;">0</span> Followers
+          <span id="profile-followers" style="margin-left:0;">0</span> Followers
+        </div>
+        <!-- Add stats row for likes, threads, reposts -->
+        <div class="profile-stats-row">
+          <span><i class="fa fa-heart"></i> <span id="profile-likes">0</span> Likes</span>
+          <span><i class="fa fa-comment-dots"></i> <span id="profile-threads-count">0</span> Threads</span>
+          <span><i class="fa fa-retweet"></i> <span id="profile-reposts">0</span> Reposts</span>
         </div>
       </div>
       <div class="profile-actions">
