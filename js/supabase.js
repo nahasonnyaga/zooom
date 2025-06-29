@@ -1,22 +1,23 @@
 // js/supabase.js
-// Initialize Supabase client
-// IMPORTANT: Replace these with your actual project credentials!
-const SUPABASE_URL = 'https://your-project.supabase.co'; // <-- edit this
-const SUPABASE_ANON_KEY = 'your-anon-key'; // <-- edit this
+
+// Initialize Supabase client with your actual credentials
+const SUPABASE_URL = 'https://kocbcrctlneqqxhxowbk.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtvY2JjcmN0bG5lcXF4aHhvd2JrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAzNzc5MjksImV4cCI6MjA2NTk1MzkyOX0.pOL7LyfvmDAQ3IP7qzdpwyHzKaXGCJIN_t3jkx2ZoBI';
 
 // Ensure Supabase library is loaded
 if (typeof window !== 'undefined' && !window.supabase) {
   throw new Error('Supabase client is not loaded. Please include supabase-js via CDN before this script.');
 }
 
-// Global supabase client export
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Create Supabase client
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // ----------- Auth Helpers -----------
 
 // Get current user (returns user object or null)
 async function getUser() {
-  const { data: { user } } = await supabase.auth.getUser();
+  const { data: { user }, error } = await supabase.auth.getUser();
+  if (error) console.error('getUser error:', error);
   return user;
 }
 
