@@ -6,6 +6,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link rel="stylesheet" href="css/main.css" />
   <link rel="stylesheet" href="css/auth.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="js/supabase.js"></script>
   <script src="js/settings.js" defer></script>
 </head>
 <body>
@@ -21,7 +23,7 @@
       <input type="email" id="email" name="email" placeholder="you@email.com" disabled />
 
       <label for="password">Change Password:</label>
-      <input type="password" id="password" name="password" placeholder="••••••••" />
+      <input type="password" id="password" name="password" placeholder="New Password" />
 
       <button type="submit" class="btn">Save Changes</button>
     </form>
@@ -32,9 +34,6 @@
     fetch('components/navbar.html').then(r => r.text()).then(html => {
       document.getElementById('navbar').innerHTML = html;
     });
-
-    // Placeholder: Implement settings update in js/settings.js
-    // Example: handleSettingsForm();
   </script>
 </body>
 </html>
