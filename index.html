@@ -4,36 +4,13 @@
   <meta charset="UTF-8">
   <title>Threads 100 Clone - Feed</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Move styles to css/feed.css in real project, but keep here for compatibility -->
   <style>
     body {
       margin: 0;
       font-family: system-ui, sans-serif;
       background: #f7f7fa;
       color: #20232a;
-    }
-    nav {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: #fff;
-      border-bottom: 1px solid #eee;
-      padding: 0.75rem 1.2rem;
-      display: flex;
-      gap: 1.5rem;
-      font-size: 1.13rem;
-      font-weight: 500;
-    }
-    nav a {
-      color: #3742fa;
-      text-decoration: none;
-      padding: 0.2em 0.6em;
-      border-radius: 6px;
-      transition: background 0.15s;
-    }
-    nav a:hover, nav a:focus {
-      background: #eef3fc;
-      color: #222;
-      outline: none;
     }
     .feed {
       width: 100vw;
@@ -73,7 +50,6 @@
       margin-bottom: 0.7em;
       letter-spacing: 0.2px;
     }
-    /* Updated action bar and counts for Threads/Twitter style */
     .thread-actions {
       display: flex;
       align-items: center;
@@ -145,11 +121,6 @@
       outline-offset: 2px;
     }
     @media (max-width: 600px) {
-      nav {
-        font-size: 1.25rem;
-        gap: 0.4rem;
-        padding: 0.75rem 0.4rem;
-      }
       .feed {
         padding: 0.6rem 0.1rem 1.2rem 0.1rem;
         gap: 1.7rem;
@@ -189,10 +160,9 @@
   </style>
 </head>
 <body>
-
-  <!-- Navbar -->
-  <nav>
-    <a href="index.html" aria-current="page">Feed</a>
+  <!-- Navbar include -->
+  <nav style="background:#fff;border-bottom:1px solid #eee;padding:0.5rem 1rem;display:flex;gap:1rem;">
+    <a href="index.html">Feed</a>
     <a href="profile.html">Profile</a>
     <a href="post.html">New Thread</a>
   </nav>
@@ -206,19 +176,12 @@
       </a>
       <small>Posted by alice • 2h ago</small>
       <div class="thread-actions" aria-label="actions">
-        <button class="action-btn like-btn" title="Like" aria-label="Like">
-          &#10084;
-        </button>
+        <button class="action-btn like-btn" title="Like" aria-label="Like">&#10084;</button>
         <span class="like-count" aria-label="5 likes">5</span>
-        <button class="action-btn retweet-btn" title="Repost" aria-label="Repost">
-          &#8635;
-        </button>
+        <button class="action-btn retweet-btn" title="Repost" aria-label="Repost">&#128257;</button>
         <span class="retweet-count" aria-label="2 reposts">2</span>
-        <button class="action-btn bookmark-btn" title="Bookmark" aria-label="Bookmark">
-          &#128278;
-        </button>
+        <button class="action-btn bookmark-btn" title="Bookmark" aria-label="Bookmark">&#128278;</button>
       </div>
-      <!-- Replies to Thread 1 -->
       <div class="reply-section" aria-label="Replies">
         <div class="reply-card" tabindex="0" aria-label="Reply by bob">
           <p>I love Supabase! Super easy to use! 🔥</p>
@@ -238,19 +201,12 @@
       </a>
       <small>Posted by dana • 30m ago</small>
       <div class="thread-actions" aria-label="actions">
-        <button class="action-btn like-btn" title="Like" aria-label="Like">
-          &#10084;
-        </button>
+        <button class="action-btn like-btn" title="Like" aria-label="Like">&#10084;</button>
         <span class="like-count" aria-label="9 likes">9</span>
-        <button class="action-btn retweet-btn" title="Repost" aria-label="Repost">
-          &#8635;
-        </button>
+        <button class="action-btn retweet-btn" title="Repost" aria-label="Repost">&#128257;</button>
         <span class="retweet-count" aria-label="1 repost">1</span>
-        <button class="action-btn bookmark-btn" title="Bookmark" aria-label="Bookmark">
-          &#128278;
-        </button>
+        <button class="action-btn bookmark-btn" title="Bookmark" aria-label="Bookmark">&#128278;</button>
       </div>
-      <!-- Replies to Thread 2 -->
       <div class="reply-section" aria-label="Replies">
         <div class="reply-card" tabindex="0" aria-label="Reply by alice">
           <p>Congrats! Would love to see your project.</p>
@@ -266,20 +222,13 @@
       </a>
       <small>Posted by emma • 10m ago</small>
       <div class="thread-actions" aria-label="actions">
-        <button class="action-btn like-btn" title="Like" aria-label="Like">
-          &#10084;
-        </button>
+        <button class="action-btn like-btn" title="Like" aria-label="Like">&#10084;</button>
         <span class="like-count" aria-label="3 likes">3</span>
-        <button class="action-btn retweet-btn" title="Repost" aria-label="Repost">
-          &#8635;
-        </button>
+        <button class="action-btn retweet-btn" title="Repost" aria-label="Repost">&#128257;</button>
         <span class="retweet-count" aria-label="0 reposts">0</span>
-        <button class="action-btn bookmark-btn" title="Bookmark" aria-label="Bookmark">
-          &#128278;
-        </button>
+        <button class="action-btn bookmark-btn" title="Bookmark" aria-label="Bookmark">&#128278;</button>
       </div>
     </section>
-
   </main>
 </body>
 </html>
