@@ -3,29 +3,148 @@
 <head>
   <meta charset="UTF-8">
   <title>Privacy Policy | Zooom</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link rel="stylesheet" href="css/main.css">
+  <link rel="icon" href="assets/logo.png">
   <style>
-    main { max-width: 700px; margin: 2rem auto; padding: 2rem; background: #fff; border-radius: 10px; }
-    h1, h2 { color: #3b82f6; }
-    p, ul { font-size: 1.1em; color: #222; }
+    body {
+      background: #f7f8fb;
+      margin: 0;
+      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+      color: #222;
+    }
+    main {
+      max-width: 700px;
+      margin: 2rem auto 2.5rem auto;
+      padding: 2.2rem 2rem 2.2rem 2rem;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 14px #0002;
+      min-height: 65vh;
+    }
+    h1, h2 {
+      color: #3b82f6;
+      margin-top: 0;
+      font-weight: 900;
+      letter-spacing: -1px;
+    }
+    h2 {
+      margin-bottom: 0.45em;
+      font-size: 1.38em;
+    }
+    p, ul, li {
+      font-size: 1.11em;
+      color: #222;
+      line-height: 1.65;
+    }
+    ul {
+      margin-top: 1em;
+      margin-bottom: 1.3em;
+      padding-left: 1.3em;
+    }
+    li {
+      margin-bottom: 0.55em;
+    }
+    .privacy-meta {
+      font-size: 0.98em;
+      color: #666;
+      margin-bottom: 1.3em;
+      display: inline-block;
+    }
+    .privacy-section {
+      margin-bottom: 2.2em;
+    }
+    a {
+      color: #3b82f6;
+      text-decoration: underline;
+      transition: color 0.16s;
+    }
+    a:hover {
+      color: #2563eb;
+    }
+    .privacy-feedback {
+      margin-top: 2.2em;
+      background: #e0f2fe;
+      color: #2563eb;
+      padding: 1em 1.5em;
+      border-radius: 8px;
+      font-size: 1.02em;
+      display: flex;
+      align-items: center;
+      gap: 0.6em;
+    }
+    .privacy-feedback i {
+      font-size: 1.3em;
+      color: #3b82f6;
+      margin-right: 0.1em;
+    }
+    @media (max-width: 700px) {
+      main { padding: 1.2rem 0.5rem; }
+    }
+    @media (max-width: 480px) {
+      main { padding: 0.5rem 0.1rem; border-radius: 5px; }
+      h1 { font-size: 1.4em; }
+    }
   </style>
+  <!-- Font Awesome for feedback icon -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
 <body>
-  <div id="navbar"></div>
+  <!-- Navbar include using consistent naming -->
+  <div id="navbar-placeholder"></div>
   <main>
     <h1>Privacy Policy</h1>
-    <p><b>Effective Date:</b> June 29, 2025</p>
-    <p>Your privacy is important to us. This policy explains how we process your data:</p>
-    <ul>
-      <li>We collect your email and profile info for account usage only.</li>
-      <li>We do not sell your data to third parties.</li>
-      <li>You can request deletion of your data by contacting support.</li>
-      <li>We use cookies for session management and analytics.</li>
-    </ul>
-    <p>Contact <a href="mailto:support@zooom.com">support@zooom.com</a> for privacy requests.</p>
+    <div class="privacy-meta"><b>Effective Date:</b> June 29, 2025</div>
+
+    <div class="privacy-section">
+      <p>Your privacy is important to us. This policy explains how we process your data:</p>
+      <ul>
+        <li>We collect your email and profile info for account usage only.</li>
+        <li>We do <strong>not</strong> sell your data to third parties.</li>
+        <li>You can request deletion of your data by contacting support.</li>
+        <li>We use cookies for session management and analytics.</li>
+      </ul>
+    </div>
+
+    <div class="privacy-section">
+      <h2>Your Rights & Control</h2>
+      <ul>
+        <li>You may update your profile at any time from your <a href="profile.html">account page</a>.</li>
+        <li>For data deletion or export, email us at <a href="mailto:support@zooom.com">support@zooom.com</a>.</li>
+        <li>You can control cookies via your browser settings.</li>
+      </ul>
+    </div>
+
+    <div class="privacy-section">
+      <h2>Third-Party Services</h2>
+      <p>We use <b>Supabase</b> for authentication, data, and file storage. Supabase is GDPR-compliant and does not use your data for advertising.</p>
+    </div>
+
+    <div class="privacy-section">
+      <h2>Policy Updates</h2>
+      <p>We may update this policy. Changes will be posted here with a new effective date.</p>
+    </div>
+
+    <div class="privacy-feedback" id="privacy-feedback" style="display:none;">
+      <i class="fa-solid fa-circle-check"></i> Thank you for your feedback!
+    </div>
+    <div style="margin-top:2.5em;font-size:0.98em;color:#666;text-align:center;">
+      Questions? <button id="privacyContact" style="background:none;border:none;color:#3b82f6;font-weight:600;cursor:pointer;font-size:1em;text-decoration:underline;">Contact Support</button>
+    </div>
   </main>
   <script>
-    fetch("components/navbar.html").then(r=>r.text()).then(html=>{document.getElementById("navbar").innerHTML=html;});
+    // Navbar include (consistent with repo)
+    fetch('components/navbar.html')
+      .then(r => r.text())
+      .then(html => { document.getElementById('navbar-placeholder').innerHTML = html; });
+
+    // Feedback/contact quick demo (shows feedback message)
+    document.getElementById('privacyContact').onclick = function() {
+      const feedback = document.getElementById('privacy-feedback');
+      feedback.style.display = 'flex';
+      setTimeout(()=>{ feedback.style.display = 'none'; }, 2200);
+      window.open('mailto:support@zooom.com?subject=Privacy%20Request');
+    };
   </script>
 </body>
 </html>
