@@ -42,6 +42,29 @@
       padding: 10px 28px;
       margin-top: 10px;
     }
+    #must-login {
+      padding: 18px;
+      background: #ffefef;
+      color: #a33;
+      border: 1px solid #faa;
+      border-radius: 5px;
+      margin-bottom: 24px;
+      text-align: center;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .login-btn {
+      background: #0057e7;
+      color: white;
+      border: none;
+      padding: 8px 24px;
+      font-size: 1em;
+      margin: 0 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
     @media (min-width: 601px) {
       main {
         max-width: 900px;
@@ -51,6 +74,9 @@
         max-width: 600px;
         margin: 0 auto;
       }
+      #must-login {
+        max-width: 600px;
+      }
     }
   </style>
 </head>
@@ -58,10 +84,16 @@
   <div id="navbar"></div>
   <main>
     <h1>Post a New Thread</h1>
-    <form id="post-form">
+    <div id="must-login" style="display:none;">
+      <span>You must be logged in to post a new thread.</span><br/>
+      <button class="login-btn" id="login-btn">Log In</button>
+      <span>or</span>
+      <button class="login-btn" id="signup-btn">Create Account</button>
+    </div>
+    <form id="post-form" style="display:none;">
       <textarea id="content" rows="5" placeholder="What's happening?" maxlength="280" required></textarea>
-      <!-- Add file input for images and videos, accept up to 3 files -->
       <input type="file" id="media" accept="image/*,video/*" multiple style="display:block;margin-top:10px;" />
+      <div id="media-preview" style="margin-top:10px;"></div>
       <button type="submit">Post</button>
       <div id="post-error"></div>
     </form>
@@ -72,41 +104,42 @@
   <script src="js/supabase.js"></script>
   <script src="js/post.js"></script>
   <script>
-    // Allow up to 3 files, each <= 10MB and must be image/video
-    document.getElementById('post-form').addEventListener('submit', async function(e) {
-      const mediaInput = document.getElementById('media');
-      const errorDiv = document.getElementById('post-error');
-      errorDiv.textContent = '';
-      if (mediaInput && mediaInput.files && mediaInput.files.length > 0) {
-        if (mediaInput.files.length > 3) {
-          errorDiv.textContent = 'You can only upload up to 3 files.';
-          e.preventDefault();
-          return;
-        }
-        for (let i = 0; i < mediaInput.files.length; i++) {
-          const file = mediaInput.files[i];
-          if (!file.type.match(/^image\/|^video\//)) {
-            errorDiv.textContent = 'Only image and video files are allowed.';
-            e.preventDefault();
-            return;
-          }
-          if (file.size > 10 * 1024 * 1024) {
-            errorDiv.textContent = 'Each file must be 10MB or less.';
-            e.preventDefault();
-            return;
-          }
-          // Optional: Upload each file to Supabase Storage (uncomment and configure as needed)
-          /*
-          const { data, error } = await supabase.storage
-            .from('YOUR_BUCKET_NAME')
-            .upload('media/' + Date.now() + '-' + file.name, file);
-          if (error) {
-            errorDiv.textContent = 'Upload failed: ' + error.message;
-            e.preventDefault();
-            return;
-          }
-          */
-        }
+    // --- AUTH CHECK AND FORM DISPLAY ---
+    async function checkAuthAndToggleForm() {
+      // Assumes "supabase" client is initialized in js/supabase.js
+      let user = null;
+      try {
+        const { data: { user: loggedInUser } } = await supabase.auth.getUser();
+        user = loggedInUser;
+      } catch (e) {
+        user = null;
+      }
+      // Show/hide form and must-login message
+      if (user) {
+        document.getElementById('must-login').style.display = 'none';
+        document.getElementById('post-form').style.display = '';
+      } else {
+        document.getElementById('must-login').style.display = '';
+        document.getElementById('post-form').style.display = 'none';
+      }
+    }
+
+    // --- LOGIN/SIGN-UP BUTTON HANDLERS ---
+    document.addEventListener('DOMContentLoaded', function() {
+      checkAuthAndToggleForm();
+      // Login button
+      const loginBtn = document.getElementById('login-btn');
+      if (loginBtn) {
+        loginBtn.addEventListener('click', () => {
+          window.location.href = 'login.html'; // Change as needed
+        });
+      }
+      // Sign-up button
+      const signupBtn = document.getElementById('signup-btn');
+      if (signupBtn) {
+        signupBtn.addEventListener('click', () => {
+          window.location.href = 'signup.html'; // Change as needed
+        });
       }
     });
 
@@ -116,7 +149,6 @@
       if (!feed) return;
       feed.innerHTML = 'Loading threads...';
 
-      // Example Supabase fetch - adjust "threads" and "content" to match your table/field names:
       if (typeof supabase === "undefined") {
         feed.innerHTML = 'Thread loading requires Supabase setup.';
         return;
