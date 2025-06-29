@@ -3,11 +3,13 @@
   text-decoration: none;
   font-weight: bold;
 }
+
 .mention {
   color: #e0245e;
   text-decoration: none;
   font-weight: bold;
 }
+
 .avatar {
   width: 40px;
   height: 40px;
@@ -17,6 +19,7 @@
   margin-right: 0.5rem;
   vertical-align: middle;
 }
+
 .action-btn {
   background: none;
   border: none;
@@ -26,12 +29,27 @@
   font-size: 1.15rem;
   vertical-align: middle;
 }
+
 .action-btn.liked {
   color: #e0245e;
 }
+
 .action-btn.retweeted {
   color: #17bf63;
 }
+
 .action-btn.bookmarked {
   color: #f5c518;
+}
+
+/* Added .vslue class as requested */
+.vslue {
+  color: #8b5cf6;
+  font-weight: 600;
+  background: #f3f0ff;
+  border-radius: 4px;
+  padding: 0.1em 0.4em;
+  font-size: 1em;
+  display: inline-block;
+  margin-right: 0.3em;
 }
