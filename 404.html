@@ -5,6 +5,9 @@
   <title>404 - Page Not Found | Zooom</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link rel="stylesheet" href="css/main.css">
+  <link rel="icon" href="assets/logo.png">
+  <!-- Font Awesome for icons, if not included globally -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <style>
     body {
       min-height: 100vh;
@@ -12,49 +15,145 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      font-family: Arial, sans-serif;
+      justify-content: flex-start;
+      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
       color: #222;
       margin: 0;
+    }
+    .notfound-main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
     }
     .notfound-container {
       text-align: center;
       background: #fff;
-      padding: 2.5rem 2.2rem;
+      padding: 2.5rem 2.2rem 2.1rem 2.2rem;
       border-radius: 12px;
       box-shadow: 0 2px 14px #0002;
-      max-width: 450px;
-      margin: auto;
+      max-width: 480px;
+      margin: 2rem auto;
+      position: relative;
     }
     .notfound-container h1 {
-      font-size: 3.2rem;
+      font-size: 3.5rem;
       color: #3b82f6;
       margin-bottom: 0.3em;
+      font-family: inherit;
+      font-weight: 900;
+      letter-spacing: -1.2px;
+    }
+    .notfound-icon {
+      display: inline-block;
+      margin-bottom: 0.7em;
+      font-size: 3.3rem;
+      color: #3b82f6;
+      animation: bounce404 1.4s infinite alternate cubic-bezier(.68,-0.55,.27,1.55);
+    }
+    @keyframes bounce404 {
+      to { transform: translateY(-14px);}
     }
     .notfound-container p {
       font-size: 1.22rem;
-      margin-bottom: 1.2em;
+      margin-bottom: 0.95em;
+      color: #444;
+      line-height: 1.5;
     }
-    .notfound-container a {
+    .notfound-hint {
+      font-size: 1.03rem;
+      margin-bottom: 1.2em;
+      color: #888;
+      display: block;
+    }
+    .notfound-actions {
+      margin-top: 1.1em;
+      display: flex;
+      justify-content: center;
+      gap: 1.2em;
+    }
+    .notfound-container a, .notfound-container button {
       color: #fff;
-      background: #3b82f6;
-      padding: 0.8em 2.2em;
+      background: linear-gradient(90deg, #3b82f6 65%, #60a5fa 100%);
+      padding: 0.8em 2.1em;
       border-radius: 30px;
       font-weight: 600;
       text-decoration: none;
       font-size: 1.08em;
-      transition: background 0.2s;
+      border: none;
+      box-shadow: 0 2px 7px #3b82f511;
+      transition: background 0.18s, color 0.18s;
+      cursor: pointer;
+      outline: none;
+      display: flex;
+      align-items: center;
+      gap: 0.4em;
     }
-    .notfound-container a:hover {
-      background: #2563eb;
+    .notfound-container a:hover, .notfound-container button:hover {
+      background: linear-gradient(90deg, #2563eb 50%, #60a5fa 100%);
+      color: #fff;
+    }
+    .notfound-feedback {
+      margin-top: 1.2em;
+      color: #3b82f6;
+      font-size: 0.99em;
+      display: none;
+      font-weight: 600;
+    }
+    @media (max-width: 600px) {
+      .notfound-container {padding: 1.7rem 0.5rem;}
+      .notfound-container h1 {font-size: 2.3rem;}
+      .notfound-icon {font-size: 2.1rem;}
+      .notfound-actions {flex-direction: column; gap: 0.7em;}
+      .notfound-container a, .notfound-container button {font-size: 1em; padding: 0.7em 1.1em;}
     }
   </style>
 </head>
 <body>
-  <div class="notfound-container">
-    <h1>404</h1>
-    <p>Oops! The page you are looking for does not exist.</p>
-    <a href="index.html">Go to Home</a>
-  </div>
+  <!-- Navbar (reused from components/navbar.html) -->
+  <div id="navbar-placeholder"></div>
+  <main class="notfound-main">
+    <div class="notfound-container">
+      <span class="notfound-icon">
+        <i class="fa-solid fa-magnifying-glass-location"></i>
+      </span>
+      <h1>404</h1>
+      <p>Oops! The page you are looking for does not exist or has been moved.</p>
+      <span class="notfound-hint">You may have mistyped the address or followed a broken link.</span>
+      <div class="notfound-actions">
+        <a href="index.html"><i class="fa-solid fa-house"></i> Home</a>
+        <a href="explore.html"><i class="fa-solid fa-hashtag"></i> Explore</a>
+        <button id="contactBtn"><i class="fa-solid fa-circle-question"></i> Contact</button>
+      </div>
+      <div class="notfound-feedback" id="feedbackMsg">Thank you! We'll look into this.</div>
+    </div>
+  </main>
+  <script>
+    // Navbar include (compatible with your file structure)
+    fetch('components/navbar.html')
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById('navbar-placeholder').innerHTML = html;
+      });
+
+    // Contact button: send feedback about broken link (demo only)
+    document.addEventListener('DOMContentLoaded', function () {
+      const btn = document.getElementById('contactBtn');
+      const feedback = document.getElementById('feedbackMsg');
+      if (btn) {
+        btn.addEventListener('click', function () {
+          feedback.style.display = 'block';
+          btn.disabled = true;
+          btn.style.opacity = 0.7;
+          setTimeout(() => {
+            feedback.style.display = 'none';
+            btn.disabled = false;
+            btn.style.opacity = 1;
+          }, 2600);
+        });
+      }
+    });
+  </script>
 </body>
 </html>
