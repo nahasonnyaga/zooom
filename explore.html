@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Explore - Zooom</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/feed.css" />
+  <link rel="stylesheet" href="css/auth.css" />
+  <script src="js/feed.js" defer></script>
+</head>
+<body>
+  <!-- Navbar -->
+  <div id="navbar"></div>
+  <main class="main-container">
+    <h2>Explore</h2>
+    <p>Discover trending threads and new users!</p>
+    <section id="explore-feed">
+      <!-- Dynamically loaded thread-cards, e.g. popular/recent -->
+    </section>
+  </main>
+  <script>
+    // Load navbar component
+    fetch('components/navbar.html').then(r => r.text()).then(html => {
+      document.getElementById('navbar').innerHTML = html;
+    });
+
+    // Placeholder: Load trending/popular threads (implement in js/feed.js)
+    // Example: fetchExploreThreads();
+  </script>
+</body>
+</html>
