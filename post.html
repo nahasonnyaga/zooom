@@ -167,7 +167,6 @@
     </div>
     <form id="post-form" style="display:none;" autocomplete="off">
       <textarea id="content" rows="5" placeholder="What's happening?" maxlength="280" required></textarea>
-      <!-- ADD: Separate file inputs for images and videos, enforce new rules -->
       <label for="images">Upload Images (optional, max 4):</label>
       <input type="file" id="images" name="images" accept="image/*" multiple style="display:block;margin-top:10px;" />
       <label for="videos">Upload Videos (optional, max 2):</label>
@@ -178,6 +177,7 @@
     </form>
     <div id="thread-feed" style="margin-top: 32px;"></div>
   </main>
+  <!-- Supabase and helper API -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="js/supabase.js"></script>
   <script src="js/post.js"></script>
@@ -185,7 +185,6 @@
     // --- NAVBAR LOAD ---
     async function loadNavbar() {
       const nav = document.getElementById('navbar');
-      // Use fetch to load navbar.html from /components
       if (nav) {
         try {
           const res = await fetch('components/navbar.html');
@@ -267,107 +266,6 @@
     }
     document.getElementById('images').addEventListener('change', previewMedia);
     document.getElementById('videos').addEventListener('change', previewMedia);
-
-    // --- THREAD FEED LOGIC (using thread-card and thread-actions components) ---
-    async function loadThreads() {
-      const feed = document.getElementById('thread-feed');
-      if (!feed) return;
-      feed.innerHTML = 'Loading threads...';
-
-      if (typeof supabase === "undefined") {
-        feed.innerHTML = 'Thread loading requires Supabase setup.';
-        return;
-      }
-      const { data: threads, error } = await supabase
-        .from('threads')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(20);
-
-      if (error) {
-        feed.innerHTML = 'Failed to load threads.';
-        return;
-      }
-
-      if (!threads || !threads.length) {
-        feed.innerHTML = 'No threads yet. Be the first to post!';
-        return;
-      }
-
-      // Fetch thread-card and thread-actions HTML
-      const [cardRes, actionsRes] = await Promise.all([
-        fetch('components/thread-card.html'),
-        fetch('components/thread-actions.html')
-      ]);
-      const cardTemplate = await cardRes.text();
-      const actionsTemplate = await actionsRes.text();
-
-      feed.innerHTML = threads.map(t => {
-        let card = cardTemplate;
-        card = card.replace('<!-- thread content -->', escapeHtml(t.content));
-        card = card.replace('<!-- timestamp -->', new Date(t.created_at).toLocaleString());
-        // Optionally link to thread.html?thread_id=
-        card = card.replace('<a href="#">', `<a href="thread.html?thread_id=${t.id}">`);
-        // Insert actions
-        card = card.replace('</div>', actionsTemplate + '</div>');
-
-        // ADD: Render images/videos if present
-        let mediaHtml = '';
-        if (t.image_urls && Array.isArray(t.image_urls)) {
-          mediaHtml += t.image_urls.map(url =>
-            `<img src="${url}" alt="thread image" style="max-width:96%;border-radius:6px;margin-top:0.7em;">`
-          ).join('');
-        }
-        if (t.video_urls && Array.isArray(t.video_urls)) {
-          mediaHtml += t.video_urls.map(url =>
-            `<video controls style="max-width:96%;border-radius:6px;margin-top:0.7em;">
-              <source src="${url}" type="video/mp4">
-              Your browser does not support the video tag.
-            </video>`
-          ).join('');
-        }
-        card = card.replace('</a>', (mediaHtml ? `<div class="thread-media">${mediaHtml}</div>` : '') + '</a>');
-        return card;
-      }).join('');
-    }
-
-    // --- Escape HTML helper ---
-    function escapeHtml(str) {
-      if (!str) return '';
-      return str.replace(/[&<>"']/g, function(m) {
-        return ({
-          '&': '&amp;',
-          '<': '&lt;',
-          '>': '&gt;',
-          '"': '&quot;',
-          "'": '&#39;'
-        })[m];
-      });
-    }
-
-    document.addEventListener('DOMContentLoaded', loadThreads);
-
-    // --- Optional: Notification system (using notification component) ---
-    function showNotification(message, duration = 2500) {
-      fetch('components/notification.html')
-        .then(res => res.text())
-        .then(template => {
-          const div = document.createElement('div');
-          div.innerHTML = template;
-          div.querySelector('.notification-msg').textContent = message;
-          div.querySelector('.notification-date').textContent = new Date().toLocaleTimeString();
-          div.style.position = "fixed";
-          div.style.top = "24px";
-          div.style.left = "50%";
-          div.style.transform = "translateX(-50%)";
-          div.style.zIndex = 9999;
-          document.body.appendChild(div);
-          setTimeout(() => div.remove(), duration);
-        });
-    }
-
-    // --- OPTIONAL: Expose showNotification to post.js if needed ---
-    window.showNotification = showNotification;
   </script>
 </body>
 </html>
