@@ -1,82 +1,52 @@
 // js/notifications.js
+// Requires: @supabase/supabase-js loaded via CDN
 
-// Add a notification (thread liked, reply, mention, etc.)
-// This function inserts a new notification into the Supabase 'notifications' table.
-async function addNotification(userId, type, referenceId, message, extra = {}) {
-  // type: 'like', 'reply', 'mention', 'retweet', etc.
-  // extra: an object for any additional fields (e.g. thread_id, reply_id, actor_id for who performed action)
-  const notification = {
-    user_id: userId,
-    type,
-    reference_id: referenceId,
-    message,
-    seen: false,
-    created_at: new Date().toISOString(),
-    ...extra
-  };
-  return await supabase.from('notifications').insert([notification]);
-}
+// --- Supabase config: update these to match your project ---
+const SUPABASE_URL = 'https://kocbcrctlneqqxhxowbk.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtvY2JjcmN0bG5lcXF4aHhvd2JrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAzNzc5MjksImV4cCI6MjA2NTk1MzkyOX0.pOL7LyfvmDAQ3IP7qzdpwyHzKaXGCJIN_t3jkx2ZoBI';
+// -----------------------------------------------------------
 
-// Listen for notifications in real time for a user.
-// Calls callback(newNotification) for each new notification.
-function listenNotifications(userId, callback) {
-  const channel = supabase
-    .channel('public:notifications')
-    .on(
-      'postgres_changes',
-      {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'notifications',
-        filter: `user_id=eq.${userId}`
-      },
-      payload => {
-        callback(payload.new);
-      }
-    )
-    .subscribe();
-  return channel;
-}
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Fetch latest notifications for a user, newest first
-async function fetchNotifications(userId, limit = 20) {
-  const { data, error } = await supabase
+async function fetchNotifications() {
+  // Try to get the currently logged-in user
+  const { data: { user } } = await supabase.auth.getUser();
+  const list = document.getElementById('notification-list');
+  const emptyMsg = document.getElementById('notification-empty');
+  if (!user) {
+    list.innerHTML = '<div class="feed-empty">Sign in to view your notifications.</div>';
+    emptyMsg.style.display = "none";
+    return;
+  }
+  // Fetch notifications for this user
+  const { data: notifications, error } = await supabase
     .from('notifications')
     .select('*')
-    .eq('user_id', userId)
+    .eq('user_id', user.id)
     .order('created_at', { ascending: false })
-    .limit(limit);
-  if (error) throw error;
-  return data;
+    .limit(30);
+  if (error) {
+    list.innerHTML = '<div class="feed-empty">Error loading notifications.</div>';
+    emptyMsg.style.display = "none";
+    return;
+  }
+  if (!notifications || notifications.length === 0) {
+    list.innerHTML = '';
+    emptyMsg.style.display = "";
+    return;
+  }
+  emptyMsg.style.display = "none";
+  list.innerHTML = '';
+  // Load notification card template once
+  const tpl = await fetch('components/notification.html').then(r=>r.text());
+  notifications.forEach(n => {
+    let html = tpl;
+    html = html.replace('<!-- message -->', n.message);
+    html = html.replace('<!-- date -->', new Date(n.created_at).toLocaleString());
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    list.appendChild(div.firstElementChild);
+  });
 }
 
-// Mark a notification as seen/read
-async function markNotificationSeen(notificationId) {
-  return await supabase
-    .from('notifications')
-    .update({ seen: true })
-    .eq('id', notificationId);
-}
-
-// Mark all notifications as seen for a user
-async function markAllNotificationsSeen(userId) {
-  return await supabase
-    .from('notifications')
-    .update({ seen: true })
-    .eq('user_id', userId)
-    .eq('seen', false); // Only unseen
-}
-
-// Render a notification using the notification component
-// Returns HTML string
-function renderNotification(notification) {
-  // Use components/notification.html structure
-  // notification.message and notification.created_at are expected
-  const date = new Date(notification.created_at).toLocaleString();
-  return `
-    <div class="notification${notification.seen ? ' seen' : ''}">
-      <span class="notification-msg">${notification.message}</span>
-      <span class="notification-date">${date}</span>
-    </div>
-  `;
-}
+document.addEventListener('DOMContentLoaded', fetchNotifications);
