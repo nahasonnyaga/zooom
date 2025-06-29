@@ -2,42 +2,90 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>New Post - Zooom</title>
+  <title>Authenticate - Zooom</title>
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/auth.css">
-  <link rel="stylesheet" href="css/feed.css">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    .main-col {
-      max-width: 540px;
-      margin: 2rem auto;
-      padding: 1rem;
-      background: #fff;
-      border-radius: 10px;
-      box-shadow: 0 1px 8px #0001;
-    }
-    .post-form {
+    body {
+      min-height: 100vh;
+      min-width: 100vw;
       display: flex;
       flex-direction: column;
-      gap: 0.8rem;
-      margin: 2rem 0 1.5rem 0;
+      justify-content: center;
+      align-items: center;
+      background: #f7f7f7;
+      font-family: Arial, sans-serif;
+      color: #222;
+      margin: 0;
+      padding: 0;
     }
-    .post-form textarea {
-      padding: 0.9rem;
-      border-radius: 7px;
+    main {
+      width: 100vw;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: #fff;
+    }
+    .auth-card {
+      background: #fff;
+      border-radius: 14px;
+      max-width: 360px;
+      width: 94vw;
+      box-shadow: 0 2px 16px #0001;
+      padding: 2.2em 1.5em 1.5em 1.5em;
+      margin: 2.2em 0;
+      text-align: center;
+      position: relative;
+    }
+    .auth-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 1.5em;
+      margin-bottom: 2em;
+    }
+    .auth-tab {
+      font-weight: 600;
+      font-size: 1.07em;
+      color: #3b82f6;
+      background: none;
+      border: none;
+      cursor: pointer;
+      border-bottom: 2.5px solid transparent;
+      padding: 0.3em 0.8em 0.4em 0.8em;
+      transition: color 0.15s, border 0.15s;
+      outline: none;
+    }
+    .auth-tab.active {
+      color: #1d4ed8;
+      border-bottom: 2.5px solid #1d4ed8;
+    }
+    .auth-form {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+    }
+    .auth-form.active {
+      display: flex;
+    }
+    .auth-form input[type="email"],
+    .auth-form input[type="password"] {
+      width: 95%;
+      padding: 0.75em;
+      margin-bottom: 1.1em;
       border: 1px solid #d1d5db;
-      font-size: 1.13rem;
-      resize: vertical;
-      min-height: 70px;
+      border-radius: 7px;
+      font-size: 1em;
     }
-    .post-form button {
-      align-self: flex-end;
+    .auth-form button {
       background: linear-gradient(90deg, #3b82f6 65%, #60a5fa 100%);
       color: #fff;
-      padding: 0.65em 2.2em;
+      padding: 0.7em 2.1em;
       border-radius: 30px;
       font-weight: 600;
-      font-size: 1.06em;
+      font-size: 1em;
       border: none;
       outline: none;
       cursor: pointer;
@@ -45,51 +93,169 @@
       margin-bottom: 0.3em;
       transition: background 0.18s;
     }
-    .post-form button:disabled {
+    .auth-form button:disabled {
       opacity: 0.7;
-      cursor: not-allowed;
     }
-    #post-error {
-      color: #d00;
-      margin-top: 0.4em;
-      text-align: center;
+    .auth-error {
+      color: #a33;
+      margin-top: 0.5em;
+      font-size: 0.99em;
       min-height: 1.4em;
-      font-size: 1.03em;
+    }
+    .auth-switch {
+      margin-top: 1.5em;
+      font-size: 1.08em;
+      color: #333;
+    }
+    .auth-switch a {
+      color: #3b82f6;
+      text-decoration: none;
+    }
+    .auth-switch a:hover {
+      text-decoration: underline;
+      color: #1d4ed8;
+    }
+    .reset-link {
+      display: block;
+      margin-top: 0.7rem;
+      font-size: 1.09rem;
+      text-align: center;
+      color: #3b82f6;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+    .reset-link:hover {
+      text-decoration: underline;
+      color: #2563eb;
+    }
+    .reset-modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0; top: 0; width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.18);
+      justify-content: center;
+      align-items: center;
+    }
+    .reset-modal.active { display: flex; }
+    .reset-modal-content {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 14px #0002;
+      padding: 2rem 1.5rem 1.5rem 1.5rem;
+      max-width: 350px;
+      width: 94vw;
+      text-align: center;
+      position: relative;
+      animation: fadein-modal 0.2s;
+    }
+    @keyframes fadein-modal {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .reset-modal-content input[type="email"] {
+      width: 95%;
+      padding: 0.7em;
+      margin: 1em 0 1.2em 0;
+      border: 1px solid #d1d5db;
+      border-radius: 7px;
+      font-size: 1em;
+    }
+    .reset-modal-content button {
+      background: linear-gradient(90deg, #3b82f6 65%, #60a5fa 100%);
+      color: #fff;
+      padding: 0.7em 2.1em;
+      border-radius: 30px;
+      font-weight: 600;
+      font-size: 1em;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      margin-top: 0.2em;
+      margin-bottom: 0.3em;
+      transition: background 0.18s;
+    }
+    .reset-modal-content button:disabled {
+      opacity: 0.7;
+    }
+    .close-reset-modal {
+      position: absolute;
+      top: 10px; right: 18px;
+      font-size: 1.2em;
+      background: none;
+      border: none;
+      color: #888;
+      cursor: pointer;
+    }
+    .reset-feedback {
+      margin-top: 0.4em;
+      color: #2d7ee7;
+      font-size: 1em;
+      font-weight: 600;
+      min-height: 1.2em;
+    }
+    .reset-error {
+      color: #a33;
+      margin-top: 0.5em;
+      font-size: 0.99em;
+      min-height: 1.2em;
+    }
+    @media (max-width: 500px) {
+      .auth-card {padding: 1.2rem 0.3rem;}
+      .reset-modal-content {padding: 1.1rem 0.4rem;}
     }
   </style>
 </head>
-<body style="background:#f6f6f6;">
+<body>
   <div id="navbar-include"></div>
-  <main class="main-col">
-    <h2 style="margin-bottom:1.2rem;">Create a New Post</h2>
-    <form id="post-form" class="post-form">
-      <textarea id="post-content" maxlength="300" placeholder="What's on your mind?" required></textarea>
-      <button type="submit" id="post-btn">Post</button>
-      <div id="post-error"></div>
-    </form>
+  <main>
+    <div class="auth-card">
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="show-login">Log In</button>
+        <button class="auth-tab" id="show-signup">Sign Up</button>
+      </div>
+      <!-- Login Form -->
+      <form class="auth-form active" id="login-form" autocomplete="on">
+        <input type="email" id="login-email" placeholder="Email" required>
+        <input type="password" id="login-password" placeholder="Password" required>
+        <button type="submit">Log In</button>
+        <div class="auth-error" id="login-error"></div>
+        <button type="button" class="reset-link" id="show-reset-modal">Forgot password?</button>
+      </form>
+      <!-- Signup Form -->
+      <form class="auth-form" id="signup-form" autocomplete="on">
+        <input type="email" id="signup-email" placeholder="Email" required>
+        <input type="password" id="signup-password" placeholder="Password" required>
+        <button type="submit">Sign Up</button>
+        <div class="auth-error" id="signup-error"></div>
+      </form>
+      <!-- Switch Text -->
+      <div class="auth-switch" id="switch-to-signup" style="display:none;">
+        Don't have an account? <a href="#" id="switch-signup-link">Sign Up</a>
+      </div>
+      <div class="auth-switch" id="switch-to-login" style="display:none;">
+        Already have an account? <a href="#" id="switch-login-link">Log In</a>
+      </div>
+    </div>
+    <!-- Password Reset Modal -->
+    <div class="reset-modal" id="resetModal">
+      <div class="reset-modal-content">
+        <button class="close-reset-modal" id="closeResetModal" title="Close">&times;</button>
+        <h2>Reset Password</h2>
+        <form id="reset-form" autocomplete="off">
+          <input type="email" id="reset-email" placeholder="Enter your email" required>
+          <button type="submit" id="resetBtn">Send Reset Link</button>
+          <div class="reset-feedback" id="resetFeedback"></div>
+          <div class="reset-error" id="resetError"></div>
+        </form>
+      </div>
+    </div>
   </main>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="js/supabase.js"></script>
-  <!-- Auth Guard: Ensure user is logged in before using this page -->
-  <script>
-    (async function authGuard() {
-      // Wait for Supabase to be available
-      while (!window.supabase) await new Promise(r=>setTimeout(r,100));
-      // Get current user
-      const { data, error } = await supabase.auth.getUser?.();
-      if (!data?.user) {
-        // Not logged in, redirect to auth page with returnTo param
-        const returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
-        window.location.href = 'auth.html?returnTo=' + returnUrl;
-      } else {
-        // Save username for navbar if available
-        if (data.user.email) {
-          localStorage.setItem('username', data.user.email.split('@')[0]);
-        }
-      }
-    })();
-  </script>
-  <!-- Navbar loader (same as other pages) -->
+  <!-- Navbar loader -->
   <script>
     fetch("components/navbar.html")
       .then(res => res.ok ? res.text() : "")
@@ -98,57 +264,133 @@
         if (navbar) navbar.innerHTML = html;
       });
   </script>
-  <!-- Post form logic -->
   <script>
-    let LOGGED_IN_USER = null;
-    async function getLoggedInUser() {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        LOGGED_IN_USER = user;
-        return user;
-      } catch {
-        LOGGED_IN_USER = null;
-        return null;
+    // Tab switch logic and tab param from URL
+    const showLoginTab = document.getElementById('show-login');
+    const showSignupTab = document.getElementById('show-signup');
+    const loginForm = document.getElementById('login-form');
+    const signupForm = document.getElementById('signup-form');
+    const switchToSignup = document.getElementById('switch-to-signup');
+    const switchToLogin = document.getElementById('switch-to-login');
+    const switchSignupLink = document.getElementById('switch-signup-link');
+    const switchLoginLink = document.getElementById('switch-login-link');
+    function setTab(tab) {
+      if (tab === 'signup') {
+        showSignupTab.classList.add('active');
+        showLoginTab.classList.remove('active');
+        signupForm.classList.add('active');
+        loginForm.classList.remove('active');
+        switchToSignup.style.display = "none";
+        switchToLogin.style.display = "block";
+      } else {
+        showLoginTab.classList.add('active');
+        showSignupTab.classList.remove('active');
+        loginForm.classList.add('active');
+        signupForm.classList.remove('active');
+        switchToSignup.style.display = "block";
+        switchToLogin.style.display = "none";
       }
     }
-    document.addEventListener('DOMContentLoaded', async function() {
-      // Double-check for user before enabling form
-      const user = await getLoggedInUser();
-      if (!user) {
-        document.getElementById('post-form').style.display = 'none';
-        return;
-      }
-      document.getElementById('post-form').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const content = document.getElementById('post-content').value.trim();
-        const errorDiv = document.getElementById('post-error');
-        errorDiv.textContent = '';
-        if (!content) {
-          errorDiv.textContent = "Post cannot be empty.";
-          return;
-        }
-        // Disable button while posting
-        const btn = document.getElementById('post-btn');
-        btn.disabled = true;
-        try {
-          const { error } = await supabase.from('threads').insert({
-            content,
-            user_id: LOGGED_IN_USER.id,
-            created_at: new Date().toISOString()
-          });
-          if (error) {
-            errorDiv.textContent = "Failed to post. Please try again.";
-            btn.disabled = false;
-            return;
+    showLoginTab.onclick = () => setTab('login');
+    showSignupTab.onclick = () => setTab('signup');
+    if (switchSignupLink) switchSignupLink.onclick = (e) => { e.preventDefault(); setTab('signup'); };
+    if (switchLoginLink) switchLoginLink.onclick = (e) => { e.preventDefault(); setTab('login'); };
+
+    // Tab from URL param
+    const params = new URLSearchParams(window.location.search);
+    let tabParam = params.get('tab');
+    setTab(tabParam === 'signup' ? 'signup' : 'login');
+
+    // Login/Signup handlers with returnTo compatibility
+    loginForm.onsubmit = async function(e) {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+      const errorDiv = document.getElementById('login-error');
+      errorDiv.textContent = '';
+      try {
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) {
+          errorDiv.textContent = error.message;
+        } else {
+          // Save username for navbar
+          if (data.user && data.user.email) {
+            localStorage.setItem('username', data.user.email.split('@')[0]);
           }
-          // Success - redirect to feed/index
-          window.location.href = "index.html";
-        } catch {
-          errorDiv.textContent = "Unexpected error. Please try again.";
+          // Redirect if returnTo is set
+          const returnTo = params.get('returnTo');
+          window.location.href = returnTo ? decodeURIComponent(returnTo) : 'index.html';
         }
-        btn.disabled = false;
-      });
+      } catch (err) {
+        errorDiv.textContent = "Unexpected error. Please try again.";
+      }
+    };
+
+    signupForm.onsubmit = async function(e) {
+      e.preventDefault();
+      const email = document.getElementById('signup-email').value;
+      const password = document.getElementById('signup-password').value;
+      const errorDiv = document.getElementById('signup-error');
+      errorDiv.textContent = '';
+      try {
+        const { data, error } = await supabase.auth.signUp({ email, password });
+        if (error) {
+          errorDiv.textContent = error.message;
+        } else {
+          // Save username for navbar
+          if (data.user && data.user.email) {
+            localStorage.setItem('username', data.user.email.split('@')[0]);
+          }
+          // Redirect if returnTo is set
+          const returnTo = params.get('returnTo');
+          window.location.href = returnTo ? decodeURIComponent(returnTo) : 'index.html';
+        }
+      } catch (err) {
+        errorDiv.textContent = "Unexpected error. Please try again.";
+      }
+    };
+
+    // Password reset modal logic
+    const resetModal = document.getElementById('resetModal');
+    document.getElementById('show-reset-modal').onclick = function() {
+      resetModal.classList.add('active');
+      document.getElementById('resetFeedback').textContent = '';
+      document.getElementById('resetError').textContent = '';
+      document.getElementById('reset-email').value = '';
+    };
+    document.getElementById('closeResetModal').onclick = function() {
+      resetModal.classList.remove('active');
+    };
+    window.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') resetModal.classList.remove('active');
     });
+    resetModal.addEventListener('mousedown', function(e) {
+      if (e.target === resetModal) resetModal.classList.remove('active');
+    });
+
+    document.getElementById('reset-form').onsubmit = async function(e) {
+      e.preventDefault();
+      const email = document.getElementById('reset-email').value;
+      const feedbackDiv = document.getElementById('resetFeedback');
+      const errorDiv = document.getElementById('resetError');
+      const btn = document.getElementById('resetBtn');
+      feedbackDiv.textContent = '';
+      errorDiv.textContent = '';
+      btn.disabled = true;
+      try {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: window.location.origin + '/password-update.html'
+        });
+        if (error) {
+          errorDiv.textContent = error.message || "Failed to send reset link.";
+        } else {
+          feedbackDiv.textContent = "Reset link sent! Check your email.";
+        }
+      } catch (err) {
+        errorDiv.textContent = "Unexpected error. Please try again.";
+      }
+      btn.disabled = false;
+    };
   </script>
 </body>
 </html>
