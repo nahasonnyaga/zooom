@@ -1,5 +1,22 @@
-<nav style="background:#fff;border-bottom:1px solid #eee;padding:0.5rem 1rem;display:flex;gap:1rem;">
-  <a href="index.html">Feed</a>
-  <a href="profile.html">Profile</a>
-  <a href="post.html">New Thread</a>
+<nav class="navbar">
+  <div class="navbar-left">
+    <a href="index.html" class="navbar-logo">
+      <img src="assets/logo.png" alt="Logo" style="height:2rem;width:2rem;border-radius:50%;object-fit:cover;" onerror="this.style.display='none'">
+      <span class="navbar-title">Zooom</span>
+    </a>
+  </div>
+  <div class="navbar-center">
+    <a href="index.html" class="navbar-link"><span class="navbar-icon">&#8962;</span> Feed</a>
+    <a href="profile.html" class="navbar-link"><span class="navbar-icon">&#128100;</span> Profile</a>
+    <a href="post.html" class="navbar-link new-thread-btn"><span class="navbar-icon">&#10010;</span> New Thread</a>
+  </div>
+  <div class="navbar-right">
+    <button class="navbar-avatar" id="navbarUserBtn" title="Account">
+      <img src="assets/avatar.png" alt="User" style="height:2rem;width:2rem;border-radius:50%;object-fit:cover;" onerror="this.src='assets/avatar.png'">
+    </button>
+    <div class="navbar-dropdown" id="navbarDropdown" style="display:none;">
+      <a href="profile.html">My Profile</a>
+      <a href="#" id="navbarLogoutBtn">Logout</a>
+    </div>
+  </div>
 </nav>
