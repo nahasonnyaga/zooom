@@ -11,53 +11,75 @@
     body { margin: 0; font-family: system-ui, sans-serif; background: #f7f7fa; }
     .feed { width: 100vw; max-width: 100vw; margin: 2rem 0 0 0; }
     .thread-card, .reply-card { background: #fff; margin-bottom: 1rem; padding: 1rem; border-radius: 8px; box-shadow: 0 1px 8px #0001; }
-    .thread-actions { margin-top: 0.5rem; display: flex; gap: 1.5rem; align-items: center; }
+    .thread-actions { margin-top: 0.5rem; display: flex; gap: 2.5rem; align-items: center; }
     .thread-card a { color: inherit; text-decoration: none; }
     .thread-card small { color: #888; }
     nav { position: sticky; top: 0; z-index: 100; }
     .reply-section { margin-left: 1.5rem; }
-    /* Thread actions like Threads app style, no blue, subtle gray on hover */
+
+    /* Make action buttons big and more visible */
     .action-btn {
       background: none;
       border: none;
       cursor: pointer;
-      font-size: 1.15rem;
+      font-size: 2.2rem;
       color: #222;
-      padding: 0.2em 0.7em;
+      padding: 0.4em 0.8em;
       border-radius: 50%;
-      transition: background 0.15s;
+      transition: background 0.15s, box-shadow 0.15s;
       outline: none;
+      box-shadow: 0 0 0 rgba(0,0,0,0);
     }
-    .action-btn:active {
-      background: #ececf0;
-    }
-    .action-btn:focus {
-      background: #ececf0;
-    }
+    .action-btn:active,
+    .action-btn:focus,
     .action-btn:hover {
       background: #ececf0;
+      box-shadow: 0 2px 8px #0002;
     }
     .like-btn.liked {
       color: #e74c3c;
+      font-weight: bold;
+      text-shadow: 0 0 4px #e74c3c44;
     }
     .bookmark-btn.bookmarked {
       color: #222;
       font-weight: bold;
+      text-shadow: 0 0 4px #5553;
     }
     .retweet-btn.retweeted {
       color: #27ae60;
+      font-weight: bold;
+      text-shadow: 0 0 4px #27ae6044;
     }
     .like-count, .retweet-count {
-      font-size: 0.98rem;
-      color: #555;
-      margin-right: 0.7em;
+      font-size: 1.3rem;
+      color: #333;
+      margin-right: 0.8em;
       margin-left: -1em;
       font-variant-numeric: tabular-nums;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+    }
+    /* Bigger and clearer: threads and replies */
+    .thread-card, .reply-card {
+      font-size: 1.23rem;
+      line-height: 1.7;
+    }
+    .thread-card small, .reply-card small {
+      font-size: 1.05rem;
     }
     /* Responsive */
     @media (max-width: 600px) {
       .thread-card, .reply-card {
         padding: 0.7rem;
+        font-size: 1.07rem;
+      }
+      .action-btn {
+        font-size: 1.6rem;
+        padding: 0.38em 0.65em;
+      }
+      .like-count, .retweet-count {
+        font-size: 1.07rem;
       }
     }
   </style>
