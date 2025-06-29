@@ -9,32 +9,46 @@
       height: 100%;
       margin: 0;
       padding: 0;
+      width: 100vw;
+      min-height: 100vh;
+      min-width: 100vw;
     }
     body {
+      width: 100vw;
+      height: 100vh;
       min-height: 100vh;
+      min-width: 100vw;
       display: flex;
       justify-content: center;
       align-items: center;
       background: #f7f7f7;
       font-family: Arial, sans-serif;
       color: #222;
+      box-sizing: border-box;
     }
     main {
-      padding: 2rem;
-      max-width: 600px;
-      margin: 0 auto;
-      background: #fff;
-      border-radius: 10px;
-      box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+      width: 100vw;
+      height: 100vh;
       display: flex;
       flex-direction: column;
+      justify-content: center;
       align-items: center;
+      background: #fff;
+      border-radius: 0;
+      box-shadow: none;
+      padding: 0;
+      margin: 0;
     }
     #signup-form {
       display: flex;
       flex-direction: column;
       align-items: center;
       width: 100%;
+      max-width: 400px;
+      background: #f7f7f7;
+      padding: 2rem 2rem 1rem 2rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.08);
     }
     #signup-form input {
       font-size: 1.4rem;
@@ -56,6 +70,7 @@
       margin-top: 1rem;
       font-weight: bold;
       box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+      width: 100%;
     }
     h1 {
       font-size: 2.4rem;
@@ -65,10 +80,19 @@
     p {
       margin-top: 1.5rem;
       font-size: 1.2rem;
+      text-align: center;
     }
     a {
       color: #0077ff;
       text-decoration: none;
+    }
+    @media (max-width: 500px) {
+      #signup-form input {
+        width: 100%;
+      }
+      #signup-form {
+        padding: 1rem;
+      }
     }
   </style>
 </head>
@@ -96,7 +120,7 @@
       if (error) {
         errorDiv.textContent = error.message;
       } else {
-        window.location.href = 'post.html'; // or main page
+        window.location.href = 'post.html';
       }
     }
   </script>
