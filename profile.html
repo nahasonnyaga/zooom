@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="css/profile.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    /* Add advanced profile styles */
+    /* Inline advanced profile styles for extra polish */
     .profile-container {
       max-width: 700px;
       margin: 30px auto;
@@ -302,9 +302,11 @@
   </style>
 </head>
 <body>
+  <!-- Navbar (loaded via JS for componentization) -->
   <div id="navbar"></div>
   <main>
     <div class="profile-container">
+      <!-- Hidden forms for image upload -->
       <form id="profile-banner-form" style="display:none">
         <input type="file" id="banner-upload-input" accept="image/*">
       </form>
@@ -377,8 +379,75 @@
       </form>
     </div>
   </div>
+  <!-- Notification area -->
+  <div id="notification-area"></div>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="js/supabase.js"></script>
+  <script>
+    // Navbar component loader (for modular HTML)
+    fetch('components/navbar.html')
+      .then(r => r.text())
+      .then(html => { document.getElementById('navbar').innerHTML = html; });
+
+    // Notification component loader
+    function showNotification(msg, date = "") {
+      fetch('components/notification.html')
+        .then(r => r.text())
+        .then(html => {
+          const temp = document.createElement('div');
+          temp.innerHTML = html;
+          temp.querySelector('.notification-msg').textContent = msg;
+          if (date) temp.querySelector('.notification-date').textContent = date;
+          else temp.querySelector('.notification-date').style.display = 'none';
+          document.getElementById('notification-area').appendChild(temp.firstElementChild);
+          setTimeout(() => temp.firstElementChild.remove(), 3000);
+        });
+    }
+  </script>
   <script src="js/profile.js"></script>
+  <script>
+    // Profile threads loader for modular thread display
+    function loadProfileTab(tab) {
+      const section = document.getElementById('profile-threads');
+      section.innerHTML = '<div style="text-align:center;padding:2em;">Loading...</div>';
+      // For demo, only thread tab is populated
+      if (tab === 'threads') {
+        // Fetch user's threads from Supabase (handled in profile.js), then for each:
+        // Example render using modular component
+        fetch('components/thread-card.html')
+          .then(r => r.text())
+          .then(cardHtml => {
+            // For demo, render 2 dummy threads
+            let html = '';
+            for (let i = 0; i < 2; i++) {
+              let temp = document.createElement('div');
+              temp.innerHTML = cardHtml;
+              temp.querySelector('p').textContent = `Thread content #${i+1}`;
+              temp.querySelector('small').textContent = `Just now`;
+              html += temp.innerHTML;
+            }
+            section.innerHTML = html;
+          });
+      } else if (tab === 'likes') {
+        section.innerHTML = '<div style="text-align:center;padding:2em;color:#888;">No liked threads yet!</div>';
+      } else if (tab === 'reposts') {
+        section.innerHTML = '<div style="text-align:center;padding:2em;color:#888;">No reposts yet!</div>';
+      } else if (tab === 'bookmarks') {
+        section.innerHTML = '<div style="text-align:center;padding:2em;color:#888;">No bookmarks yet!</div>';
+      }
+    }
+
+    // Tab switching
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('.profile-tab').forEach(btn => {
+        btn.addEventListener('click', function() {
+          document.querySelectorAll('.profile-tab').forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          loadProfileTab(this.getAttribute('data-tab'));
+        });
+      });
+      loadProfileTab('threads');
+    });
+  </script>
 </body>
 </html>
