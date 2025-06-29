@@ -2,61 +2,80 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>New Thread - Threads 100</title>
+  <title>Thread - Threads 100</title>
   <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/feed.css">
+  <link rel="stylesheet" href="css/auth.css">
+  <link rel="stylesheet" href="css/reply-card.css">
+  <link rel="stylesheet" href="css/profile.css">
   <link href="https://fonts.googleapis.com/css?family=Inter:400,600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    /* ...existing styles... */
-    .thread .thread-actions button.bookmarked {
-      color: #ffd700;
+    .main-col {
+      max-width: 540px;
+      margin: 2rem auto;
+      padding: 1rem;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 1px 8px #0001;
     }
-    .thread .thread-actions button.reposted {
-      color: #43c25e;
+    .reply-section {
+      margin-top: 2rem;
+      border-top: 1px solid #eee;
+      padding-top: 1rem;
+    }
+    .reply-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    .reply-form textarea {
+      padding: 0.7rem;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+      font-size: 1rem;
+      resize: vertical;
+    }
+    .reply-form button {
+      align-self: flex-end;
+      padding: 0.5rem 1.2rem;
+    }
+    #error-msg {
+      color: #d00;
+      margin-top: 0.5rem;
+      text-align: center;
+    }
+    .replies-list {
+      margin-top: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
     }
   </style>
 </head>
-<body>
+<body style="background:#f6f6f6;">
   <div id="navbar"></div>
-  <div class="layout-container">
+  <div class="layout-container" style="display:flex;flex-wrap:wrap;gap:2rem;justify-content:center;">
     <main class="main-col">
-      <h1>Post a New Thread</h1>
-      <!-- ...search bar, must-login, and form as before... -->
-      <div id="must-login" style="display:none;">
-        <span>You must be logged in to post a new thread.</span><br/>
-        <button class="login-btn" id="login-btn">Log In</button>
-        <span>or</span>
-        <button class="login-btn" id="signup-btn">Create Account</button>
+      <div id="thread-container">
+        <!-- Thread content will be loaded here -->
       </div>
-      <form id="post-form" style="display:none;">
-        <!-- ...emoji picker, char count, textarea, tags, media, etc... -->
-        <div class="emoji-picker" aria-label="Add emoji">
-          <button type="button" class="emoji-btn" data-emoji="😀" title="Grinning face">😀</button>
-          <button type="button" class="emoji-btn" data-emoji="😂" title="Laughing">😂</button>
-          <button type="button" class="emoji-btn" data-emoji="😍" title="Love">😍</button>
-          <button type="button" class="emoji-btn" data-emoji="👍" title="Thumbs up">👍</button>
-          <button type="button" class="emoji-btn" data-emoji="🔥" title="Fire">🔥</button>
-          <button type="button" class="emoji-btn" data-emoji="🎉" title="Party">🎉</button>
+      <section class="reply-section">
+        <h3>Replies</h3>
+        <form id="reply-form" class="reply-form" style="display:none;">
+          <textarea id="reply-content" rows="3" maxlength="280" placeholder="Write your reply..." required></textarea>
+          <button type="submit">Reply</button>
+        </form>
+        <div id="error-msg"></div>
+        <div class="replies-list" id="replies-list">
+          <!-- Replies will be loaded here -->
         </div>
-        <span class="char-count" id="char-count">0/280</span>
-        <textarea id="content" rows="5" placeholder="What's happening? Use #hashtags and @mentions." maxlength="280" required></textarea>
-        <input class="tag-input" id="tags" type="text" maxlength="64" placeholder="Add tags or #hashtags, comma separated">
-        <input type="file" id="media" accept="image/*,video/*" multiple style="display:block;margin-top:10px;" />
-        <div id="media-preview"></div>
-        <button type="submit"><i class="fa-solid fa-paper-plane"></i>&nbsp;Post</button>
-        <div id="post-error"></div>
-      </form>
-      <div id="thread-feed" style="margin-top: 32px;"></div>
+      </section>
     </main>
-    <aside class="sidebar-col">
-      <!-- ...suggested users, suggested content, trending hashtags... -->
+    <aside class="sidebar-col" style="min-width:260px;">
       <section class="suggested-section" id="suggested-users">
         <h3>Suggested Users to Follow</h3>
-      </section>
-      <section class="suggested-section">
-        <h3>Suggested Content</h3>
-        <ul class="suggested-content" id="suggested-content"></ul>
       </section>
       <section class="suggested-section">
         <h3>Trending Hashtags</h3>
@@ -66,269 +85,125 @@
   </div>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="js/supabase.js"></script>
-  <script src="js/post.js"></script>
+  <script src="js/thread.js"></script>
   <script>
-    // --- Auth Check ---
+    // Basic navbar injection
+    fetch('components/navbar.html')
+      .then(r=>r.text()).then(html => {
+        document.getElementById('navbar').innerHTML = html;
+      });
+
+    // Show reply form only if logged in
     let LOGGED_IN_USER = null;
-    async function checkAuthAndToggleForm() {
-      let user = null;
+    async function checkAuth() {
       try {
-        const { data: { user: loggedInUser } } = await supabase.auth.getUser();
-        user = loggedInUser;
-      } catch (e) {
-        user = null;
+        const { data: { user } } = await supabase.auth.getUser();
+        LOGGED_IN_USER = user;
+      } catch {
+        LOGGED_IN_USER = null;
       }
-      LOGGED_IN_USER = user;
-      if (user) {
-        document.getElementById('must-login').style.display = 'none';
-        document.getElementById('post-form').style.display = '';
-      } else {
-        document.getElementById('must-login').style.display = '';
-        document.getElementById('post-form').style.display = 'none';
-      }
+      document.getElementById('reply-form').style.display = LOGGED_IN_USER ? '' : 'none';
+    }
+    checkAuth();
+
+    // Load thread details and replies
+    let threadId = null;
+    function getThreadIdFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('id');
+    }
+    threadId = getThreadIdFromUrl();
+    if (!threadId) {
+      document.getElementById('thread-container').innerHTML = "<p>Thread not found.</p>";
     }
 
-    // --- BOOKMARK, LIKE, REPOST: In-Memory Stores (Replace with backend for production) ---
-    let bookmarks = JSON.parse(localStorage.getItem('bookmarks') || '{}');
-    let likes = JSON.parse(localStorage.getItem('likes') || '{}');
-    let reposts = JSON.parse(localStorage.getItem('reposts') || '{}');
-
-    // --- Redirection Helper ---
-    function redirectToAuth() {
-      // Prefer signin.html if exists, fallback to signup.html
-      if (window.location.pathname.includes('signin.html')) {
-        window.location.href = 'signup.html';
-      } else if (window.location.pathname.includes('signup.html')) {
-        window.location.href = 'signin.html';
-      } else if (document.getElementById('login-btn')) {
-        // If on the threads page, check for both files
-        // Try to use both buttons as per UI
-        return; // Don't auto-redirect from display, only on action
-      } else {
-        // Default fallback
-        window.location.href = 'signin.html';
-      }
-    }
-    function requireAuthOrRedirect(callback) {
-      if (LOGGED_IN_USER) {
-        callback();
-      } else {
-        // Try to send to signin.html, fallback to signup.html if not found
-        window.location.href = 'signin.html';
-      }
-    }
-
-    function toggleBookmark(threadId) {
-      if (!LOGGED_IN_USER) {
-        window.location.href = 'signin.html';
-        return;
-      }
-      bookmarks[threadId] = !bookmarks[threadId];
-      localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
-      renderBookmarks();
-    }
-    function toggleLike(threadId, btn) {
-      if (!LOGGED_IN_USER) {
-        window.location.href = 'signin.html';
-        return;
-      }
-      likes[threadId] = !likes[threadId];
-      localStorage.setItem('likes', JSON.stringify(likes));
-      if (btn) btn.classList.toggle('liked', likes[threadId]);
-    }
-    function toggleRepost(threadId, btn) {
-      if (!LOGGED_IN_USER) {
-        window.location.href = 'signin.html';
-        return;
-      }
-      reposts[threadId] = !reposts[threadId];
-      localStorage.setItem('reposts', JSON.stringify(reposts));
-      if (btn) btn.classList.toggle('reposted', reposts[threadId]);
-    }
-    function renderBookmarks() {
-      // Optionally show a list of bookmarks in the sidebar or a modal
-    }
-
-    // --- THREAD FEED LOADING WITH BOOKMARK, REPOST, LIKE ---
-    window.__allThreads = [];
-    async function loadThreads(searchQ) {
-      const feed = document.getElementById('thread-feed');
-      if (!feed) return;
-      feed.innerHTML = 'Loading threads...';
-      if (typeof supabase === "undefined") {
-        feed.innerHTML = 'Thread loading requires Supabase setup.';
-        return;
-      }
-      const { data: threads, error } = await supabase
+    async function loadThread() {
+      if (!threadId) return;
+      const { data: thread, error } = await supabase
         .from('threads')
         .select('*')
-        .order('created_at', { ascending: false })
-        .limit(50);
-
-      if (error) {
-        feed.innerHTML = 'Failed to load threads.';
+        .eq('id', threadId)
+        .single();
+      if (error || !thread) {
+        document.getElementById('thread-container').innerHTML = "<p>Thread not found.</p>";
         return;
       }
-      if (!threads || !threads.length) {
-        feed.innerHTML = 'No threads yet. Be the first to post!';
-        return;
-      }
-
-      window.__allThreads = threads;
-      renderThreads(threads);
-    }
-
-    function renderThreads(threads) {
-      const feed = document.getElementById('thread-feed');
-      feed.innerHTML = threads.map((t, idx) => {
-        const threadId = t.id || idx;
-        const isBookmarked = bookmarks[threadId];
-        const isLiked = likes[threadId];
-        const isReposted = reposts[threadId];
-        let tagHTML = "";
-        if (t.tags) {
-          tagHTML = `<div class="thread-tags">${t.tags.split(',').map(tag=>`<a class="hashtag-link" href="#" data-hashtag="${tag.trim().replace('#','')}">#${tag.trim().replace('#','')}</a>`).join(' ')}</div>`;
-        }
-        let metaHTML = `<div class="thread-meta"><i class="fa fa-user"></i> ${escapeHTML(t.user || 'Anon')} &nbsp; <i class="fa fa-clock"></i> ${t.created_at ? new Date(t.created_at).toLocaleString() : ''}</div>`;
-        let commentsHTML = `
-          <div class="thread-comments"></div>
-          <form class="add-comment" data-thread-id="${threadId}">
-            <input type="text" placeholder="Add a comment..." maxlength="140" required>
-            <button type="submit"><i class="fa fa-paper-plane"></i></button>
-          </form>
-        `;
-        return `<div class="thread" data-thread-id="${threadId}">
-          ${metaHTML}
-          <p>${linkify(escapeHTML(t.content))}</p>
-          ${tagHTML}
-          <div class="thread-actions">
-            <button class="bookmark-btn${isBookmarked ? ' bookmarked' : ''}" title="Bookmark"><i class="fa fa-bookmark"></i></button>
-            <button class="like-btn${isLiked ? ' liked' : ''}" title="Like"><i class="fa-solid fa-heart"></i> <span>0</span></button>
-            <button class="repost-btn${isReposted ? ' reposted' : ''}" title="Repost"><i class="fa fa-retweet"></i></button>
-            <button class="share-btn" title="Copy link"><i class="fa-solid fa-share-from-square"></i></button>
-          </div>
-          ${commentsHTML}
-        </div>`;
-      }).join('');
-      // Handlers:
-      feed.querySelectorAll('.bookmark-btn').forEach(btn => {
-        btn.onclick = function() {
-          const threadId = btn.closest('.thread').dataset.threadId;
-          if (!LOGGED_IN_USER) {
-            window.location.href = 'signin.html';
-            return;
-          }
-          toggleBookmark(threadId);
-          btn.classList.toggle('bookmarked');
-        };
-      });
-      feed.querySelectorAll('.like-btn').forEach(btn => {
-        btn.onclick = function() {
-          const threadId = btn.closest('.thread').dataset.threadId;
-          if (!LOGGED_IN_USER) {
-            window.location.href = 'signin.html';
-            return;
-          }
-          toggleLike(threadId, btn);
-        };
-      });
-      feed.querySelectorAll('.repost-btn').forEach(btn => {
-        btn.onclick = function() {
-          const threadId = btn.closest('.thread').dataset.threadId;
-          if (!LOGGED_IN_USER) {
-            window.location.href = 'signin.html';
-            return;
-          }
-          toggleRepost(threadId, btn);
-          // Optionally: Add a "repost" to the user's feed
-        };
-      });
-      feed.querySelectorAll('.share-btn').forEach(btn => {
-        btn.onclick = function(e) {
-          e.preventDefault();
-          const threadId = btn.closest('.thread').dataset.threadId;
-          const url = window.location.href + "#" + threadId;
-          navigator.clipboard.writeText(url);
-          btn.title = "Copied!";
-          setTimeout(() => btn.title = "Copy link", 1200);
-        };
-      });
-      feed.querySelectorAll('.add-comment').forEach(form => {
-        form.addEventListener('submit', function(e) {
-          e.preventDefault();
-          const threadId = form.getAttribute('data-thread-id');
-          const input = form.querySelector('input');
-          if (input.value.trim()) {
-            addComment(threadId, input.value.trim());
-            input.value = '';
-          }
+      // Render with thread-card.html component
+      fetch('components/thread-card.html')
+        .then(r=>r.text()).then(template => {
+          let html = template
+            .replace('<!-- thread content -->', escapeHTML(thread.content))
+            .replace('<!-- timestamp -->', thread.created_at ? new Date(thread.created_at).toLocaleString() : '');
+          document.getElementById('thread-container').innerHTML = html;
         });
-      });
-      // Hashtag links in threads
-      feed.querySelectorAll('.hashtag-link').forEach(link => {
-        link.onclick = (e) => {
-          e.preventDefault();
-          performSearch('#' + link.dataset.hashtag);
-        };
-      });
-      Object.keys(threadComments).forEach(renderComments);
     }
 
-    // --- Like/Bookmark/Repost helpers ---
+    async function loadReplies() {
+      if (!threadId) return;
+      const { data: replies, error } = await supabase
+        .from('replies')
+        .select('*')
+        .eq('thread_id', threadId)
+        .order('created_at', { ascending: true });
+      const list = document.getElementById('replies-list');
+      if (error || !replies) {
+        list.innerHTML = "<p>No replies yet.</p>";
+        return;
+      }
+      if (!replies.length) {
+        list.innerHTML = "<p>No replies yet.</p>";
+        return;
+      }
+      // Render using reply-card.html
+      fetch('components/reply-card.html')
+        .then(r=>r.text()).then(template => {
+          list.innerHTML = replies.map(reply => {
+            let html = template
+              .replace('<!-- reply content -->', escapeHTML(reply.content))
+              .replace('<!-- timestamp -->', reply.created_at ? new Date(reply.created_at).toLocaleString() : '');
+            return html;
+          }).join('');
+        });
+    }
+
     function escapeHTML(str) {
       return String(str).replace(/[&<>"']/g, c =>
         ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])
       );
     }
-    function linkify(text) {
-      return text
-        .replace(/(^|[^\w])#([a-zA-Z0-9_]+)/g, '$1<a class="hashtag-link" href="#" data-hashtag="$2">#$2</a>')
-        .replace(/(^|[^\w])@([a-zA-Z0-9_]+)/g, '$1<a class="mention-link" href="?user=$2">@$2</a>');
-    }
 
-    // --- Comments logic (frontend demo) ---
-    let threadComments = {};
-    function addComment(threadId, comment, user='You') {
-      if (!threadComments[threadId]) threadComments[threadId] = [];
-      threadComments[threadId].push({ user, comment, time: new Date().toLocaleString() });
-      renderComments(threadId);
-    }
-    function renderComments(threadId) {
-      const threadElem = document.querySelector(`.thread[data-thread-id="${threadId}"]`);
-      if (!threadElem) return;
-      const commentsDiv = threadElem.querySelector('.thread-comments');
-      if (!commentsDiv) return;
-      const comments = threadComments[threadId] || [];
-      commentsDiv.innerHTML = comments.map(
-        c => `<div class="comment"><b>${c.user}:</b> ${escapeHTML(c.comment)}<br><small>${c.time}</small></div>`
-      ).join('');
-    }
-
-    // --- On DOMContentLoaded ---
-    document.addEventListener('DOMContentLoaded', function() {
-      checkAuthAndToggleForm();
-      renderSuggestedUsers();
-      renderSuggestedContent();
-      loadThreads();
-
-      // Auth redirect for post form submit
-      const postForm = document.getElementById('post-form');
-      if (postForm) {
-        postForm.addEventListener('submit', function(e) {
-          if (!LOGGED_IN_USER) {
-            e.preventDefault();
-            window.location.href = 'signin.html';
-            return false;
-          }
-        });
+    // Handle reply form
+    document.getElementById('reply-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      if (!LOGGED_IN_USER) {
+        document.getElementById('error-msg').textContent = "You must be logged in to reply.";
+        return;
       }
-      // Auth redirect for must-login buttons
-      const loginBtn = document.getElementById('login-btn');
-      const signupBtn = document.getElementById('signup-btn');
-      if (loginBtn) loginBtn.onclick = function() { window.location.href = 'signin.html'; }
-      if (signupBtn) signupBtn.onclick = function() { window.location.href = 'signup.html'; }
+      const content = document.getElementById('reply-content').value.trim();
+      if (!content) return;
+      document.getElementById('error-msg').textContent = '';
+      const { error } = await supabase.from('replies').insert({
+        thread_id: threadId,
+        content,
+        user_id: LOGGED_IN_USER.id,
+        created_at: new Date().toISOString()
+      });
+      if (error) {
+        document.getElementById('error-msg').textContent = "Failed to post reply.";
+        return;
+      }
+      document.getElementById('reply-content').value = '';
+      loadReplies();
     });
-    // ...existing emoji picker, char count, media preview, search, trending hashtags, etc...
+
+    // Initial loads
+    document.addEventListener('DOMContentLoaded', function() {
+      loadThread();
+      loadReplies();
+      checkAuth();
+      // Optionally: trending hashtags, suggested users
+      // (implementations can be added in js/thread.js or js/feed.js)
+    });
   </script>
 </body>
 </html>
