@@ -175,6 +175,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // ========== RENDER TABS ==========
   function threadHtml(thread) {
+    // Value add: Add thread actions (like, repost, bookmark) and reply count if available
+    const likeCount = thread.likes_count || thread.likes?.length || 0;
+    const repostCount = thread.reposts_count || thread.reposts?.length || 0;
+    const bookmarkCount = thread.bookmarks_count || thread.bookmarks?.length || 0;
+
+    // Import thread-actions.html for thread actions if available
+    // Use minimal actions if not using the component system
     return `
       <div class="thread-card" style="border-bottom:1.2px solid #eee;padding:13px 0;">
         <div style="display:flex;align-items:flex-start;gap:9px;">
@@ -187,6 +194,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             ${thread.image_url ? `<img src="${thread.image_url}" style="margin-top:5px;max-width:200px;border-radius:6px;">` : ''}
             <div style="color:#888;font-size:.92em;margin-top:4px;">
               ${new Date(thread.created_at).toLocaleString()}
+            </div>
+            <div style="margin-top:7px;">
+              <button class="action-btn like-btn" title="Like">&#10084;</button>
+              <span class="like-count">${likeCount}</span>
+              <button class="action-btn retweet-btn" title="Repost">&#128257;</button>
+              <span class="retweet-count">${repostCount}</span>
+              <button class="action-btn bookmark-btn" title="Bookmark">&#128278;</button>
+              <span class="bookmark-count">${bookmarkCount}</span>
+              <a href="thread.html?id=${thread.id}" style="margin-left:10px;font-size:.93em;color:#007bff;text-decoration:none;">View Thread</a>
             </div>
           </div>
         </div>
@@ -237,4 +253,57 @@ document.addEventListener('DOMContentLoaded', async () => {
     await signOut();
     window.location.href = 'login.html';
   };
+
+  // ========== VALUE ADD: Copy Profile Link ==========
+  // Add a "Copy Profile Link" button if not present
+  let copyBtn = document.getElementById('copy-profile-link-btn');
+  if (!copyBtn) {
+    copyBtn = document.createElement('button');
+    copyBtn.id = 'copy-profile-link-btn';
+    copyBtn.textContent = 'Copy Profile Link';
+    copyBtn.className = 'action-btn';
+    const profileHeader = document.getElementById('profile-header') || document.body;
+    profileHeader.appendChild(copyBtn);
+  }
+  copyBtn.onclick = () => {
+    const url = window.location.origin + `/profile.html?user=${encodeURIComponent(user.username || user.id)}`;
+    navigator.clipboard.writeText(url);
+    // Show notification
+    let notif = document.createElement('div');
+    notif.textContent = 'Profile link copied!';
+    notif.style = 'position:fixed;top:15px;right:15px;background:#222;color:#fff;padding:8px 18px;border-radius:5px;z-index:10000;box-shadow:0 1px 6px #0002;';
+    document.body.appendChild(notif);
+    setTimeout(() => notif.remove(), 2000);
+  };
+
+  // ========== VALUE ADD: Accessibility Improvements ==========
+  // Add alt text for avatar and images
+  document.getElementById('profile-avatar').alt = `${user.displayname || user.username || 'User'}'s avatar`;
+  Array.from(document.getElementsByClassName('profile-img-thumb')).forEach(img => {
+    img.alt = 'Profile image';
+  });
+
+  // ========== VALUE ADD: Show user ID ==========
+  let uidRow = document.getElementById('profile-uid-row');
+  if (!uidRow) {
+    uidRow = document.createElement('div');
+    uidRow.id = 'profile-uid-row';
+    uidRow.innerHTML = `<span style="color:#888;font-size:.88em;">User ID:</span> <span id="profile-uid-val">${user.id}</span>`;
+    const bioRow = document.getElementById('profile-bio');
+    if (bioRow && bioRow.parentNode) {
+      bioRow.parentNode.appendChild(uidRow);
+    }
+  } else {
+    document.getElementById('profile-uid-val').textContent = user.id;
+  }
+
+  // ========== VALUE ADD: Welcome Notification ==========
+  if (!window._profileWelcomeShown) {
+    window._profileWelcomeShown = true;
+    let notif = document.createElement('div');
+    notif.textContent = `Welcome, ${user.displayname || user.username || 'User'}!`;
+    notif.style = 'position:fixed;top:15px;left:50%;transform:translateX(-50%);background:#0a0;color:#fff;padding:8px 22px;border-radius:7px;z-index:10000;font-weight:bold;box-shadow:0 2px 10px #0003;';
+    document.body.appendChild(notif);
+    setTimeout(() => notif.remove(), 2200);
+  }
 });
