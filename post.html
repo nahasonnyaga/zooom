@@ -65,6 +65,8 @@
       <button type="submit">Post</button>
       <div id="post-error"></div>
     </form>
+    <!-- Thread feed inserted below the post creation box as requested -->
+    <div id="thread-feed" style="margin-top: 32px;"></div>
   </main>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="js/supabase.js"></script>
@@ -107,6 +109,42 @@
         }
       }
     });
+
+    // Thread feed logic inserted as requested
+    async function loadThreads() {
+      const feed = document.getElementById('thread-feed');
+      if (!feed) return;
+      feed.innerHTML = 'Loading threads...';
+
+      // Example Supabase fetch - adjust "threads" and "content" to match your table/field names:
+      if (typeof supabase === "undefined") {
+        feed.innerHTML = 'Thread loading requires Supabase setup.';
+        return;
+      }
+      const { data: threads, error } = await supabase
+        .from('threads')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(20);
+
+      if (error) {
+        feed.innerHTML = 'Failed to load threads.';
+        return;
+      }
+
+      if (!threads || !threads.length) {
+        feed.innerHTML = 'No threads yet. Be the first to post!';
+        return;
+      }
+
+      feed.innerHTML = threads.map(t =>
+        `<div class="thread" style="margin-bottom:16px;padding:12px;border:1px solid #eee;border-radius:6px;">
+          <p>${t.content}</p>
+          <small>${new Date(t.created_at).toLocaleString()}</small>
+        </div>`
+      ).join('');
+    }
+    document.addEventListener('DOMContentLoaded', loadThreads);
   </script>
 </body>
 </html>
