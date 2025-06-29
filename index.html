@@ -313,6 +313,56 @@
         });
       });
     }
-  </script>
+  </script><!-- Notification fetch and render for current user -->
+<script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+const SUPABASE_URL = 'https://your-project.supabase.co'; // <-- update this
+const SUPABASE_ANON_KEY = 'your-anon-key'; // <-- update this
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+async function showNotifications() {
+  // Try to get logged-in user
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return; // Not logged in
+
+  // Fetch notifications
+  const { data: notifications, error } = await supabase
+    .from('notifications')
+    .select('*')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: false })
+    .limit(10);
+
+  if (!notifications || notifications.length === 0) return;
+  let area = document.getElementById('modern-notification-area');
+  if (!area) {
+    area = document.createElement('div');
+    area.id = 'modern-notification-area';
+    area.style.position = "fixed";
+    area.style.top = "1.7rem";
+    area.style.right = "1.6rem";
+    area.style.zIndex = "205";
+    document.body.appendChild(area);
+  }
+
+  // (Optional) Clear previous
+  area.innerHTML = "";
+
+  // Load notification component template
+  const tpl = await fetch('components/notification.html').then(r=>r.text());
+
+  notifications.forEach(n => {
+    let html = tpl;
+    html = html.replace('<!-- message -->', n.message);
+    html = html.replace('<!-- date -->', new Date(n.created_at).toLocaleString());
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    area.appendChild(div.firstElementChild);
+  });
+}
+
+// Run on page load
+document.addEventListener('DOMContentLoaded', showNotifications);
+</script>
 </body>
 </html>
