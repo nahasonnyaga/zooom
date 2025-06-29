@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Explore Users - Zooom</title>
+  <link rel="stylesheet" href="css/main.css">
+  <style>
+    .users-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      padding: 1.5rem 0.5rem;
+      justify-content: flex-start;
+    }
+    .user-card {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 1px 8px #0001;
+      padding: 1.1rem 1.2rem 1.1rem 1.2rem;
+      max-width: 260px;
+      min-width: 220px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border: 1.5px solid #ececec;
+      transition: box-shadow 0.15s;
+      margin-bottom: 1rem;
+    }
+    .user-card:hover {
+      box-shadow: 0 4px 16px #0002;
+      border-color: #dbeafe;
+    }
+    .user-avatar {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #e0e0e0;
+      background: #f3f6f9;
+      margin-bottom: 0.8rem;
+    }
+    .user-username {
+      font-weight: 700;
+      font-size: 1.12rem;
+      color: #1c1b22;
+      margin-bottom: 0.2rem;
+    }
+    .user-handle {
+      color: #3b82f6;
+      font-size: 0.99rem;
+      margin-bottom: 0.4rem;
+    }
+    .user-bio {
+      color: #444;
+      font-size: 0.97rem;
+      text-align: center;
+      margin-bottom: 0.7rem;
+      min-height: 2.2em;
+    }
+    .user-meta {
+      color: #666;
+      font-size: 0.88rem;
+      margin-bottom: 0.5rem;
+    }
+    .user-links {
+      display: flex;
+      gap: 0.6rem;
+      margin-bottom: 0.1rem;
+      justify-content: center;
+    }
+    .user-links a {
+      color: #2563eb;
+      font-size: 1.18em;
+      text-decoration: none;
+      border-radius: 50%;
+      padding: 3px;
+      transition: background 0.15s;
+    }
+    .user-links a:hover {
+      background: #e0e7ff;
+    }
+    .user-follow-btn {
+      background: linear-gradient(90deg,#3b82f6 60%,#60a5fa 100%);
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      font-weight: 600;
+      padding: 0.5em 1.2em;
+      margin-top: 0.5em;
+      cursor: pointer;
+      font-size: 1.04em;
+      transition: background 0.13s;
+    }
+    .user-follow-btn:active {
+      background: linear-gradient(90deg,#2563eb 60%,#60a5fa 100%);
+    }
+    @media (max-width:650px) {
+      .users-list {justify-content: center;}
+      .user-card {max-width: 98vw;}
+    }
+  </style>
+</head>
+<body style="background:#f7f7fa;">
+  <div id="navbar-include"></div>
+  <main>
+    <h1 style="text-align:center; margin-top: 1.5rem;">
+      <i class="fa-solid fa-users" style="color:#3b82f6;margin-right:0.3em;"></i>
+      Explore Users
+    </h1>
+    <div id="users-list" class="users-list"></div>
+  </main>
+  <script>
+    // Load navbar (compatible with project structure)
+    fetch('components/navbar.html')
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById('navbar-include').innerHTML = html;
+      });
+
+    // Mock users data
+    const mockUsers = [
+      {
+        username: "sonnyaga",
+        name: "Nahason Nyaga",
+        avatar: "assets/avatar.png",
+        bio: "🐘 Building Zooom. Love coding, coffee, and open source. Nairobi, Kenya.",
+        location: "Nairobi, Kenya",
+        website: "https://github.com/nahasonnyaga",
+        twitter: "nahasonnyaga",
+        followers: 124,
+        following: 182,
+        threads: 33
+      },
+      {
+        username: "jane_dev",
+        name: "Jane Doe",
+        avatar: "https://randomuser.me/api/portraits/women/44.jpg",
+        bio: "Frontend engineer. React, Vue, and a sprinkle of magic ✨. Cat mom.",
+        location: "Berlin, Germany",
+        website: "https://janedev.dev",
+        twitter: "janedoe_dev",
+        followers: 98,
+        following: 77,
+        threads: 12
+      },
+      {
+        username: "tommyc",
+        name: "Tommy Chen",
+        avatar: "https://randomuser.me/api/portraits/men/32.jpg",
+        bio: "Full Stack | Node & Go | Cyclist 🚴 | Building cool stuff.",
+        location: "San Francisco, CA",
+        website: "",
+        twitter: "",
+        followers: 231,
+        following: 150,
+        threads: 58
+      },
+      {
+        username: "sarah.codes",
+        name: "Sarah Lee",
+        avatar: "https://randomuser.me/api/portraits/women/65.jpg",
+        bio: "Product designer. Lover of minimal UI and pancakes 🥞.",
+        location: "London, UK",
+        website: "https://sarahlee.design",
+        twitter: "sarahcodes",
+        followers: 176,
+        following: 202,
+        threads: 40
+      },
+      {
+        username: "dev_omar",
+        name: "Omar Ali",
+        avatar: "https://randomuser.me/api/portraits/men/85.jpg",
+        bio: "Backend wizard. Python, Rust & cloud infra. Open for gigs.",
+        location: "Cairo, Egypt",
+        website: "",
+        twitter: "omar_codes",
+        followers: 89,
+        following: 110,
+        threads: 23
+      }
+    ];
+
+    function renderUsers(users) {
+      const list = document.getElementById('users-list');
+      list.innerHTML = '';
+      users.forEach(user => {
+        const card = document.createElement('div');
+        card.className = 'user-card';
+        card.innerHTML = `
+          <img src="${user.avatar}" class="user-avatar" loading="lazy" alt="${user.name || user.username}" onerror="this.src='assets/avatar.png'">
+          <div class="user-username">${user.name}</div>
+          <div class="user-handle">@${user.username}</div>
+          <div class="user-bio">${user.bio || ''}</div>
+          <div class="user-meta">${user.location ? `📍 ${user.location}` : ''}</div>
+          <div class="user-meta">
+            <span title="Followers">👥 <b>${user.followers}</b></span>
+            &nbsp; | &nbsp;
+            <span title="Following">🔗 <b>${user.following}</b></span>
+            &nbsp; | &nbsp;
+            <span title="Threads">🧵 <b>${user.threads}</b></span>
+          </div>
+          <div class="user-links">
+            ${user.website ? `<a href="${user.website}" target="_blank" title="Website"><i class="fa-solid fa-link"></i></a>` : ''}
+            ${user.twitter ? `<a href="https://twitter.com/${user.twitter}" target="_blank" title="Twitter"><i class="fa-brands fa-x-twitter"></i></a>` : ''}
+            <a href="profile.html?user=${encodeURIComponent(user.username)}" title="View Profile"><i class="fa-solid fa-user"></i></a>
+          </div>
+          <button class="user-follow-btn" onclick="alert('Followed @${user.username}!')">Follow</button>
+        `;
+        list.appendChild(card);
+      });
+    }
+
+    // FontAwesome icons (minimal CDN, for .fa-* classes)
+    (function loadFontAwesome() {
+      if (!window.FontAwesomeLoaded) {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css';
+        document.head.appendChild(link);
+        window.FontAwesomeLoaded = true;
+      }
+    })();
+
+    // Render mock users
+    document.addEventListener('DOMContentLoaded', () => renderUsers(mockUsers));
+  </script>
+  <!-- Optionally include supabase logic below (not used for mock data) -->
+  <!-- <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/users.js"></script> -->
+</body>
+</html>
