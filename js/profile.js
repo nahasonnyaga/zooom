@@ -42,10 +42,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // Followers/Following (fetch from DB if you have tables for this)
-  // For now, use dummy values or add your real fetch here
   let followers = 0, following = 0;
   try {
-    // Example: Assuming you have a 'follows' table with 'follower_id' and 'following_id'
     let [{ count: followersCount }, { count: followingCount }] = await Promise.all([
       supabase.from('follows').select('*', { count: 'exact', head: true }).eq('following_id', user.id),
       supabase.from('follows').select('*', { count: 'exact', head: true }).eq('follower_id', user.id)
@@ -56,21 +54,65 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('profile-followers').textContent = followers;
   document.getElementById('profile-following').textContent = following;
 
+  // ====== NEW: Likes, Threads, Reposts counts ======
+
+  // Threads count (user's posts)
+  let threadsCount = 0;
+  let threads = [];
+  try {
+    const { data: threadsData, error: threadsError, count: threadsCountRaw } = await supabase
+      .from('threads')
+      .select('*', { count: 'exact' })
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false });
+
+    threads = threadsData || [];
+    threadsCount = threadsCountRaw ?? (threads.length || 0);
+  } catch (e) { /* ignore */ }
+
+  // Likes count (number of likes the user has given - or received on their threads)
+  // This assumes a 'likes' table with 'user_id' (who liked), 'thread_id' (liked what)
+  // If you want likes received, you need to count likes on user's threads.
+  let likesCount = 0;
+  try {
+    // Likes received on user's threads:
+    if (threads && threads.length) {
+      const threadIds = threads.map(t => t.id);
+      if (threadIds.length > 0) {
+        const { count: likesReceivedCount } = await supabase
+          .from('likes')
+          .select('*', { count: 'exact', head: true })
+          .in('thread_id', threadIds);
+        likesCount = likesReceivedCount ?? 0;
+      }
+    }
+  } catch (e) { /* ignore */ }
+
+  // Reposts count (number of reposts the user has made)
+  // This assumes a 'reposts' table with 'user_id' (who reposted)
+  let repostsCount = 0;
+  try {
+    const { count: repostsRaw } = await supabase
+      .from('reposts')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', user.id);
+    repostsCount = repostsRaw ?? 0;
+  } catch (e) { /* ignore */ }
+
+  // Set stats in DOM
+  document.getElementById('profile-likes').textContent = likesCount;
+  document.getElementById('profile-threads-count').textContent = threadsCount;
+  document.getElementById('profile-reposts').textContent = repostsCount;
+
   // Edit profile button action (optional: show modal, etc.)
   document.getElementById('edit-profile-btn').onclick = () => {
     alert('Edit profile functionality coming soon!');
     // Could open a modal to edit display name, bio, avatar, etc.
   };
 
-  // Fetch user's threads
-  let { data: threads, error } = await supabase
-    .from('threads')
-    .select('*')
-    .eq('user_id', user.id)
-    .order('created_at', { ascending: false });
-
+  // Render user's threads
   const threadsList = document.getElementById('profile-threads');
-  if (error || !threads) {
+  if (!threads) {
     threadsList.innerHTML = "<p>Error loading your threads.</p>";
     return;
   }
