@@ -32,13 +32,12 @@
       width: 100vw;
       box-sizing: border-box;
       max-width: 100vw;
-      /* prevent browser "shaking" on hover by reserving space for the hover state shadow and border */
       min-height: 0;
     }
     .user-card {
       background: #fff;
       border-radius: 10px;
-      box-shadow: 0 4px 16px #0002; /* match hover shadow so no jump */
+      box-shadow: 0 4px 16px #0002;
       padding: 1.1rem 1.2rem 1.1rem 1.2rem;
       max-width: 260px;
       min-width: 220px;
@@ -131,7 +130,10 @@
       Explore Users
     </h1>
     <div id="users-list" class="users-list"></div>
+    <div id="users-error" style="text-align:center;color:#a33;"></div>
   </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="js/supabase.js"></script>
   <script>
     // Load navbar (compatible with project structure)
     fetch('components/navbar.html')
@@ -139,100 +141,6 @@
       .then(html => {
         document.getElementById('navbar-include').innerHTML = html;
       });
-
-    // Mock users data
-    const mockUsers = [
-      {
-        username: "sonnyaga",
-        name: "Nahason Nyaga",
-        avatar: "assets/avatar.png",
-        bio: "🐘 Building Zooom. Love coding, coffee, and open source. Nairobi, Kenya.",
-        location: "Nairobi, Kenya",
-        website: "https://github.com/nahasonnyaga",
-        twitter: "nahasonnyaga",
-        followers: 124,
-        following: 182,
-        threads: 33
-      },
-      {
-        username: "jane_dev",
-        name: "Jane Doe",
-        avatar: "https://randomuser.me/api/portraits/women/44.jpg",
-        bio: "Frontend engineer. React, Vue, and a sprinkle of magic ✨. Cat mom.",
-        location: "Berlin, Germany",
-        website: "https://janedev.dev",
-        twitter: "janedoe_dev",
-        followers: 98,
-        following: 77,
-        threads: 12
-      },
-      {
-        username: "tommyc",
-        name: "Tommy Chen",
-        avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-        bio: "Full Stack | Node & Go | Cyclist 🚴 | Building cool stuff.",
-        location: "San Francisco, CA",
-        website: "",
-        twitter: "",
-        followers: 231,
-        following: 150,
-        threads: 58
-      },
-      {
-        username: "sarah.codes",
-        name: "Sarah Lee",
-        avatar: "https://randomuser.me/api/portraits/women/65.jpg",
-        bio: "Product designer. Lover of minimal UI and pancakes 🥞.",
-        location: "London, UK",
-        website: "https://sarahlee.design",
-        twitter: "sarahcodes",
-        followers: 176,
-        following: 202,
-        threads: 40
-      },
-      {
-        username: "dev_omar",
-        name: "Omar Ali",
-        avatar: "https://randomuser.me/api/portraits/men/85.jpg",
-        bio: "Backend wizard. Python, Rust & cloud infra. Open for gigs.",
-        location: "Cairo, Egypt",
-        website: "",
-        twitter: "omar_codes",
-        followers: 89,
-        following: 110,
-        threads: 23
-      }
-    ];
-
-    function renderUsers(users) {
-      const list = document.getElementById('users-list');
-      list.innerHTML = '';
-      users.forEach(user => {
-        const card = document.createElement('div');
-        card.className = 'user-card';
-        card.innerHTML = `
-          <img src="${user.avatar}" class="user-avatar" loading="lazy" alt="${user.name || user.username}" onerror="this.src='assets/avatar.png'">
-          <div class="user-username">${user.name}</div>
-          <div class="user-handle">@${user.username}</div>
-          <div class="user-bio">${user.bio || ''}</div>
-          <div class="user-meta">${user.location ? `📍 ${user.location}` : ''}</div>
-          <div class="user-meta">
-            <span title="Followers">👥 <b>${user.followers}</b></span>
-            &nbsp; | &nbsp;
-            <span title="Following">🔗 <b>${user.following}</b></span>
-            &nbsp; | &nbsp;
-            <span title="Threads">🧵 <b>${user.threads}</b></span>
-          </div>
-          <div class="user-links">
-            ${user.website ? `<a href="${user.website}" target="_blank" title="Website"><i class="fa-solid fa-link"></i></a>` : ''}
-            ${user.twitter ? `<a href="https://twitter.com/${user.twitter}" target="_blank" title="Twitter"><i class="fa-brands fa-x-twitter"></i></a>` : ''}
-            <a href="profile.html?user=${encodeURIComponent(user.username)}" title="View Profile"><i class="fa-solid fa-user"></i></a>
-          </div>
-          <button class="user-follow-btn" onclick="alert('Followed @${user.username}!')">Follow</button>
-        `;
-        list.appendChild(card);
-      });
-    }
 
     // FontAwesome icons (minimal CDN, for .fa-* classes)
     (function loadFontAwesome() {
@@ -245,12 +153,58 @@
       }
     })();
 
-    // Render mock users
-    document.addEventListener('DOMContentLoaded', () => renderUsers(mockUsers));
+    // Render users from Supabase (replace mock with real fetch)
+    async function renderUsersFromSupabase() {
+      const usersList = document.getElementById('users-list');
+      const errorDiv = document.getElementById('users-error');
+      usersList.innerHTML = '';
+      errorDiv.textContent = '';
+      try {
+        // Use your Supabase helper
+        const { data, error } = await window.supabaseApi.supabase
+          .from('users')
+          .select('*')
+          .order('created_at', { ascending: false });
+        if (error) {
+          errorDiv.textContent = error.message || 'Failed to fetch users.';
+          return;
+        }
+        if (!data || data.length === 0) {
+          usersList.innerHTML = '<em>No users found.</em>';
+          return;
+        }
+        data.forEach(user => {
+          const card = document.createElement('div');
+          card.className = 'user-card';
+          card.innerHTML = `
+            <img src="${user.avatar_url || 'assets/avatar.png'}" class="user-avatar" loading="lazy" alt="${user.name || user.username || ''}" onerror="this.src='assets/avatar.png'">
+            <div class="user-username">${user.name || user.username || ''}</div>
+            <div class="user-handle">@${user.username || ''}</div>
+            <div class="user-bio">${user.bio || ''}</div>
+            <div class="user-meta">${user.location ? `📍 ${user.location}` : ''}</div>
+            <div class="user-meta">
+              <span title="Followers">👥 <b>${user.followers ?? 0}</b></span>
+              &nbsp; | &nbsp;
+              <span title="Following">🔗 <b>${user.following ?? 0}</b></span>
+              &nbsp; | &nbsp;
+              <span title="Threads">🧵 <b>${user.threads ?? 0}</b></span>
+            </div>
+            <div class="user-links">
+              ${user.website ? `<a href="${user.website}" target="_blank" title="Website"><i class="fa-solid fa-link"></i></a>` : ''}
+              ${user.twitter ? `<a href="https://twitter.com/${user.twitter}" target="_blank" title="Twitter"><i class="fa-brands fa-x-twitter"></i></a>` : ''}
+              <a href="profile.html?user=${encodeURIComponent(user.username || '')}" title="View Profile"><i class="fa-solid fa-user"></i></a>
+            </div>
+            <button class="user-follow-btn" onclick="alert('Followed @${user.username || ''}!')">Follow</button>
+          `;
+          usersList.appendChild(card);
+        });
+      } catch (err) {
+        errorDiv.textContent = err.message || 'Unknown error.';
+      }
+    }
+
+    // On DOM ready, fetch users from Supabase
+    document.addEventListener('DOMContentLoaded', renderUsersFromSupabase);
   </script>
-  <!-- Optionally include supabase logic below (not used for mock data) -->
-  <!-- <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script src="js/supabase.js"></script>
-  <script src="js/users.js"></script> -->
 </body>
 </html>
