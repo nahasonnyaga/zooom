@@ -1,6 +1,16 @@
 <div class="thread-card">
+  <div class="thread-header" style="display: flex; justify-content: space-between; align-items: center;">
+    <span class="thread-user">@username</span>
+    <small class="thread-timestamp"><!-- timestamp --></small>
+  </div>
   <a href="#">
     <p><!-- thread content --></p>
   </a>
-  <small><!-- timestamp --></small>
+  <div class="thread-actions">
+    <button class="action-btn like-btn" title="Like">&#10084;</button>
+    <span class="like-count">0</span>
+    <button class="action-btn retweet-btn" title="Retweet">&#128257;</button>
+    <span class="retweet-count">0</span>
+    <button class="action-btn bookmark-btn" title="Bookmark">&#128278;</button>
+  </div>
 </div>
