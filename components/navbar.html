@@ -48,7 +48,7 @@
     <button class="navbar-avatar" id="navbarUserBtn" title="Account">
       <img src="assets/avatar.png" alt="User" class="navbar-avatar-img" onerror="this.src='assets/avatar.png'">
     </button>
-    <div class="navbar-dropdown" id="navbarDropdown">
+    <div class="navbar-dropdown" id="navbarDropdown" style="display:none;">
       <div class="dropdown-profile">
         <img src="assets/avatar.png" alt="User" class="dropdown-avatar" onerror="this.src='assets/avatar.png'">
         <div class="dropdown-user-info">
@@ -69,7 +69,7 @@
 </nav>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-  // Navbar User Dropdown
+  // User dropdown
   const userBtn = document.getElementById('navbarUserBtn');
   const dropdown = document.getElementById('navbarDropdown');
   let dropdownOpen = false;
@@ -83,6 +83,8 @@ document.addEventListener('DOMContentLoaded', function () {
   document.body.addEventListener('click', function () {
     dropdown.style.display = 'none';
     dropdownOpen = false;
+    var navbarMoreMenu = document.querySelector('.navbar-more-menu');
+    var navbarMore = document.querySelector('.navbar-more-dropdown');
     if (navbarMoreMenu) navbarMoreMenu.style.display = 'none';
     if (navbarMore) navbarMore.classList.remove('active');
   });
@@ -91,18 +93,18 @@ document.addEventListener('DOMContentLoaded', function () {
     e.stopPropagation();
   });
 
-  // Navbar More Dropdown
-  const navbarMore = document.querySelector('.navbar-more-dropdown');
-  const navbarMoreMenu = navbarMore ? navbarMore.querySelector('.navbar-more-menu') : null;
+  // More dropdown
+  var navbarMore = document.querySelector('.navbar-more-dropdown');
+  var navbarMoreMenu = navbarMore ? navbarMore.querySelector('.navbar-more-menu') : null;
   if (navbarMore && navbarMoreMenu) {
     navbarMore.addEventListener('click', function (e) {
       e.stopPropagation();
-      const isOpen = navbarMoreMenu.style.display === 'block';
+      var isOpen = navbarMoreMenu.style.display === 'block';
       navbarMoreMenu.style.display = isOpen ? 'none' : 'block';
       navbarMore.classList.toggle('active', !isOpen);
     });
     navbarMore.addEventListener('blur', function () {
-      setTimeout(() => {
+      setTimeout(function () {
         navbarMoreMenu.style.display = 'none';
         navbarMore.classList.remove('active');
       }, 120);
@@ -112,23 +114,28 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // Show alert dot if there are notifications
+  // Notification dot
   if (localStorage.getItem('new_notifications') === '1') {
-    document.getElementById('navbarNotifDot').style.display = 'inline-block';
+    var notifDot = document.getElementById('navbarNotifDot');
+    if (notifDot) notifDot.style.display = 'inline-block';
   }
 
-  // Set username in dropdown if available
-  const username = localStorage.getItem('username');
+  // Username in dropdown
+  var username = localStorage.getItem('username');
   if (username) {
-    document.getElementById('dropdownUsername').textContent = '@' + username;
+    var usernameEl = document.getElementById('dropdownUsername');
+    if (usernameEl) usernameEl.textContent = '@' + username;
   }
 
-  // Logout logic
-  document.getElementById('navbarLogoutBtn').addEventListener('click', function (e) {
-    e.preventDefault();
-    localStorage.clear();
-    window.location.href = 'login.html';
-  });
+  // Logout
+  var logoutBtn = document.getElementById('navbarLogoutBtn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      localStorage.clear();
+      window.location.href = 'login.html';
+    });
+  }
 });
 </script>
 <style>
