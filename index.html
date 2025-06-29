@@ -3,10 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <title>Threads 100 Clone - Feed</title>
-  <link rel="stylesheet" href="css/main.css">
-  <link rel="stylesheet" href="css/feed.css">
-  <link rel="stylesheet" href="css/reply-card.css">
-  <link rel="stylesheet" href="css/auth.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
@@ -77,59 +73,56 @@
       margin-bottom: 0.7em;
       letter-spacing: 0.2px;
     }
+    /* Updated action bar and counts for Threads/Twitter style */
     .thread-actions {
-      margin-top: 1.1rem;
       display: flex;
-      gap: 2.7rem;
       align-items: center;
-      flex-wrap: wrap;
+      gap: 1.2rem;
+      margin-top: 0.85rem;
+      font-size: 1.2rem;
+      padding: 0 0.3rem;
     }
     .action-btn {
       background: none;
       border: none;
-      cursor: pointer;
-      font-size: 2.9rem;
-      color: #222;
-      padding: 0.65em 1.2em;
+      box-shadow: none;
+      padding: 0.25rem 0.6rem;
+      font-size: 1.45rem;
+      color: #606770;
       border-radius: 50%;
-      transition: background 0.15s, box-shadow 0.15s;
-      outline: none;
-      box-shadow: 0 0 0 rgba(0,0,0,0);
-      display: inline-flex;
+      transition: background 0.13s, color 0.17s;
+      display: flex;
       align-items: center;
       justify-content: center;
+      min-width: 2.1em;
+      min-height: 2.1em;
     }
     .action-btn:active,
     .action-btn:focus,
     .action-btn:hover {
-      background: #ebecf4;
-      box-shadow: 0 2px 8px #0002;
+      background: #f0f2f5;
+      color: #222;
+      outline: none;
     }
     .like-btn.liked {
       color: #e74c3c;
-      font-weight: bold;
-      text-shadow: 0 0 4px #e74c3c44;
     }
     .bookmark-btn.bookmarked {
       color: #222;
-      font-weight: bold;
-      text-shadow: 0 0 4px #5553;
     }
     .retweet-btn.retweeted {
       color: #27ae60;
-      font-weight: bold;
-      text-shadow: 0 0 4px #27ae6044;
     }
     .like-count, .retweet-count {
-      font-size: 2rem;
-      color: #333;
-      margin: 0 0.6em;
-      font-variant-numeric: tabular-nums;
-      font-weight: bold;
-      letter-spacing: 0.5px;
-      min-width: 1.7em;
-      display: inline-block;
-      text-align: center;
+      font-size: 1.18rem;
+      color: #606770;
+      margin: 0 0.18em 0 0.18em;
+      font-weight: 400;
+      letter-spacing: 0;
+      min-width: unset;
+      display: inline;
+      text-align: left;
+      vertical-align: middle;
     }
     .reply-section {
       margin-left: 0;
@@ -174,12 +167,18 @@
       .thread-card a {
         font-size: 1.5rem;
       }
+      .thread-actions {
+        font-size: 1.06rem;
+        gap: 0.7rem;
+      }
       .action-btn {
-        font-size: 2.2rem;
-        padding: 0.38em 0.9em;
+        font-size: 1.1rem;
+        padding: 0.08rem 0.32rem;
+        min-width: 1.6em;
+        min-height: 1.6em;
       }
       .like-count, .retweet-count {
-        font-size: 1.3rem;
+        font-size: 0.95rem;
       }
     }
     @media (hover: none) and (pointer: coarse) {
@@ -207,11 +206,17 @@
       </a>
       <small>Posted by alice • 2h ago</small>
       <div class="thread-actions" aria-label="actions">
-        <button class="action-btn like-btn" title="Like" aria-label="Like">&#10084;</button>
+        <button class="action-btn like-btn" title="Like" aria-label="Like">
+          &#10084;
+        </button>
         <span class="like-count" aria-label="5 likes">5</span>
-        <button class="action-btn retweet-btn" title="Repost" aria-label="Repost">&#8635;</button>
+        <button class="action-btn retweet-btn" title="Repost" aria-label="Repost">
+          &#8635;
+        </button>
         <span class="retweet-count" aria-label="2 reposts">2</span>
-        <button class="action-btn bookmark-btn" title="Bookmark" aria-label="Bookmark">&#128278;</button>
+        <button class="action-btn bookmark-btn" title="Bookmark" aria-label="Bookmark">
+          &#128278;
+        </button>
       </div>
       <!-- Replies to Thread 1 -->
       <div class="reply-section" aria-label="Replies">
@@ -233,11 +238,17 @@
       </a>
       <small>Posted by dana • 30m ago</small>
       <div class="thread-actions" aria-label="actions">
-        <button class="action-btn like-btn" title="Like" aria-label="Like">&#10084;</button>
+        <button class="action-btn like-btn" title="Like" aria-label="Like">
+          &#10084;
+        </button>
         <span class="like-count" aria-label="9 likes">9</span>
-        <button class="action-btn retweet-btn" title="Repost" aria-label="Repost">&#8635;</button>
+        <button class="action-btn retweet-btn" title="Repost" aria-label="Repost">
+          &#8635;
+        </button>
         <span class="retweet-count" aria-label="1 repost">1</span>
-        <button class="action-btn bookmark-btn" title="Bookmark" aria-label="Bookmark">&#128278;</button>
+        <button class="action-btn bookmark-btn" title="Bookmark" aria-label="Bookmark">
+          &#128278;
+        </button>
       </div>
       <!-- Replies to Thread 2 -->
       <div class="reply-section" aria-label="Replies">
@@ -255,11 +266,17 @@
       </a>
       <small>Posted by emma • 10m ago</small>
       <div class="thread-actions" aria-label="actions">
-        <button class="action-btn like-btn" title="Like" aria-label="Like">&#10084;</button>
+        <button class="action-btn like-btn" title="Like" aria-label="Like">
+          &#10084;
+        </button>
         <span class="like-count" aria-label="3 likes">3</span>
-        <button class="action-btn retweet-btn" title="Repost" aria-label="Repost">&#8635;</button>
+        <button class="action-btn retweet-btn" title="Repost" aria-label="Repost">
+          &#8635;
+        </button>
         <span class="retweet-count" aria-label="0 reposts">0</span>
-        <button class="action-btn bookmark-btn" title="Bookmark" aria-label="Bookmark">&#128278;</button>
+        <button class="action-btn bookmark-btn" title="Bookmark" aria-label="Bookmark">
+          &#128278;
+        </button>
       </div>
     </section>
 
