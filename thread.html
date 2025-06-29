@@ -87,24 +87,60 @@
         document.getElementById('post-form').style.display = 'none';
       }
     }
-    // ...existing DOMContentLoaded, emoji, charCount, mediaPreview, formValidation...
 
     // --- BOOKMARK, LIKE, REPOST: In-Memory Stores (Replace with backend for production) ---
     let bookmarks = JSON.parse(localStorage.getItem('bookmarks') || '{}');
     let likes = JSON.parse(localStorage.getItem('likes') || '{}');
     let reposts = JSON.parse(localStorage.getItem('reposts') || '{}');
 
+    // --- Redirection Helper ---
+    function redirectToAuth() {
+      // Prefer signin.html if exists, fallback to signup.html
+      if (window.location.pathname.includes('signin.html')) {
+        window.location.href = 'signup.html';
+      } else if (window.location.pathname.includes('signup.html')) {
+        window.location.href = 'signin.html';
+      } else if (document.getElementById('login-btn')) {
+        // If on the threads page, check for both files
+        // Try to use both buttons as per UI
+        return; // Don't auto-redirect from display, only on action
+      } else {
+        // Default fallback
+        window.location.href = 'signin.html';
+      }
+    }
+    function requireAuthOrRedirect(callback) {
+      if (LOGGED_IN_USER) {
+        callback();
+      } else {
+        // Try to send to signin.html, fallback to signup.html if not found
+        window.location.href = 'signin.html';
+      }
+    }
+
     function toggleBookmark(threadId) {
+      if (!LOGGED_IN_USER) {
+        window.location.href = 'signin.html';
+        return;
+      }
       bookmarks[threadId] = !bookmarks[threadId];
       localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
       renderBookmarks();
     }
     function toggleLike(threadId, btn) {
+      if (!LOGGED_IN_USER) {
+        window.location.href = 'signin.html';
+        return;
+      }
       likes[threadId] = !likes[threadId];
       localStorage.setItem('likes', JSON.stringify(likes));
       if (btn) btn.classList.toggle('liked', likes[threadId]);
     }
     function toggleRepost(threadId, btn) {
+      if (!LOGGED_IN_USER) {
+        window.location.href = 'signin.html';
+        return;
+      }
       reposts[threadId] = !reposts[threadId];
       localStorage.setItem('reposts', JSON.stringify(reposts));
       if (btn) btn.classList.toggle('reposted', reposts[threadId]);
@@ -178,6 +214,10 @@
       feed.querySelectorAll('.bookmark-btn').forEach(btn => {
         btn.onclick = function() {
           const threadId = btn.closest('.thread').dataset.threadId;
+          if (!LOGGED_IN_USER) {
+            window.location.href = 'signin.html';
+            return;
+          }
           toggleBookmark(threadId);
           btn.classList.toggle('bookmarked');
         };
@@ -185,12 +225,20 @@
       feed.querySelectorAll('.like-btn').forEach(btn => {
         btn.onclick = function() {
           const threadId = btn.closest('.thread').dataset.threadId;
+          if (!LOGGED_IN_USER) {
+            window.location.href = 'signin.html';
+            return;
+          }
           toggleLike(threadId, btn);
         };
       });
       feed.querySelectorAll('.repost-btn').forEach(btn => {
         btn.onclick = function() {
           const threadId = btn.closest('.thread').dataset.threadId;
+          if (!LOGGED_IN_USER) {
+            window.location.href = 'signin.html';
+            return;
+          }
           toggleRepost(threadId, btn);
           // Optionally: Add a "repost" to the user's feed
         };
@@ -262,6 +310,23 @@
       renderSuggestedUsers();
       renderSuggestedContent();
       loadThreads();
+
+      // Auth redirect for post form submit
+      const postForm = document.getElementById('post-form');
+      if (postForm) {
+        postForm.addEventListener('submit', function(e) {
+          if (!LOGGED_IN_USER) {
+            e.preventDefault();
+            window.location.href = 'signin.html';
+            return false;
+          }
+        });
+      }
+      // Auth redirect for must-login buttons
+      const loginBtn = document.getElementById('login-btn');
+      const signupBtn = document.getElementById('signup-btn');
+      if (loginBtn) loginBtn.onclick = function() { window.location.href = 'signin.html'; }
+      if (signupBtn) signupBtn.onclick = function() { window.location.href = 'signup.html'; }
     });
     // ...existing emoji picker, char count, media preview, search, trending hashtags, etc...
   </script>
