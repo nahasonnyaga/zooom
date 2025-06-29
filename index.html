@@ -8,6 +8,16 @@
   <link rel="stylesheet" href="css/feed.css">
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- PWA Manifest & Theme -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#3b82f6">
+  <!-- iOS support -->
+  <link rel="apple-touch-icon" href="assets/logo.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="#3b82f6">
+  <meta name="apple-mobile-web-app-title" content="Zooom">
+
   <style>
     /* Extra: Loader & new thread floating button for more value */
     .floating-new-thread-btn {
@@ -291,6 +301,18 @@
     }
     // Example usage:
     // document.querySelector('.thread-card .thread-media').innerHTML = renderThreadMedia(["img1.jpg"], ["vid1.mp4"]);
+  </script>
+  <!-- PWA Service Worker registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('sw.js').then(function(reg) {
+          console.log('ServiceWorker registered: ', reg);
+        }, function(err) {
+          console.log('ServiceWorker registration failed: ', err);
+        });
+      });
+    }
   </script>
 </body>
 </html>
