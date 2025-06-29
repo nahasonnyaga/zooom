@@ -1,7 +1,63 @@
 <div class="thread-actions">
   <button class="action-btn like-btn" title="Like">&#10084;</button>
-  <span class="like-count"></span>
+  <span class="like-count">0</span>
   <button class="action-btn retweet-btn" title="Retweet">&#128257;</button>
-  <span class="retweet-count"></span>
+  <span class="retweet-count">0</span>
   <button class="action-btn bookmark-btn" title="Bookmark">&#128278;</button>
 </div>
+<script>
+// Add simple interactivity for demo value
+document.addEventListener('DOMContentLoaded', function() {
+  // Like button logic
+  document.querySelectorAll('.like-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      let countSpan = btn.nextElementSibling;
+      let count = parseInt(countSpan.textContent, 10) || 0;
+      btn.classList.toggle('liked');
+      if (btn.classList.contains('liked')) {
+        count++;
+        btn.style.color = '#e11d48'; // Tailwind red-600
+      } else {
+        count = Math.max(0, count - 1);
+        btn.style.color = '';
+      }
+      countSpan.textContent = count;
+    });
+  });
+
+  // Retweet button logic
+  document.querySelectorAll('.retweet-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      let countSpan = btn.nextElementSibling;
+      let count = parseInt(countSpan.textContent, 10) || 0;
+      btn.classList.toggle('retweeted');
+      if (btn.classList.contains('retweeted')) {
+        count++;
+        btn.style.color = '#22d3ee'; // Tailwind cyan-400
+      } else {
+        count = Math.max(0, count - 1);
+        btn.style.color = '';
+      }
+      countSpan.textContent = count;
+    });
+  });
+
+  // Bookmark button logic
+  document.querySelectorAll('.bookmark-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      btn.classList.toggle('bookmarked');
+      if (btn.classList.contains('bookmarked')) {
+        btn.style.color = '#fbbf24'; // Tailwind yellow-400
+      } else {
+        btn.style.color = '';
+      }
+    });
+  });
+});
+</script>
+<style>
+/* Optional: visual feedback for liked/retweeted/bookmarked */
+.action-btn.liked { color: #e11d48 !important; }
+.action-btn.retweeted { color: #22d3ee !important; }
+.action-btn.bookmarked { color: #fbbf24 !important; }
+</style>
