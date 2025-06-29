@@ -1,22 +1,24 @@
 <nav class="navbar">
   <div class="navbar-left">
     <a href="index.html" class="navbar-logo">
+      <!-- If you want to use an icon for the logo instead of an image: -->
+      <!-- <i class="fa-solid fa-bolt" style="font-size:2rem;color:#fff;"></i> -->
       <img src="assets/logo.png" alt="Logo" style="height:2rem;width:2rem;border-radius:50%;object-fit:cover;" onerror="this.style.display='none'">
       <span class="navbar-title">Zooom</span>
     </a>
   </div>
   <div class="navbar-center">
-    <a href="index.html" class="navbar-link"><span class="navbar-icon">&#8962;</span> Feed</a>
-    <a href="profile.html" class="navbar-link"><span class="navbar-icon">&#128100;</span> Profile</a>
-    <a href="post.html" class="navbar-link new-thread-btn"><span class="navbar-icon">&#10010;</span> New Thread</a>
+    <a href="index.html" class="navbar-link"><i class="fa-solid fa-house navbar-icon"></i> Feed</a>
+    <a href="profile.html" class="navbar-link"><i class="fa-solid fa-user-circle navbar-icon"></i> Profile</a>
+    <a href="post.html" class="navbar-link new-thread-btn"><i class="fa-solid fa-circle-plus navbar-icon"></i> New Thread</a>
   </div>
   <div class="navbar-right">
     <button class="navbar-avatar" id="navbarUserBtn" title="Account">
       <img src="assets/avatar.png" alt="User" style="height:2rem;width:2rem;border-radius:50%;object-fit:cover;" onerror="this.src='assets/avatar.png'">
     </button>
     <div class="navbar-dropdown" id="navbarDropdown" style="display:none;">
-      <a href="profile.html">My Profile</a>
-      <a href="#" id="navbarLogoutBtn">Logout</a>
+      <a href="profile.html"><i class="fa-solid fa-user"></i> My Profile</a>
+      <a href="#" id="navbarLogoutBtn"><i class="fa-solid fa-sign-out-alt"></i> Logout</a>
     </div>
   </div>
 </nav>
