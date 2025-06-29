@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Settings - Zooom</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/auth.css" />
+  <script src="js/settings.js" defer></script>
+</head>
+<body>
+  <!-- Navbar -->
+  <div id="navbar"></div>
+  <main class="main-container">
+    <h2>Settings</h2>
+    <form id="settings-form">
+      <label for="display-name">Display Name:</label>
+      <input type="text" id="display-name" name="display-name" placeholder="Your Name" />
+
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" placeholder="you@email.com" disabled />
+
+      <label for="password">Change Password:</label>
+      <input type="password" id="password" name="password" placeholder="••••••••" />
+
+      <button type="submit" class="btn">Save Changes</button>
+    </form>
+    <div id="settings-msg"></div>
+  </main>
+  <script>
+    // Load navbar component
+    fetch('components/navbar.html').then(r => r.text()).then(html => {
+      document.getElementById('navbar').innerHTML = html;
+    });
+
+    // Placeholder: Implement settings update in js/settings.js
+    // Example: handleSettingsForm();
+  </script>
+</body>
+</html>
