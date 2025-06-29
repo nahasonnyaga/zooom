@@ -1,7 +1,6 @@
 <nav class="navbar threads-navbar">
   <div class="navbar-left">
     <a href="index.html" class="navbar-logo" title="Home">
-      <!-- Modern Threads-like icon with text -->
       <img src="assets/logo.png" alt="Zooom Logo" class="navbar-logo-img" onerror="this.style.display='none'">
       <span class="navbar-title">Zooom</span>
     </a>
@@ -26,17 +25,16 @@
     <a href="notifications.html" class="navbar-link" title="Notifications">
       <i class="fa-solid fa-bell navbar-icon"></i>
       <span class="nav-label">Alerts</span>
-      <span class="nav-alert-dot" id="navbarNotifDot" style="display:none"></span>
+      <span class="nav-alert-dot" id="navbarNotifDot"></span>
     </a>
     <a href="profile.html" class="navbar-link" title="Profile">
       <i class="fa-solid fa-user-circle navbar-icon"></i>
       <span class="nav-label">Profile</span>
     </a>
-    <!-- UI: More/Settings Dropdown -->
-    <div class="navbar-link navbar-more-dropdown" tabindex="0" title="More" style="position:relative;">
+    <div class="navbar-link navbar-more-dropdown" tabindex="0" title="More">
       <i class="fa-solid fa-ellipsis navbar-icon"></i>
       <span class="nav-label">More</span>
-      <div class="navbar-more-menu" style="display:none; position:absolute; top:120%; left:50%; transform:translateX(-50%); background:#fff; box-shadow:0 2px 12px #0002; border-radius:8px; min-width:170px; border:1px solid #ececec; z-index:999;">
+      <div class="navbar-more-menu">
         <a href="settings.html"><i class="fa-solid fa-gear"></i> Settings</a>
         <a href="security.html"><i class="fa-solid fa-shield-halved"></i> Security</a>
         <a href="privacy.html"><i class="fa-solid fa-user-shield"></i> Privacy</a>
@@ -50,7 +48,7 @@
     <button class="navbar-avatar" id="navbarUserBtn" title="Account">
       <img src="assets/avatar.png" alt="User" class="navbar-avatar-img" onerror="this.src='assets/avatar.png'">
     </button>
-    <div class="navbar-dropdown" id="navbarDropdown" style="display:none;">
+    <div class="navbar-dropdown" id="navbarDropdown">
       <div class="dropdown-profile">
         <img src="assets/avatar.png" alt="User" class="dropdown-avatar" onerror="this.src='assets/avatar.png'">
         <div class="dropdown-user-info">
@@ -70,8 +68,8 @@
   </div>
 </nav>
 <script>
-// Navbar interactivity (dropdown, alerts, mimic Threads)
 document.addEventListener('DOMContentLoaded', function () {
+  // Navbar User Dropdown
   const userBtn = document.getElementById('navbarUserBtn');
   const dropdown = document.getElementById('navbarDropdown');
   let dropdownOpen = false;
@@ -93,25 +91,7 @@ document.addEventListener('DOMContentLoaded', function () {
     e.stopPropagation();
   });
 
-  // Show alert dot if there are notifications (demo)
-  if (localStorage.getItem('new_notifications') === '1') {
-    document.getElementById('navbarNotifDot').style.display = 'inline-block';
-  }
-
-  // Optionally set the username in the dropdown (if available in localStorage)
-  const username = localStorage.getItem('username');
-  if (username) {
-    document.getElementById('dropdownUsername').textContent = '@' + username;
-  }
-
-  // Logout logic (demo)
-  document.getElementById('navbarLogoutBtn').addEventListener('click', function (e) {
-    e.preventDefault();
-    localStorage.clear();
-    window.location.href = 'login.html';
-  });
-
-  // More Dropdown logic
+  // Navbar More Dropdown
   const navbarMore = document.querySelector('.navbar-more-dropdown');
   const navbarMoreMenu = navbarMore ? navbarMore.querySelector('.navbar-more-menu') : null;
   if (navbarMore && navbarMoreMenu) {
@@ -121,7 +101,6 @@ document.addEventListener('DOMContentLoaded', function () {
       navbarMoreMenu.style.display = isOpen ? 'none' : 'block';
       navbarMore.classList.toggle('active', !isOpen);
     });
-    // Accessibility: hide on blur
     navbarMore.addEventListener('blur', function () {
       setTimeout(() => {
         navbarMoreMenu.style.display = 'none';
@@ -132,10 +111,27 @@ document.addEventListener('DOMContentLoaded', function () {
       e.stopPropagation();
     });
   }
+
+  // Show alert dot if there are notifications
+  if (localStorage.getItem('new_notifications') === '1') {
+    document.getElementById('navbarNotifDot').style.display = 'inline-block';
+  }
+
+  // Set username in dropdown if available
+  const username = localStorage.getItem('username');
+  if (username) {
+    document.getElementById('dropdownUsername').textContent = '@' + username;
+  }
+
+  // Logout logic
+  document.getElementById('navbarLogoutBtn').addEventListener('click', function (e) {
+    e.preventDefault();
+    localStorage.clear();
+    window.location.href = 'login.html';
+  });
 });
 </script>
 <style>
-/* Enhanced Threads-inspired Navbar Styles */
 .navbar.threads-navbar {
   background: #fff;
   border-bottom: 1.5px solid #ececec;
@@ -179,7 +175,6 @@ document.addEventListener('DOMContentLoaded', function () {
   margin-top: 1px;
 }
 
-/* Center links, Threads-like spacing */
 .navbar-center {
   display: flex;
   align-items: center;
@@ -247,7 +242,6 @@ document.addEventListener('DOMContentLoaded', function () {
   color: #fff;
 }
 
-/* Right section: Avatar and Dropdown */
 .navbar-right {
   display: flex;
   align-items: center;
@@ -273,7 +267,6 @@ document.addEventListener('DOMContentLoaded', function () {
   background: #f4f6fa;
 }
 
-/* Dropdown */
 .navbar-dropdown {
   position: absolute;
   top: 2.4rem;
@@ -342,11 +335,11 @@ document.addEventListener('DOMContentLoaded', function () {
   color: #3b82f6;
 }
 
-/* More Dropdown styles */
 .navbar-more-dropdown {
   position: relative;
   outline: none;
 }
+
 .navbar-more-menu {
   margin-top: 4px;
   display: none;
@@ -356,7 +349,13 @@ document.addEventListener('DOMContentLoaded', function () {
   border: 1px solid #ececec;
   box-shadow: 0 3px 16px #0002;
   padding: 0.32rem 0.2rem;
+  position: absolute;
+  top: 120%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999;
 }
+
 .navbar-more-menu a {
   display: flex;
   align-items: center;
@@ -368,15 +367,16 @@ document.addEventListener('DOMContentLoaded', function () {
   font-size: 1.02rem;
   transition: background 0.13s, color 0.13s;
 }
+
 .navbar-more-menu a:hover {
   background: #f4f5fa;
   color: #3b82f6;
 }
+
 .navbar-more-dropdown.active .navbar-more-menu {
   display: block;
 }
 
-/* Responsive: hide text labels on very small screens */
 @media (max-width: 600px) {
   .navbar-center {
     gap: 0.5rem;
@@ -400,7 +400,6 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 }
 
-/* Make navbar sticky on top */
 @media (max-width: 900px) {
   .navbar.threads-navbar {
     padding-left: 0.45rem;
