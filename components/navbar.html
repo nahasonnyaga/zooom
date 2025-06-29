@@ -19,7 +19,7 @@
       <span class="nav-label">Explore Users</span>
     </a>
     <!-- Post/Thread button: redirect to auth.html if not logged in -->
-    <a href="#" class="navbar-link new-thread-btn" title="New Thread" id="newThreadNavBtn">
+    <a href="#" class="navbar-link thread-btn" title="Thread" id="threadNavBtn">
       <i class="fa-solid fa-circle-plus navbar-icon"></i>
       <span class="nav-label">Post</span>
     </a>
@@ -102,10 +102,10 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // New Thread/Post button logic
-  const newThreadBtn = document.getElementById('newThreadNavBtn');
-  if (newThreadBtn) {
-    newThreadBtn.addEventListener('click', async function (e) {
+  // Thread/Post button logic
+  const threadBtn = document.getElementById('threadNavBtn');
+  if (threadBtn) {
+    threadBtn.addEventListener('click', async function (e) {
       e.preventDefault();
       // Wait for Supabase to be available
       if (!window.supabase) {
