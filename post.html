@@ -31,6 +31,8 @@
     <h1>Post a New Thread</h1>
     <form id="post-form">
       <textarea id="content" rows="5" placeholder="What's happening?" maxlength="280" required></textarea>
+      <!-- Add file input for images and videos, accept up to 3 files -->
+      <input type="file" id="media" accept="image/*,video/*" multiple style="display:block;margin-top:10px;" />
       <button type="submit">Post</button>
       <div id="post-error"></div>
     </form>
@@ -38,5 +40,44 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="js/supabase.js"></script>
   <script src="js/post.js"></script>
+  <script>
+    // Allow up to 3 files, each <= 10MB and must be image/video
+    document.getElementById('post-form').addEventListener('submit', async function(e) {
+      const mediaInput = document.getElementById('media');
+      const errorDiv = document.getElementById('post-error');
+      errorDiv.textContent = '';
+      if (mediaInput && mediaInput.files && mediaInput.files.length > 0) {
+        if (mediaInput.files.length > 3) {
+          errorDiv.textContent = 'You can only upload up to 3 files.';
+          e.preventDefault();
+          return;
+        }
+        for (let i = 0; i < mediaInput.files.length; i++) {
+          const file = mediaInput.files[i];
+          if (!file.type.match(/^image\/|^video\//)) {
+            errorDiv.textContent = 'Only image and video files are allowed.';
+            e.preventDefault();
+            return;
+          }
+          if (file.size > 10 * 1024 * 1024) {
+            errorDiv.textContent = 'Each file must be 10MB or less.';
+            e.preventDefault();
+            return;
+          }
+          // Optional: Upload each file to Supabase Storage (uncomment and configure as needed)
+          /*
+          const { data, error } = await supabase.storage
+            .from('YOUR_BUCKET_NAME')
+            .upload('media/' + Date.now() + '-' + file.name, file);
+          if (error) {
+            errorDiv.textContent = 'Upload failed: ' + error.message;
+            e.preventDefault();
+            return;
+          }
+          */
+        }
+      }
+    });
+  </script>
 </body>
 </html>
