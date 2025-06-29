@@ -2,23 +2,223 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Thread - Threads 100</title>
+  <title>New Thread - Threads 100</title>
   <link rel="stylesheet" href="css/main.css">
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      width: 100vw;
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    main {
+      width: 100vw;
+      max-width: 100vw;
+      box-sizing: border-box;
+      padding: 0 8px;
+    }
+    #post-form {
+      width: 100%;
+      max-width: 100vw;
+      margin: 0;
+      box-sizing: border-box;
+    }
+    #content {
+      width: 100%;
+      min-height: 150px;
+      font-size: 1.1em;
+      padding: 14px;
+      box-sizing: border-box;
+      resize: vertical;
+      display: block;
+    }
+    #post-form button {
+      font-size: 1.1em;
+      padding: 10px 28px;
+      margin-top: 10px;
+    }
+    #must-login {
+      padding: 18px;
+      background: #ffefef;
+      color: #a33;
+      border: 1px solid #faa;
+      border-radius: 5px;
+      margin-bottom: 24px;
+      text-align: center;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .login-btn {
+      background: #0057e7;
+      color: white;
+      border: none;
+      padding: 8px 24px;
+      font-size: 1em;
+      margin: 0 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    @media (min-width: 601px) {
+      main {
+        max-width: 900px;
+        margin: 0 auto;
+      }
+      #post-form {
+        max-width: 600px;
+        margin: 0 auto;
+      }
+      #must-login {
+        max-width: 600px;
+      }
+    }
+  </style>
 </head>
 <body>
   <div id="navbar"></div>
   <main>
-    <div id="thread-container"></div>
-    <h2>Replies</h2>
-    <section id="replies-list"></section>
-    <form id="reply-form">
-      <textarea id="reply-content" rows="3" placeholder="Reply..." maxlength="280" required></textarea>
-      <button type="submit">Reply</button>
-      <div id="reply-error"></div>
+    <h1>Post a New Thread</h1>
+    <div id="must-login" style="display:none;">
+      <span>You must be logged in to post a new thread.</span><br/>
+      <button class="login-btn" id="login-btn">Log In</button>
+      <span>or</span>
+      <button class="login-btn" id="signup-btn">Create Account</button>
+    </div>
+    <form id="post-form" style="display:none;">
+      <textarea id="content" rows="5" placeholder="What's happening?" maxlength="280" required></textarea>
+      <!-- Add file input for images and videos, accept up to 3 files -->
+      <input type="file" id="media" accept="image/*,video/*" multiple style="display:block;margin-top:10px;" />
+      <button type="submit">Post</button>
+      <div id="post-error"></div>
     </form>
+    <!-- Thread feed inserted below the post creation box as requested -->
+    <div id="thread-feed" style="margin-top: 32px;"></div>
   </main>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="js/supabase.js"></script>
-  <script src="js/thread.js"></script>
+  <script src="js/post.js"></script>
+  <script>
+    // --- AUTH CHECK AND FORM DISPLAY ---
+    async function checkAuthAndToggleForm() {
+      // Assumes "supabase" client is initialized in js/supabase.js
+      let user = null;
+      try {
+        const { data: { user: loggedInUser } } = await supabase.auth.getUser();
+        user = loggedInUser;
+      } catch (e) {
+        // fallback just in case
+        user = null;
+      }
+      // Show/hide form and must-login message
+      if (user) {
+        document.getElementById('must-login').style.display = 'none';
+        document.getElementById('post-form').style.display = '';
+      } else {
+        document.getElementById('must-login').style.display = '';
+        document.getElementById('post-form').style.display = 'none';
+      }
+    }
+
+    // --- LOGIN/SIGN-UP BUTTON HANDLERS ---
+    document.addEventListener('DOMContentLoaded', function() {
+      checkAuthAndToggleForm();
+      // Login button
+      const loginBtn = document.getElementById('login-btn');
+      if (loginBtn) {
+        loginBtn.addEventListener('click', () => {
+          // redirect to your login page or open modal
+          window.location.href = 'login.html'; // Change as needed
+        });
+      }
+      // Sign-up button
+      const signupBtn = document.getElementById('signup-btn');
+      if (signupBtn) {
+        signupBtn.addEventListener('click', () => {
+          // redirect to your signup page or open modal
+          window.location.href = 'signup.html'; // Change as needed
+        });
+      }
+    });
+
+    // Allow up to 3 files, each <= 10MB and must be image/video
+    document.getElementById('post-form').addEventListener('submit', async function(e) {
+      const mediaInput = document.getElementById('media');
+      const errorDiv = document.getElementById('post-error');
+      errorDiv.textContent = '';
+      if (mediaInput && mediaInput.files && mediaInput.files.length > 0) {
+        if (mediaInput.files.length > 3) {
+          errorDiv.textContent = 'You can only upload up to 3 files.';
+          e.preventDefault();
+          return;
+        }
+        for (let i = 0; i < mediaInput.files.length; i++) {
+          const file = mediaInput.files[i];
+          if (!file.type.match(/^image\/|^video\//)) {
+            errorDiv.textContent = 'Only image and video files are allowed.';
+            e.preventDefault();
+            return;
+          }
+          if (file.size > 10 * 1024 * 1024) {
+            errorDiv.textContent = 'Each file must be 10MB or less.';
+            e.preventDefault();
+            return;
+          }
+          // Optional: Upload each file to Supabase Storage (uncomment and configure as needed)
+          /*
+          const { data, error } = await supabase.storage
+            .from('YOUR_BUCKET_NAME')
+            .upload('media/' + Date.now() + '-' + file.name, file);
+          if (error) {
+            errorDiv.textContent = 'Upload failed: ' + error.message;
+            e.preventDefault();
+            return;
+          }
+          */
+        }
+      }
+    });
+
+    // Thread feed logic inserted as requested
+    async function loadThreads() {
+      const feed = document.getElementById('thread-feed');
+      if (!feed) return;
+      feed.innerHTML = 'Loading threads...';
+
+      // Example Supabase fetch - adjust "threads" and "content" to match your table/field names:
+      if (typeof supabase === "undefined") {
+        feed.innerHTML = 'Thread loading requires Supabase setup.';
+        return;
+      }
+      const { data: threads, error } = await supabase
+        .from('threads')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(20);
+
+      if (error) {
+        feed.innerHTML = 'Failed to load threads.';
+        return;
+      }
+
+      if (!threads || !threads.length) {
+        feed.innerHTML = 'No threads yet. Be the first to post!';
+        return;
+      }
+
+      feed.innerHTML = threads.map(t =>
+        `<div class="thread" style="margin-bottom:16px;padding:12px;border:1px solid #eee;border-radius:6px;">
+          <p>${t.content}</p>
+          <small>${new Date(t.created_at).toLocaleString()}</small>
+        </div>`
+      ).join('');
+    }
+    document.addEventListener('DOMContentLoaded', loadThreads);
+  </script>
 </body>
 </html>
