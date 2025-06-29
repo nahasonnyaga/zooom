@@ -22,6 +22,10 @@
       height: 180px;
       background: linear-gradient(120deg, #1da1f2 40%, #d3eafd 100%);
       position: relative;
+      cursor: pointer;
+    }
+    .profile-banner.uploading {
+      opacity: 0.6;
     }
     .profile-avatar {
       width: 132px;
@@ -34,6 +38,7 @@
       object-fit: cover;
       background: #eee;
       box-shadow: 0 0 0 2px #1da1f2;
+      cursor: pointer;
     }
     .profile-header {
       padding: 80px 30px 15px 185px;
@@ -84,6 +89,17 @@
     .profile-info-row i {
       margin-right: 2px;
       color: #1da1f2;
+    }
+    .profile-links-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .profile-link-block {
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
     .profile-follow-row {
       font-size: 1em;
@@ -161,13 +177,141 @@
     .profile-threads {
       min-height: 60px;
     }
+    .profile-tabs {
+      display: flex;
+      gap: 18px;
+      border-bottom: 1.5px solid #eee;
+      margin: 0 35px 8px 35px;
+    }
+    .profile-tab {
+      background: none;
+      border: none;
+      color: #444;
+      font-size: 1.12em;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 9px 0;
+      transition: color 0.18s;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1.5px;
+      outline: none;
+    }
+    .profile-tab.active {
+      color: #1da1f2;
+      border-bottom: 2.2px solid #1da1f2;
+    }
+    .profile-images-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 10px;
+      margin-top: 4px;
+    }
+    .profile-img-thumb {
+      width: 34px;
+      height: 34px;
+      border-radius: 7px;
+      object-fit: cover;
+      border: 1.7px solid #eee;
+      cursor: pointer;
+      background: #fafafa;
+    }
+    /* Modal styling for editing profile */
+    .modal-bg {
+      position: fixed;
+      z-index: 1000;
+      left: 0; top: 0; width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.34);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal {
+      background: #fff;
+      border-radius: 15px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.13);
+      min-width: 320px;
+      max-width: 90vw;
+      padding: 27px 24px 17px 24px;
+      position: relative;
+    }
+    .modal-close-btn {
+      position: absolute;
+      top: 12px; right: 14px;
+      background: none;
+      border: none;
+      font-size: 1.6em;
+      color: #1da1f2;
+      cursor: pointer;
+    }
+    .modal label {
+      display: block;
+      margin-top: 11px;
+      font-weight: 600;
+      margin-bottom: 3px;
+    }
+    .modal input[type="text"], .modal textarea {
+      width: 100%;
+      padding: 8px 6px;
+      border: 1px solid #ccc;
+      border-radius: 7px;
+      margin-bottom: 7px;
+      font-size: 1em;
+    }
+    .modal textarea {
+      min-height: 55px;
+      resize: vertical;
+    }
+    .modal .profile-img-upload-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .modal .profile-img-upload-label {
+      font-size: 1.06em;
+      font-weight: 500;
+      cursor: pointer;
+      color: #1da1f2;
+    }
+    .modal .profile-img-upload-label:hover {
+      text-decoration: underline;
+    }
+    .modal .profile-link-inputs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 7px;
+    }
+    .modal .profile-link-inputs input[type="text"] {
+      width: 48%;
+    }
+    .modal .save-btn {
+      background: #1da1f2;
+      color: #fff;
+      border-radius: 999px;
+      border: none;
+      padding: 8px 22px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+      font-size: 1.1em;
+      float: right;
+    }
+    .modal .save-btn:hover {
+      background: #1a8cd8;
+    }
   </style>
 </head>
 <body>
   <div id="navbar"></div>
   <main>
     <div class="profile-container">
+      <form id="profile-banner-form" style="display:none">
+        <input type="file" id="banner-upload-input" accept="image/*">
+      </form>
       <div class="profile-banner" id="profile-banner"></div>
+      <form id="profile-avatar-form" style="display:none">
+        <input type="file" id="avatar-upload-input" accept="image/*">
+      </form>
       <img id="profile-avatar" class="profile-avatar" src="img/default-avatar.png" alt="Profile Avatar">
       <div class="profile-header">
         <button class="edit-profile-btn" id="edit-profile-btn"><i class="fa fa-pen"></i> Edit Profile</button>
@@ -178,26 +322,61 @@
           <span><i class="fa fa-envelope"></i> <span id="profile-email">email@example.com</span></span>
           <span><i class="fa fa-calendar"></i> Joined <span id="profile-joined">June 2024</span></span>
           <span id="profile-location-row" style="display:none"><i class="fa fa-location-dot"></i> <span id="profile-location"></span></span>
-          <span id="profile-link-row" style="display:none"><i class="fa fa-link"></i> <a id="profile-link" href="#" target="_blank"></a></span>
         </div>
+        <div class="profile-links-row" id="profile-links-row" style="display:none"></div>
         <div class="profile-follow-row">
           <span id="profile-following">0</span> Following
           <span id="profile-followers" style="margin-left:0;">0</span> Followers
         </div>
-        <!-- Add stats row for likes, threads, reposts -->
         <div class="profile-stats-row">
           <span><i class="fa fa-heart"></i> <span id="profile-likes">0</span> Likes</span>
           <span><i class="fa fa-comment-dots"></i> <span id="profile-threads-count">0</span> Threads</span>
           <span><i class="fa fa-retweet"></i> <span id="profile-reposts">0</span> Reposts</span>
+          <span><i class="fa fa-bookmark"></i> <span id="profile-bookmarks">0</span> Bookmarks</span>
         </div>
+        <div class="profile-images-row" id="profile-images-row"></div>
       </div>
       <div class="profile-actions">
         <button id="logout-btn"><i class="fa fa-sign-out-alt"></i> Log Out</button>
       </div>
-      <h3 style="margin-left:35px;margin-top:12px;">Your Threads</h3>
+      <div class="profile-tabs" id="profile-tabs">
+        <button class="profile-tab active" data-tab="threads">Threads</button>
+        <button class="profile-tab" data-tab="likes">Likes</button>
+        <button class="profile-tab" data-tab="reposts">Reposts</button>
+        <button class="profile-tab" data-tab="bookmarks">Bookmarked</button>
+      </div>
       <section id="profile-threads" class="profile-threads"></section>
     </div>
   </main>
+  <!-- Modal for Edit Profile -->
+  <div id="edit-profile-modal-bg" class="modal-bg" style="display:none;">
+    <div class="modal" id="edit-profile-modal">
+      <button class="modal-close-btn" id="close-edit-profile-modal"><i class="fa fa-times"></i></button>
+      <h2>Edit Profile</h2>
+      <form id="edit-profile-form">
+        <div class="profile-img-upload-row">
+          <label for="edit-avatar-upload" class="profile-img-upload-label"><i class="fa fa-image"></i> Change Avatar</label>
+          <input type="file" id="edit-avatar-upload" accept="image/*" style="display:none;">
+          <label for="edit-banner-upload" class="profile-img-upload-label"><i class="fa fa-image"></i> Change Banner</label>
+          <input type="file" id="edit-banner-upload" accept="image/*" style="display:none;">
+        </div>
+        <label for="edit-displayname">Display Name</label>
+        <input type="text" id="edit-displayname" maxlength="40">
+        <label for="edit-username">Username</label>
+        <input type="text" id="edit-username" maxlength="30" disabled>
+        <label for="edit-bio">Bio</label>
+        <textarea id="edit-bio" maxlength="180"></textarea>
+        <label for="edit-location">Location</label>
+        <input type="text" id="edit-location" maxlength="50">
+        <label>Links <span style="color:#aaa">(up to 2)</span></label>
+        <div class="profile-link-inputs">
+          <input type="text" id="edit-link1" placeholder="https://example.com" maxlength="90">
+          <input type="text" id="edit-link2" placeholder="https://another.com" maxlength="90">
+        </div>
+        <button class="save-btn" type="submit">Save</button>
+      </form>
+    </div>
+  </div>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="js/supabase.js"></script>
   <script src="js/profile.js"></script>
