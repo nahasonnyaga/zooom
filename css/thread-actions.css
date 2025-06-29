@@ -4,3 +4,55 @@
   gap: 0.7rem;
   margin-top: 0.5rem;
 }
+
+.thread-actions .action-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.25rem;
+  transition: color 0.2s;
+  padding: 0.3rem;
+  border-radius: 50%;
+}
+
+.thread-actions .action-btn:active,
+.thread-actions .action-btn:focus {
+  outline: none;
+  background: #f0f4ff;
+}
+
+.thread-actions .like-btn {
+  color: #d00;
+}
+
+.thread-actions .retweet-btn {
+  color: #34d399;
+}
+
+.thread-actions .bookmark-btn {
+  color: #3b82f6;
+}
+
+.thread-actions .like-count,
+.thread-actions .retweet-count {
+  min-width: 1.5em;
+  text-align: center;
+  font-size: 1rem;
+  color: #555;
+  font-weight: 500;
+}
+
+/* Responsive for mobile */
+@media (max-width: 500px) {
+  .thread-actions {
+    gap: 0.3rem;
+  }
+  .thread-actions .action-btn {
+    font-size: 1.1rem;
+    padding: 0.15rem;
+  }
+  .thread-actions .like-count,
+  .thread-actions .retweet-count {
+    font-size: 0.95rem;
+  }
+}
