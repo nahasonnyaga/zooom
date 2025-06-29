@@ -5,12 +5,8 @@
   <title>Sign Up - Threads 100</title>
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/auth.css">
-  <!-- Remove the large <style> block to defer to css/main.css and css/auth.css for styling, as per project structure -->
 </head>
 <body style="background: #f7f7f7; min-height: 100vh;">
-  <!-- Optional: Add navbar if you want a consistent navigation (uncomment below if desired) -->
-  <!-- <div id="navbar"></div> -->
-
   <main>
     <h1>Create Account</h1>
     <form id="signup-form">
@@ -24,16 +20,14 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="js/supabase.js"></script>
   <script>
-    // (Optional) Load navbar dynamically if you want to use the shared navbar component
-    // fetch('components/navbar.html').then(r => r.text()).then(html => { document.getElementById('navbar').innerHTML = html; });
-
     document.getElementById('signup-form').onsubmit = async function(e) {
       e.preventDefault();
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
       const errorDiv = document.getElementById('signup-error');
       errorDiv.textContent = '';
-      const { error } = await supabase.auth.signUp({ email, password });
+      // Use your exported helper
+      const { error } = await window.supabaseApi.signUp(email, password);
       if (error) {
         errorDiv.textContent = error.message;
       } else {
