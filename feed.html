@@ -4,11 +4,9 @@
   <meta charset="UTF-8">
   <title>Threads 100 Clone - Feed</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Main CSS -->
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/feed.css">
   <style>
-    /* Inline fallback for page-specific tweaks */
     .notification {
       display: none;
       position: fixed;
@@ -30,85 +28,55 @@
   </style>
 </head>
 <body>
-  <!-- Login status (handled by JS) -->
   <div class="login-status" id="loginStatus">
-    <span id="loginText">Not logged in</span>
-    <button id="loginBtn" onclick="toggleLogin()">Login</button>
+    <span id="loginText">Checking login...</span>
+    <button id="loginBtn" style="display:none;" onclick="toggleLogin()">Logout</button>
   </div>
-
-  <!-- Navbar include -->
   <div id="navbar-container"></div>
-
-  <!-- Notification (for UX feedback) -->
   <div id="notification" class="notification" role="alert" aria-live="polite"></div>
-
   <main class="feed" aria-label="Threads feed">
-    <!-- Threads will be rendered here -->
     <div id="feed-loading" style="text-align:center;color:#888;margin:2rem 0;font-size:1.2rem;">
       Loading feed...
     </div>
     <div id="feed-list"></div>
   </main>
-
   <script src="js/supabase.js"></script>
-  <script src="js/feed.js"></script>
   <script>
-    // Navbar load (uses the component system)
+    // Navbar load
     fetch('components/navbar.html')
       .then(r => r.text())
-      .then(html => {
-        document.getElementById('navbar-container').innerHTML = html;
-      });
+      .then(html => document.getElementById('navbar-container').innerHTML = html);
 
-    // Login logic (shared with other pages)
-    let loggedIn = false;
-    let username = '';
+    let currentUser = null;
 
-    function getLoginState() {
-      const user = localStorage.getItem('threadsUser');
-      if (user) {
-        loggedIn = true;
-        username = user;
-      } else {
-        loggedIn = false;
-        username = '';
-      }
-    }
-
-    function updateLoginUI() {
+    // Auth UI
+    async function updateLoginUI() {
+      currentUser = await window.supabaseApi.getUser();
       const loginText = document.getElementById('loginText');
       const loginBtn = document.getElementById('loginBtn');
-      if (loggedIn) {
+      if (currentUser) {
+        // Optionally fetch username from profile
+        let username = currentUser.user_metadata?.username || currentUser.email;
         loginText.innerHTML = `<span class="logged-in">Logged in as <b>${username}</b></span>`;
+        loginBtn.style.display = '';
         loginBtn.textContent = 'Logout';
       } else {
         loginText.textContent = 'Not logged in';
+        loginBtn.style.display = '';
         loginBtn.textContent = 'Login';
       }
     }
 
-    function toggleLogin() {
-      if (!loggedIn) {
+    async function toggleLogin() {
+      if (!currentUser) {
         window.location.href = 'signin.html';
       } else {
-        localStorage.removeItem('threadsUser');
-        loggedIn = false;
-        username = '';
-        updateLoginUI();
+        await window.supabaseApi.signOut();
         showNotification('Logged out successfully.');
         setTimeout(() => window.location.reload(), 600);
       }
     }
 
-    function requireLogin(redirectTo = 'signin.html') {
-      if (!loggedIn) {
-        window.location.href = redirectTo;
-        return false;
-      }
-      return true;
-    }
-
-    // Notification helper
     function showNotification(msg, timeout = 2200) {
       const notif = document.getElementById('notification');
       notif.textContent = msg;
@@ -116,74 +84,50 @@
       setTimeout(() => notif.classList.remove('active'), timeout);
     }
 
-    // On page load:
-    getLoginState();
-    updateLoginUI();
+    // Auth check and UI update
+    (async () => {
+      await updateLoginUI();
+      if (!currentUser) {
+        window.location.href = 'signin.html';
+        return;
+      }
+      loadFeed();
+    })();
 
-    // Redirect if not logged in
-    if (!loggedIn) {
-      window.location.href = 'signin.html';
-    }
-
-    // Feed logic: Fetch threads and render (Supabase version)
-    document.addEventListener('DOMContentLoaded', async () => {
-      // Wait for login check
-      if (!loggedIn) return;
-
+    // Feed logic using supabaseApi
+    async function loadFeed() {
       const feedList = document.getElementById('feed-list');
       const feedLoading = document.getElementById('feed-loading');
+      feedLoading.style.display = '';
+      feedList.innerHTML = '';
 
-      // Get threads from Supabase
-      let threads = [];
-      try {
-        // Requires js/supabase.js to be configured!
-        const { data, error } = await supabase
-          .from('threads')
-          .select(`
-            id, content, created_at, user_id,
-            user:profiles(username)
-          `)
-          .order('created_at', { ascending: false })
-          .limit(15);
-
-        if (error) throw error;
-        threads = data || [];
-      } catch (err) {
+      let { data: threads, error } = await window.supabaseApi.fetchThreads();
+      if (error) {
         feedLoading.textContent = 'Failed to load feed. Please reload.';
         showNotification('Error loading feed.');
         return;
       }
-
-      feedLoading.style.display = 'none';
-      if (!threads.length) {
+      if (!threads || !threads.length) {
+        feedLoading.style.display = 'none';
         feedList.innerHTML = '<div style="color:#888;text-align:center;margin:2.5rem 0;">No threads yet. Be the first to post!</div>';
         return;
       }
+      feedLoading.style.display = 'none';
 
-      // Render each thread using the component
       for (const thread of threads) {
         await renderThread(thread, feedList);
       }
-    });
+    }
 
-    // Helper: Render a thread (using thread-card.html and thread-actions.html)
     async function renderThread(thread, feedList) {
-      // Get user name
-      let userDisplay = thread.user?.username || thread.user_id?.substring(0, 7) || 'user';
-      // Get replies for this thread
-      let replies = [];
-      try {
-        const { data, error } = await supabase
-          .from('replies')
-          .select(`
-            id, content, created_at, user_id,
-            user:profiles(username)
-          `)
-          .eq('thread_id', thread.id)
-          .order('created_at', { ascending: true });
+      // Get username from joined user or fallback to ID/email
+      let userDisplay = thread.user?.username || thread.user?.email || thread.user_id?.substring(0, 7) || 'user';
 
-        if (!error && data) replies = data;
-      } catch {}
+      // Get replies for this thread (expand if you want full reply data)
+      let replies = [];
+      if (thread.replies && Array.isArray(thread.replies)) {
+        replies = thread.replies;
+      }
 
       // Load components
       const [threadCardHTML, replyCardHTML, threadActionsHTML] = await Promise.all([
@@ -201,28 +145,25 @@
       // Thread content
       threadDiv.innerHTML = threadCardHTML
         .replace('<!-- thread content -->', escapeHtml(thread.content))
-        .replace('<!-- timestamp -->',
-          `Posted by ${escapeHtml(userDisplay)} • ${getRelativeTime(thread.created_at)}`);
+        .replace('<!-- timestamp -->', `Posted by ${escapeHtml(userDisplay)} • ${getRelativeTime(thread.created_at)}`);
 
       // Actions (likes, etc)
       const actionsDiv = document.createElement('div');
       actionsDiv.innerHTML = threadActionsHTML;
-      // Optionally: Set like/retweet/bookmark counts here with Supabase fields
 
       // Replies section
       const replySection = document.createElement('div');
       replySection.className = 'reply-section';
       replySection.setAttribute('aria-label', 'Replies');
       for (const reply of replies) {
-        let replyUser = reply.user?.username || reply.user_id?.substring(0, 7) || 'user';
+        let replyUser = reply.user?.username || reply.user?.email || reply.user_id?.substring(0, 7) || 'user';
         const replyDiv = document.createElement('div');
         replyDiv.className = 'reply-card';
         replyDiv.tabIndex = 0;
         replyDiv.setAttribute('aria-label', `Reply by ${replyUser}`);
         replyDiv.innerHTML = replyCardHTML
           .replace('<!-- reply content -->', escapeHtml(reply.content))
-          .replace('<!-- timestamp -->',
-            `${escapeHtml(replyUser)} • ${getRelativeTime(reply.created_at)}`);
+          .replace('<!-- timestamp -->', `${escapeHtml(replyUser)} • ${getRelativeTime(reply.created_at)}`);
         replySection.appendChild(replyDiv);
       }
 
@@ -236,7 +177,6 @@
       `;
       commentForm.onsubmit = (event) => addReply(event, thread.id, replySection);
 
-      // Compose
       threadDiv.appendChild(actionsDiv.firstElementChild);
       threadDiv.appendChild(replySection);
       threadDiv.appendChild(commentForm);
@@ -244,44 +184,33 @@
       feedList.appendChild(threadDiv);
     }
 
-    // Add reply (to Supabase)
     async function addReply(event, threadId, replySection) {
       event.preventDefault();
-      if (!requireLogin()) return false;
+      if (!currentUser) {
+        window.location.href = 'signin.html';
+        return false;
+      }
       const textarea = event.target.querySelector('textarea');
       const replyText = textarea.value.trim();
       if (!replyText) return false;
 
       // Save to Supabase
-      try {
-        const user_id = localStorage.getItem('threadsUserId');
-        if (!user_id) throw new Error('Missing user ID');
-        const { data, error } = await supabase
-          .from('replies')
-          .insert([
-            {
-              thread_id: threadId,
-              content: replyText,
-              user_id,
-            }
-          ]);
-        if (error) throw error;
+      const { error } = await window.supabaseApi.replyToThread(threadId, replyText);
+      if (!error) {
         showNotification('Reply posted!');
         setTimeout(() => window.location.reload(), 700);
-      } catch (err) {
+      } else {
         showNotification('Failed to post reply.');
       }
       return false;
     }
 
-    // Escape HTML utility
     function escapeHtml(text) {
       var div = document.createElement('div');
       div.textContent = text;
       return div.innerHTML;
     }
 
-    // Relative time utility
     function getRelativeTime(dateString) {
       const now = new Date();
       const date = new Date(dateString);
@@ -292,10 +221,13 @@
       return date.toLocaleDateString();
     }
 
-    // Like/Retweet/Bookmark actions (basic UI toggle, demo - can be extended)
+    // Demo action buttons
     document.addEventListener('click', function(event) {
       if (event.target.classList.contains('action-btn')) {
-        if (!requireLogin()) return;
+        if (!currentUser) {
+          window.location.href = 'signin.html';
+          return;
+        }
         if (event.target.classList.contains('like-btn')) {
           event.target.classList.toggle('liked');
         } else if (event.target.classList.contains('retweet-btn')) {
