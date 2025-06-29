@@ -1,0 +1,178 @@
+Here are **Sign In (login.html)**, **Reset Password (password-reset.html)**, and **Sign Up (signup.html)** pages, styled and structured to match your existing codebase and fully compatible with your `supabase.js`.
+
+---
+
+### 1. Sign In Page (`login.html`)
+
+```html name=login.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sign In - Zooom</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/auth.css">
+</head>
+<body style="background: #f7f7f7; min-height:100vh;">
+  <div id="navbar"></div>
+  <main>
+    <form id="login-form" autocomplete="on">
+      <h1 style="text-align:center;margin-bottom:1.2rem;">Sign In</h1>
+      <input type="email" id="email" placeholder="Email" required autocomplete="username">
+      <input type="password" id="password" placeholder="Password" required autocomplete="current-password">
+      <button type="submit">Sign In</button>
+      <div id="login-error" style="color:#d00;margin-top:10px;text-align:center;"></div>
+      <a href="password-reset.html" class="form-link" style="margin-top:0.8em;">Forgot password?</a>
+    </form>
+    <div class="form-link">Don't have an account? <a href="signup.html">Sign Up</a></div>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="js/supabase.js"></script>
+  <script>
+    // Load navbar
+    fetch('components/navbar.html').then(res => res.text()).then(html => {
+      if (document.getElementById('navbar')) document.getElementById('navbar').innerHTML = html;
+    });
+
+    document.getElementById('login-form').onsubmit = async function(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const errorDiv = document.getElementById('login-error');
+      errorDiv.textContent = '';
+      try {
+        const { error } = await window.supabaseApi.signIn(email, password);
+        if (error) {
+          errorDiv.textContent = error.message || "Invalid login credentials.";
+        } else {
+          window.location.href = 'index.html';
+        }
+      } catch (err) {
+        errorDiv.textContent = "Unexpected error. Please try again.";
+      }
+    };
+  </script>
+</body>
+</html>
+```
+
+---
+
+### 2. Reset Password Page (`password-reset.html`)
+
+```html name=password-reset.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Reset Password - Zooom</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/auth.css">
+</head>
+<body style="background: #f7f7f7; min-height:100vh;">
+  <div id="navbar"></div>
+  <main>
+    <form id="reset-form" autocomplete="off">
+      <h1 style="text-align:center;margin-bottom:1.2rem;">Reset Password</h1>
+      <input type="email" id="reset-email" placeholder="Enter your email" required autocomplete="username">
+      <button type="submit">Send Reset Link</button>
+      <div id="reset-feedback" style="color:#2d7ee7;text-align:center;margin-top:8px;"></div>
+      <div id="reset-error" style="color:#d00;text-align:center;margin-top:8px;"></div>
+    </form>
+    <div class="form-link"><a href="login.html">Back to Sign In</a></div>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="js/supabase.js"></script>
+  <script>
+    fetch('components/navbar.html').then(res => res.text()).then(html => {
+      if (document.getElementById('navbar')) document.getElementById('navbar').innerHTML = html;
+    });
+
+    document.getElementById('reset-form').onsubmit = async function(e) {
+      e.preventDefault();
+      const email = document.getElementById('reset-email').value.trim();
+      const feedbackDiv = document.getElementById('reset-feedback');
+      const errorDiv = document.getElementById('reset-error');
+      feedbackDiv.textContent = '';
+      errorDiv.textContent = '';
+      try {
+        const { error } = await window.supabaseApi.supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: window.location.origin + '/password-update.html'
+        });
+        if (error) {
+          errorDiv.textContent = error.message || "Failed to send reset link.";
+        } else {
+          feedbackDiv.textContent = "Reset link sent! Check your email.";
+        }
+      } catch (err) {
+        errorDiv.textContent = "Unexpected error. Please try again.";
+      }
+    };
+  </script>
+</body>
+</html>
+```
+
+---
+
+### 3. Sign Up Page (`signup.html`)
+
+```html name=signup.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sign Up - Zooom</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/auth.css">
+</head>
+<body style="background: #f7f7f7; min-height:100vh;">
+  <div id="navbar"></div>
+  <main>
+    <form id="signup-form" autocomplete="off">
+      <h1 style="text-align:center;margin-bottom:1.2rem;">Sign Up</h1>
+      <input type="email" id="email" placeholder="Email" required autocomplete="username">
+      <input type="password" id="password" placeholder="Password" required autocomplete="new-password">
+      <button type="submit">Sign Up</button>
+      <div id="signup-error" style="color:#d00;margin-top:10px;text-align:center;"></div>
+    </form>
+    <div class="form-link">Already have an account? <a href="login.html">Sign In</a></div>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="js/supabase.js"></script>
+  <script>
+    fetch('components/navbar.html').then(res => res.text()).then(html => {
+      if (document.getElementById('navbar')) document.getElementById('navbar').innerHTML = html;
+    });
+
+    document.getElementById('signup-form').onsubmit = async function(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const errorDiv = document.getElementById('signup-error');
+      errorDiv.textContent = '';
+      try {
+        const { error } = await window.supabaseApi.signUp(email, password);
+        if (error) {
+          errorDiv.textContent = error.message || "Sign up failed.";
+        } else {
+          window.location.href = 'index.html';
+        }
+      } catch (err) {
+        errorDiv.textContent = "Unexpected error. Please try again.";
+      }
+    };
+  </script>
+</body>
+</html>
+```
+
+---
+
+**All three pages**:
+- Use your existing CSS (`main.css`, `auth.css`) and navbar include logic.
+- Are fully compatible with your `js/supabase.js` API.
+- Are mobile responsive and visually consistent with your app.
+- Use direct helpers (`window.supabaseApi.signIn`, `.signUp`, etc) from your current Supabase setup.
+
+**You can rename the files as you want (e.g., login.html, signup.html, password-reset.html) and link between them.**
