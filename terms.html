@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Terms of Service | Zooom</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="icon" href="assets/logo.png">
+  <!-- Font Awesome for icons if needed in the navbar -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <style>
+    body {
+      background: #f7f8fb;
+      margin: 0;
+      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+      color: #222;
+    }
+    main {
+      max-width: 700px;
+      margin: 2rem auto 2.5rem auto;
+      padding: 2.2rem 2rem 2.2rem 2rem;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 14px #0002;
+      min-height: 65vh;
+    }
+    h1, h2 {
+      color: #3b82f6;
+      margin-top: 0;
+      font-weight: 900;
+      letter-spacing: -1px;
+    }
+    h2 {
+      margin-bottom: 0.45em;
+      font-size: 1.38em;
+    }
+    p, ul, li {
+      font-size: 1.11em;
+      color: #222;
+      line-height: 1.65;
+    }
+    ul {
+      margin-top: 1em;
+      margin-bottom: 1.3em;
+      padding-left: 1.3em;
+    }
+    li {
+      margin-bottom: 0.55em;
+    }
+    .terms-meta {
+      font-size: 0.98em;
+      color: #666;
+      margin-bottom: 1.3em;
+      display: inline-block;
+    }
+    .terms-section {
+      margin-bottom: 2.2em;
+    }
+    a {
+      color: #3b82f6;
+      text-decoration: underline;
+      transition: color 0.16s;
+    }
+    a:hover {
+      color: #2563eb;
+    }
+    .terms-feedback {
+      margin-top: 2.2em;
+      background: #e0f2fe;
+      color: #2563eb;
+      padding: 1em 1.5em;
+      border-radius: 8px;
+      font-size: 1.02em;
+      display: flex;
+      align-items: center;
+      gap: 0.6em;
+    }
+    .terms-feedback i {
+      font-size: 1.3em;
+      color: #3b82f6;
+      margin-right: 0.1em;
+    }
+    @media (max-width: 700px) {
+      main { padding: 1.2rem 0.5rem; }
+    }
+    @media (max-width: 480px) {
+      main { padding: 0.5rem 0.1rem; border-radius: 5px; }
+      h1 { font-size: 1.4em; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar include for UI consistency -->
+  <div id="navbar-placeholder"></div>
+  <main>
+    <h1>Terms of Service</h1>
+    <div class="terms-meta"><b>Effective Date:</b> June 29, 2025</div>
+
+    <div class="terms-section">
+      <p>Welcome to Zooom! By using our service, you agree to the following terms:</p>
+      <ul>
+        <li>Respect other users and do not post abusive, threatening, harassing, or hateful content.</li>
+        <li>Do not use Zooom for illegal activities, spam, or to infringe others' rights.</li>
+        <li>You are responsible for your account security. Report suspicious activity promptly.</li>
+        <li>We may update these terms at any time. Continued use indicates acceptance of updated terms.</li>
+      </ul>
+    </div>
+
+    <div class="terms-section">
+      <h2>Your Content &amp; Conduct</h2>
+      <ul>
+        <li>You retain rights to your content but grant Zooom a license to display it on the platform.</li>
+        <li>Zooom may remove content that violates these terms without notice.</li>
+        <li>Repeated violations may result in suspension or termination.</li>
+      </ul>
+    </div>
+
+    <div class="terms-section">
+      <h2>Disclaimer</h2>
+      <p>
+        Zooom is provided "as is" without warranties of any kind. We are not liable for any damages or losses incurred from using the platform.
+      </p>
+    </div>
+
+    <div class="terms-section">
+      <h2>Contact &amp; Questions</h2>
+      <p>
+        For questions, contact us at <a href="mailto:support@zooom.com">support@zooom.com</a>.
+      </p>
+      <div class="terms-feedback" id="terms-feedback" style="display:none;">
+        <i class="fa-solid fa-circle-check"></i> Thank you for your feedback!
+      </div>
+      <div style="margin-top:2.5em;font-size:0.98em;color:#666;text-align:center;">
+        Issues with the terms? <button id="termsContact" style="background:none;border:none;color:#3b82f6;font-weight:600;cursor:pointer;font-size:1em;text-decoration:underline;">Contact Support</button>
+      </div>
+    </div>
+  </main>
+  <script>
+    // Navbar include (consistent with your repo)
+    fetch('components/navbar.html')
+      .then(function(r) { return r.text(); })
+      .then(function(html) { document.getElementById('navbar-placeholder').innerHTML = html; });
+
+    // Feedback/contact demo (shows feedback message)
+    document.addEventListener('DOMContentLoaded', function() {
+      var btn = document.getElementById('termsContact');
+      var feedback = document.getElementById('terms-feedback');
+      if (btn && feedback) {
+        btn.onclick = function() {
+          feedback.style.display = 'flex';
+          setTimeout(function(){ feedback.style.display = 'none'; }, 2200);
+          window.open('mailto:support@zooom.com?subject=Terms%20Feedback');
+        };
+      }
+    });
+  </script>
+</body>
+</html>
