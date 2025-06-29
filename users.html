@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Explore Users - Zooom</title>
   <link rel="stylesheet" href="css/main.css">
   <style>
@@ -114,95 +115,42 @@
         document.getElementById('navbar').innerHTML = html;
       });
 
-    // Mock users data
-    const mockUsers = [
-      {
-        username: "sonnyaga",
-        name: "Nahason Nyaga",
-        avatar: "assets/avatar.png",
-        bio: "🐘 Building Zooom. Love coding, coffee, and open source. Nairobi, Kenya.",
-        location: "Nairobi, Kenya",
-        website: "https://github.com/nahasonnyaga",
-        twitter: "nahasonnyaga",
-        followers: 124,
-        following: 182,
-        threads: 33
-      },
-      {
-        username: "jane_dev",
-        name: "Jane Doe",
-        avatar: "https://randomuser.me/api/portraits/women/44.jpg",
-        bio: "Frontend engineer. React, Vue, and a sprinkle of magic ✨. Cat mom.",
-        location: "Berlin, Germany",
-        website: "https://janedev.dev",
-        twitter: "janedoe_dev",
-        followers: 98,
-        following: 77,
-        threads: 12
-      },
-      {
-        username: "tommyc",
-        name: "Tommy Chen",
-        avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-        bio: "Full Stack | Node & Go | Cyclist 🚴 | Building cool stuff.",
-        location: "San Francisco, CA",
-        website: "",
-        twitter: "",
-        followers: 231,
-        following: 150,
-        threads: 58
-      },
-      {
-        username: "sarah.codes",
-        name: "Sarah Lee",
-        avatar: "https://randomuser.me/api/portraits/women/65.jpg",
-        bio: "Product designer. Lover of minimal UI and pancakes 🥞.",
-        location: "London, UK",
-        website: "https://sarahlee.design",
-        twitter: "sarahcodes",
-        followers: 176,
-        following: 202,
-        threads: 40
-      },
-      {
-        username: "dev_omar",
-        name: "Omar Ali",
-        avatar: "https://randomuser.me/api/portraits/men/85.jpg",
-        bio: "Backend wizard. Python, Rust & cloud infra. Open for gigs.",
-        location: "Cairo, Egypt",
-        website: "",
-        twitter: "omar_codes",
-        followers: 89,
-        following: 110,
-        threads: 23
-      }
-    ];
-
     function renderUsers(users) {
       const list = document.getElementById('users-list');
       list.innerHTML = '';
       users.forEach(user => {
-        const card = document.createElement('div');
+        // Fallbacks to match your previous mock structure; adjust keys if your Supabase schema is different!
+        const avatar = user.avatar || 'assets/avatar.png';
+        const name = user.name || user.username || '';
+        const username = user.username || (user.name ? user.name.replace(/\s/g, '').toLowerCase() : '');
+        const bio = user.bio || '';
+        const location = user.location || '';
+        const website = user.website;
+        const twitter = user.twitter;
+        const followers = user.followers || 0;
+        const following = user.following || 0;
+        const threads = user.threads || 0;
+        card = document.createElement('div');
         card.className = 'user-card';
         card.innerHTML = `
-          <img src="${user.avatar}" class="user-avatar" loading="lazy" alt="${user.name || user.username}" onerror="this.src='assets/avatar.png'">
-          <div class="user-username">${user.name}</div>
-          <div class="user-handle">@${user.username}</div>
-          <div class="user-bio">${user.bio || ''}</div>
-          <div class="user-meta">${user.location ? `📍 ${user.location}` : ''}</div>
+          <img src="${avatar}" class="user-avatar" loading="lazy" alt="${name}" onerror="this.src='assets/avatar.png'">
+          <div class="user-username">${name}</div>
+          <div class="user-handle">@${username}</div>
+          <div class="user-bio">${bio}</div>
+          <div class="user-meta">${location ? `📍 ${location}` : ''}</div>
           <div class="user-meta">
-            <span title="Followers">👥 <b>${user.followers}</b></span>
+            <span title="Followers">👥 <b>${followers}</b></span>
             &nbsp; | &nbsp;
-            <span title="Following">🔗 <b>${user.following}</b></span>
+            <span title="Following">🔗 <b>${following}</b></span>
             &nbsp; | &nbsp;
-            <span title="Threads">🧵 <b>${user.threads}</b></span>
+            <span title="Threads">🧵 <b>${threads}</b></span>
           </div>
           <div class="user-links">
-            ${user.website ? `<a href="${user.website}" target="_blank" title="Website"><i class="fa-solid fa-link"></i></a>` : ''}
-            ${user.twitter ? `<a href="https://twitter.com/${user.twitter}" target="_blank" title="Twitter"><i class="fa-brands fa-x-twitter"></i></a>` : ''}
-            <a href="profile.html?user=${encodeURIComponent(user.username)}" title="View Profile"><i class="fa-solid fa-user"></i></a>
+            ${website ? `<a href="${website}" target="_blank" rel="noopener noreferrer" title="Website"><i class="fa-solid fa-link"></i></a>` : ''}
+            ${twitter ? `<a href="https://twitter.com/${twitter}" target="_blank" rel="noopener noreferrer" title="Twitter"><i class="fa-brands fa-x-twitter"></i></a>` : ''}
+            <a href="profile.html?user=${encodeURIComponent(username)}" title="View Profile"><i class="fa-solid fa-user"></i></a>
           </div>
-          <button class="user-follow-btn" onclick="alert('Followed @${user.username}!')">Follow</button>
+          <button class="user-follow-btn" onclick="alert('Followed @${username}!')">Follow</button>
         `;
         list.appendChild(card);
       });
@@ -219,12 +167,29 @@
       }
     })();
 
-    // Render mock users
-    document.addEventListener('DOMContentLoaded', () => renderUsers(mockUsers));
+    // Load users from Supabase instead of mock data
+    async function fetchAndRenderSupabaseUsers() {
+      if (!window.supabaseApi || !window.supabaseApi.supabase) {
+        // Supabase not loaded yet, try again later
+        setTimeout(fetchAndRenderSupabaseUsers, 100);
+        return;
+      }
+      // Adjust the select statement if your users table uses different keys!
+      const { data: users, error } = await window.supabaseApi.supabase
+        .from('users')
+        .select('*')
+        .order('created_at', { ascending: false }); // or ascending: true if you prefer
+      if (error) {
+        document.getElementById('users-list').innerHTML = `<div style="color:red;">Error loading users: ${error.message}</div>`;
+        return;
+      }
+      renderUsers(users || []);
+    }
+
+    document.addEventListener('DOMContentLoaded', fetchAndRenderSupabaseUsers);
   </script>
-  <!-- Optionally include supabase logic below (not used for mock data) -->
-  <!-- <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <!-- Load Supabase client and your Supabase API helpers -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="js/supabase.js"></script>
-  <script src="js/users.js"></script> -->
 </body>
 </html>
