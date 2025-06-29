@@ -23,11 +23,16 @@
       max-width: 100vw;
       overflow-x: hidden;
       box-sizing: border-box;
+      /* Prevent vertical shaking (scrollbar shift) when content fits viewport */
+      height: 100%;
     }
     body {
       background: #f7f7fa;
       margin: 0;
       padding: 0;
+      min-height: 100vh;
+      /* Prevent vertical scroll-jump by always showing vertical scrollbar */
+      overflow-y: scroll;
     }
     .feed {
       max-width: 600px;
