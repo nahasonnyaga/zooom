@@ -32,6 +32,19 @@
       <i class="fa-solid fa-user-circle navbar-icon"></i>
       <span class="nav-label">Profile</span>
     </a>
+    <!-- UI: More/Settings Dropdown -->
+    <div class="navbar-link navbar-more-dropdown" tabindex="0" title="More" style="position:relative;">
+      <i class="fa-solid fa-ellipsis navbar-icon"></i>
+      <span class="nav-label">More</span>
+      <div class="navbar-more-menu" style="display:none; position:absolute; top:120%; left:50%; transform:translateX(-50%); background:#fff; box-shadow:0 2px 12px #0002; border-radius:8px; min-width:170px; border:1px solid #ececec; z-index:999;">
+        <a href="settings.html"><i class="fa-solid fa-gear"></i> Settings</a>
+        <a href="security.html"><i class="fa-solid fa-shield-halved"></i> Security</a>
+        <a href="privacy.html"><i class="fa-solid fa-user-shield"></i> Privacy</a>
+        <a href="terms.html"><i class="fa-solid fa-file-contract"></i> Terms</a>
+        <a href="password-update.html"><i class="fa-solid fa-key"></i> Update Password</a>
+        <a href="password-reset.html"><i class="fa-solid fa-unlock"></i> Reset Password</a>
+      </div>
+    </div>
   </div>
   <div class="navbar-right">
     <button class="navbar-avatar" id="navbarUserBtn" title="Account">
@@ -47,6 +60,11 @@
       <hr>
       <a href="profile.html"><i class="fa-solid fa-user"></i> My Profile</a>
       <a href="settings.html"><i class="fa-solid fa-gear"></i> Settings</a>
+      <a href="security.html"><i class="fa-solid fa-shield-halved"></i> Security</a>
+      <a href="privacy.html"><i class="fa-solid fa-user-shield"></i> Privacy</a>
+      <a href="terms.html"><i class="fa-solid fa-file-contract"></i> Terms</a>
+      <a href="password-update.html"><i class="fa-solid fa-key"></i> Update Password</a>
+      <a href="password-reset.html"><i class="fa-solid fa-unlock"></i> Reset Password</a>
       <a href="#" id="navbarLogoutBtn"><i class="fa-solid fa-sign-out-alt"></i> Logout</a>
     </div>
   </div>
@@ -67,6 +85,8 @@ document.addEventListener('DOMContentLoaded', function () {
   document.body.addEventListener('click', function () {
     dropdown.style.display = 'none';
     dropdownOpen = false;
+    if (navbarMoreMenu) navbarMoreMenu.style.display = 'none';
+    if (navbarMore) navbarMore.classList.remove('active');
   });
 
   dropdown.addEventListener('click', function (e) {
@@ -90,6 +110,28 @@ document.addEventListener('DOMContentLoaded', function () {
     localStorage.clear();
     window.location.href = 'login.html';
   });
+
+  // More Dropdown logic
+  const navbarMore = document.querySelector('.navbar-more-dropdown');
+  const navbarMoreMenu = navbarMore ? navbarMore.querySelector('.navbar-more-menu') : null;
+  if (navbarMore && navbarMoreMenu) {
+    navbarMore.addEventListener('click', function (e) {
+      e.stopPropagation();
+      const isOpen = navbarMoreMenu.style.display === 'block';
+      navbarMoreMenu.style.display = isOpen ? 'none' : 'block';
+      navbarMore.classList.toggle('active', !isOpen);
+    });
+    // Accessibility: hide on blur
+    navbarMore.addEventListener('blur', function () {
+      setTimeout(() => {
+        navbarMoreMenu.style.display = 'none';
+        navbarMore.classList.remove('active');
+      }, 120);
+    });
+    navbarMoreMenu.addEventListener('click', function (e) {
+      e.stopPropagation();
+    });
+  }
 });
 </script>
 <style>
@@ -158,9 +200,13 @@ document.addEventListener('DOMContentLoaded', function () {
   border-radius: 7px;
   transition: background 0.13s, color 0.13s;
   position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
-.navbar-link:hover, .navbar-link.active {
+.navbar-link:hover, .navbar-link.active,
+.navbar-more-dropdown.active {
   background: #f4f5fa;
   color: #3b82f6;
 }
@@ -296,6 +342,40 @@ document.addEventListener('DOMContentLoaded', function () {
   color: #3b82f6;
 }
 
+/* More Dropdown styles */
+.navbar-more-dropdown {
+  position: relative;
+  outline: none;
+}
+.navbar-more-menu {
+  margin-top: 4px;
+  display: none;
+  min-width: 170px;
+  border-radius: 8px;
+  background: #fff;
+  border: 1px solid #ececec;
+  box-shadow: 0 3px 16px #0002;
+  padding: 0.32rem 0.2rem;
+}
+.navbar-more-menu a {
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+  color: #444;
+  text-decoration: none;
+  padding: 0.47em 0.8em;
+  border-radius: 5px;
+  font-size: 1.02rem;
+  transition: background 0.13s, color 0.13s;
+}
+.navbar-more-menu a:hover {
+  background: #f4f5fa;
+  color: #3b82f6;
+}
+.navbar-more-dropdown.active .navbar-more-menu {
+  display: block;
+}
+
 /* Responsive: hide text labels on very small screens */
 @media (max-width: 600px) {
   .navbar-center {
@@ -313,6 +393,10 @@ document.addEventListener('DOMContentLoaded', function () {
   .navbar-dropdown {
     min-width: 135px;
     padding: 0.45rem 0.3rem 0.3rem 0.3rem;
+  }
+  .navbar-more-menu {
+    min-width: 125px;
+    padding: 0.2rem 0.05rem;
   }
 }
 
