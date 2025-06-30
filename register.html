@@ -4,31 +4,47 @@
   <meta charset="UTF-8">
   <title>Register | Zooom Forum</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Create your Zooom account.">
+  <meta name="description" content="Create an account on Zooom, a worldclass forum built on Supabase.">
   <link rel="icon" href="assets/logo.png">
   <link rel="stylesheet" href="css/main.css">
-  <link rel="stylesheet" href="css/auth.css">
+  <link rel="stylesheet" href="css/topmenu.css">
   <link rel="stylesheet" href="css/navbar.css">
 </head>
 <body>
-  <div id="navbar"></div>
-  <main>
-    <form id="register-form" aria-label="Registration Form" autocomplete="on">
-      <h2>Register</h2>
-      <input type="text" id="reg-username" placeholder="Username" required aria-label="Username" autocomplete="username">
-      <input type="email" id="reg-email" placeholder="Email" required aria-label="Email" autocomplete="email">
-      <input type="password" id="reg-password" placeholder="Password" required aria-label="Password" autocomplete="new-password">
-      <button type="submit" aria-label="Register">Register</button>
-      <div id="register-error" class="form-error" role="alert"></div>
+  <div id="topmenu"></div>
+  <main class="auth-main">
+    <form id="registerForm" class="auth-form">
+      <h2>Create your account</h2>
+      <label>Email<br><input type="email" name="email" required autocomplete="username"></label>
+      <label>Password<br><input type="password" name="password" required autocomplete="new-password" minlength="6"></label>
+      <button type="submit">Register</button>
+      <p>Already have an account? <a href="login.html">Sign in</a></p>
+      <div class="auth-error" id="registerError"></div>
     </form>
   </main>
+  <div id="navbar"></div>
   <script src="js/supabase.js"></script>
-  <script src="js/register.js"></script>
   <script>
+    fetch('components/topmenu.html').then(r => r.text()).then(html => {
+      document.getElementById('topmenu').innerHTML = html;
+      const script = document.createElement('script');
+      script.src = 'js/theme-topmenu.js';
+      document.body.appendChild(script);
+    });
     fetch('components/navbar.html').then(r => r.text()).then(html => {
       document.getElementById('navbar').innerHTML = html;
-      import('./js/navbar.js');
     });
+    document.getElementById('registerForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const email = e.target.email.value.trim(), password = e.target.password.value;
+      document.getElementById('registerError').textContent = "";
+      const { data, error } = await supabase.auth.signUp({ email, password });
+      if (error) {
+        document.getElementById('registerError').textContent = error.message;
+      } else {
+        window.location.href = "index.html";
+      }
+    }
   </script>
 </body>
 </html>
