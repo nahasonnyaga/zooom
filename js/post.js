@@ -1,25 +1,15 @@
-import { supabase, getUser } from './supabase.js';
-
-document.getElementById('post-form').onsubmit = async (e) => {
+// js/post.js
+// Posting logic
+document.getElementById('post-form').addEventListener('submit', async (e) => {
   e.preventDefault();
-  const content = document.getElementById('post-content').value.trim();
-  const errorEl = document.getElementById('post-error');
-  errorEl.textContent = '';
-  if (!content) {
-    errorEl.textContent = "Post content can't be empty.";
-    return;
-  }
-  const user = await getUser();
+  const title = document.getElementById('post-title').value;
+  const content = document.getElementById('post-content').value;
+  const user = window.currentUser;
   if (!user) {
-    errorEl.textContent = "You must be logged in to post.";
+    document.getElementById('post-error').innerText = 'You must be logged in.';
     return;
   }
-  const { error } = await supabase.from('threads').insert([
-    { content, user_id: user.id, created_at: new Date().toISOString() }
-  ]);
-  if (error) {
-    errorEl.textContent = error.message || "Couldn't post thread.";
-    return;
-  }
-  window.location.href = "index.html";
-};
+  const { error } = await supabase.from('threads').insert([{ title, content, author: user.email }]);
+  if (error) document.getElementById('post-error').innerText = error.message;
+  else window.location.href = 'index.html';
+});
