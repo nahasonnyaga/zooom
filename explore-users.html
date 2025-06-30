@@ -2,21 +2,24 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Explore Users | Zooom</title>
+  <title>Users | Zooom Forum</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Browse users on Zooom.">
+  <link rel="icon" href="assets/logo.png">
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/profile.css">
-  <link rel="icon" type="image/png" href="assets/logo.png">
+  <link rel="stylesheet" href="css/navbar.css">
 </head>
 <body>
   <div id="navbar"></div>
-  <main>
-    <section id="explore-users-section">
-      <h2>Discover Users</h2>
-      <div id="users-list"></div>
-      <div id="users-empty" class="feed-empty" style="display:none;">No users found.</div>
-    </section>
-  </main>
-  <script type="module" src="js/users.js"></script>
-  <script type="module" src="js/main.js"></script>
+  <main id="user-list"></main>
+  <script src="js/supabase.js"></script>
+  <script src="js/explore-users.js"></script>
+  <script>
+    fetch('components/navbar.html').then(r => r.text()).then(html => {
+      document.getElementById('navbar').innerHTML = html;
+      import('./js/navbar.js');
+    });
+  </script>
 </body>
 </html>
