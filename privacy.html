@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Privacy | Zooom Forum</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Manage your privacy settings on Zooom.">
+  <link rel="icon" href="assets/logo.png">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/profile.css">
+  <link rel="stylesheet" href="css/navbar.css">
+</head>
+<body>
+  <div id="navbar"></div>
+  <main id="privacy-container"></main>
+  <script src="js/supabase.js"></script>
+  <script src="js/privacy.js"></script>
+  <script>
+    fetch('components/navbar.html').then(r => r.text()).then(html => {
+      document.getElementById('navbar').innerHTML = html;
+      import('./js/navbar.js');
+    });
+  </script>
+</body>
+</html>
