@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Terms of Service | Zooom Forum</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Zooom Forum terms of service.">
+  <link rel="icon" href="assets/logo.png">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/topmenu.css">
+  <link rel="stylesheet" href="css/navbar.css">
+</head>
+<body>
+  <div id="topmenu"></div>
+  <main style="max-width:720px;margin:2em auto;">
+    <h1>Terms of Service</h1>
+    <p>By using Zooom Forum, you agree to the following terms:</p>
+    <ul>
+      <li>You will not post illegal or harmful content</li>
+      <li>You are responsible for your account and activity</li>
+      <li>We may remove content or suspend accounts violating our rules</li>
+      <li>We are not liable for user-generated content</li>
+    </ul>
+    <p>These terms may change at any time. Contact us for questions.</p>
+  </main>
+  <div id="navbar"></div>
+  <script>
+    fetch('components/topmenu.html').then(r => r.text()).then(html => {
+      document.getElementById('topmenu').innerHTML = html;
+      const script = document.createElement('script');
+      script.src = 'js/theme-topmenu.js';
+      document.body.appendChild(script);
+    });
+    fetch('components/navbar.html').then(r => r.text()).then(html => {
+      document.getElementById('navbar').innerHTML = html;
+    });
+  </script>
+</body>
+</html>
