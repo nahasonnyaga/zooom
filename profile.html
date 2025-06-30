@@ -5,7 +5,7 @@
   <title>Profile - Threads 100</title>
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/profile.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Remove FontAwesome link here; it is included in components/navbar.html -->
   <style>
     /* Inline advanced profile styles for extra polish */
     .profile-container {
@@ -304,6 +304,11 @@
 <body>
   <!-- Navbar (loaded via JS for componentization) -->
   <div id="navbar"></div>
+  <script>
+    fetch('components/navbar.html')
+      .then(r => r.ok ? r.text() : '')
+      .then(html => { document.getElementById('navbar').innerHTML = html; });
+  </script>
   <main>
     <div class="profile-container">
       <!-- Hidden forms for image upload -->
@@ -384,11 +389,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="js/supabase.js"></script>
   <script>
-    // Navbar component loader (for modular HTML)
-    fetch('components/navbar.html')
-      .then(r => r.text())
-      .then(html => { document.getElementById('navbar').innerHTML = html; });
-
     // Notification component loader
     function showNotification(msg, date = "") {
       fetch('components/notification.html')
