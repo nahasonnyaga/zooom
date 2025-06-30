@@ -4,30 +4,48 @@
   <meta charset="UTF-8">
   <title>Login | Zooom Forum</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Login to your Zooom account.">
+  <meta name="description" content="Login to Zooom, a worldclass forum built on Supabase.">
   <link rel="icon" href="assets/logo.png">
   <link rel="stylesheet" href="css/main.css">
-  <link rel="stylesheet" href="css/auth.css">
+  <link rel="stylesheet" href="css/topmenu.css">
   <link rel="stylesheet" href="css/navbar.css">
 </head>
 <body>
-  <div id="navbar"></div>
-  <main>
-    <form id="login-form" aria-label="Login Form" autocomplete="on">
-      <h2>Login</h2>
-      <input type="email" id="email" placeholder="Email" required autocomplete="email" aria-label="Email">
-      <input type="password" id="password" placeholder="Password" required autocomplete="current-password" aria-label="Password">
-      <button type="submit" aria-label="Login">Login</button>
-      <div id="login-error" class="form-error" role="alert"></div>
+  <div id="topmenu"></div>
+  <main class="auth-main">
+    <form id="loginForm" class="auth-form">
+      <h2>Sign in to Zooom</h2>
+      <label>Email<br><input type="email" name="email" required autocomplete="username"></label>
+      <label>Password<br><input type="password" name="password" required autocomplete="current-password"></label>
+      <button type="submit">Sign In</button>
+      <p><a href="reset-password.html">Forgot password?</a></p>
+      <p>Don't have an account? <a href="register.html">Register</a></p>
+      <div class="auth-error" id="loginError"></div>
     </form>
   </main>
+  <div id="navbar"></div>
   <script src="js/supabase.js"></script>
-  <script src="js/auth.js"></script>
   <script>
+    fetch('components/topmenu.html').then(r => r.text()).then(html => {
+      document.getElementById('topmenu').innerHTML = html;
+      const script = document.createElement('script');
+      script.src = 'js/theme-topmenu.js';
+      document.body.appendChild(script);
+    });
     fetch('components/navbar.html').then(r => r.text()).then(html => {
       document.getElementById('navbar').innerHTML = html;
-      import('./js/navbar.js');
     });
+    document.getElementById('loginForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const email = e.target.email.value.trim(), password = e.target.password.value;
+      document.getElementById('loginError').textContent = "";
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        document.getElementById('loginError').textContent = error.message;
+      } else {
+        window.location.href = "index.html";
+      }
+    }
   </script>
 </body>
 </html>
