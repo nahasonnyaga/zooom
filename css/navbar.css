@@ -21,12 +21,12 @@
   overflow-x: auto;
 }
 
+/* Make sure no page content is hidden behind the nav */
 body {
   padding-bottom: 70px !important;
 }
 
-/* Remove ALL media queries that change navbar position. */
-
+/* --- The rest of your navbar styles remain the same --- */
 .navbar-logo {
   display: flex;
   align-items: center;
