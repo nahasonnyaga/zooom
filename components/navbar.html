@@ -50,7 +50,7 @@
 </nav>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
-/* --- Worldclass Navbar Icon-only Responsive Styles --- */
+/* --- Worldclass Navbar Icon-only Responsive Styles with Better Spacing --- */
 .navbar {
   width: 100vw;
   min-width: 0;
@@ -96,27 +96,29 @@
 }
 .navbar-center {
   display: flex;
-  gap: 0.7em;
+  gap: 2.1em; /* Increased gap for better spacing */
   align-items: center;
   justify-content: center;
   flex: 1 1 0%;
   min-width: 0;
   overflow-x: auto;
+  padding-left: 0.2em;
+  padding-right: 0.2em;
 }
 .navbar-link {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.25em 0.25em;
+  padding: 0.35em 0.35em;
   border-radius: 50%;
   text-decoration: none;
   color: #555;
   background: none;
-  font-size: 1.08em;
+  font-size: 1.13em;
   font-weight: 600;
   transition: background 0.13s, color 0.13s, box-shadow 0.13s, transform 0.13s;
   position: relative;
-  min-width: 2.1em; min-height:2.1em;
+  min-width: 2.15em; min-height:2.15em;
   aspect-ratio:1/1;
   box-sizing: border-box;
 }
@@ -134,8 +136,8 @@
   border: none !important;
   border-radius: 50% !important;
   font-weight: 900 !important;
-  min-width: 2.1em; min-height:2.1em;
-  font-size: 1.12em !important;
+  min-width: 2.15em; min-height:2.15em;
+  font-size: 1.15em !important;
 }
 .thread-btn:hover, .thread-btn:focus {
   filter: brightness(1.12);
@@ -256,13 +258,13 @@
 }
 @media (max-width: 900px) {
   .navbar {padding: 0 1vw;}
-  .navbar-center {gap: 0.3em;}
+  .navbar-center {gap: 1.1em;}
   .navbar-link {padding:0.17em 0.17em;}
 }
 @media (max-width: 650px) {
   .navbar {padding:0 0.5vw;}
   .navbar-logo-img {width:1.2em;height:1.2em;}
-  .navbar-center {gap:0.01em;}
+  .navbar-center {gap:0.45em;}
   .navbar-link {padding:0.12em;}
   .navbar-dropdown {top:2em;}
 }
