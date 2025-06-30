@@ -1,15 +1,1 @@
-{
-  "name": "Zooom Forum",
-  "short_name": "Zooom",
-  "start_url": "index.html",
-  "display": "standalone",
-  "background_color": "#f4f6fb",
-  "theme_color": "#2563eb",
-  "icons": [
-    {
-      "src": "assets/logo.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    }
-  ]
-}
+<!-- Place your favicon.ico file here for browser tab icon support -->
