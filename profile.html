@@ -2,22 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Profile | Zooom</title>
+  <title>Profile - SupaForum</title>
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/profile.css">
-  <link rel="icon" type="image/png" href="assets/logo.png">
 </head>
 <body>
   <div id="navbar"></div>
-  <main>
-    <section id="profile-section">
-      <div id="profile-header"></div>
-      <div id="profile-bio"></div>
-      <div id="profile-actions"></div>
-      <div id="profile-threads"></div>
-    </section>
-  </main>
-  <script type="module" src="js/profile.js"></script>
-  <script type="module" src="js/main.js"></script>
+  <main id="profile-container"></main>
+  <script src="js/supabase.js"></script>
+  <script src="js/profile.js"></script>
+  <script>
+    fetch('components/navbar.html').then(r => r.text()).then(html => {
+      document.getElementById('navbar').innerHTML = html;
+    });
+  </script>
 </body>
 </html>
