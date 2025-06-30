@@ -1,0 +1,21 @@
+{
+  "name": "Zooom Forum",
+  "short_name": "Zooom",
+  "description": "A worldclass forum built on Supabase.",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#18191b",
+  "theme_color": "#3b82f6",
+  "icons": [
+    {
+      "src": "assets/logo-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/logo-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
