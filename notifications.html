@@ -12,8 +12,16 @@
   <script src="js/notifications.js" defer></script>
 </head>
 <body>
-  <!-- Navbar -->
+  <!-- Navbar (worldclass-navbar compatible) -->
   <div id="navbar"></div>
+  <script>
+    // Worldclass-navbar loader (do not duplicate navbar markup or fontawesome)
+    fetch('components/navbar.html')
+      .then(r => r.ok ? r.text() : '')
+      .then(html => {
+        document.getElementById('navbar').innerHTML = html;
+      });
+  </script>
   <main class="main-container">
     <h2>Notifications</h2>
     <section id="notification-list">
@@ -23,11 +31,5 @@
       No notifications yet.
     </div>
   </main>
-  <script>
-    // Load navbar component
-    fetch('components/navbar.html').then(r => r.text()).then(html => {
-      document.getElementById('navbar').innerHTML = html;
-    });
-  </script>
 </body>
 </html>
