@@ -2,28 +2,24 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Thread | Zooom</title>
+  <title>Thread | Zooom Forum</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="View thread and replies on Zooom.">
+  <link rel="icon" href="assets/logo.png">
   <link rel="stylesheet" href="css/main.css">
-  <link rel="stylesheet" href="css/feed.css">
   <link rel="stylesheet" href="css/reply-card.css">
-  <link rel="icon" type="image/png" href="assets/logo.png">
+  <link rel="stylesheet" href="css/navbar.css">
 </head>
 <body>
   <div id="navbar"></div>
-  <main>
-    <section id="thread-section">
-      <div id="thread-container"></div>
-      <div id="actions-container"></div>
-      <h3>Replies</h3>
-      <div id="replies-list"></div>
-      <form id="reply-form">
-        <textarea id="reply-content" maxlength="400" placeholder="Write a reply..." required></textarea>
-        <button type="submit">Reply</button>
-        <div id="reply-error" class="form-error"></div>
-      </form>
-    </section>
-  </main>
-  <script type="module" src="js/thread.js"></script>
-  <script type="module" src="js/main.js"></script>
+  <main id="thread-container" aria-live="polite"></main>
+  <script src="js/supabase.js"></script>
+  <script src="js/thread.js"></script>
+  <script>
+    fetch('components/navbar.html').then(r => r.text()).then(html => {
+      document.getElementById('navbar').innerHTML = html;
+      import('./js/navbar.js');
+    });
+  </script>
 </body>
 </html>
