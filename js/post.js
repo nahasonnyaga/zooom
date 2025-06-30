@@ -31,6 +31,24 @@ document.addEventListener('DOMContentLoaded', function () {
       return;
     }
 
+    // Get current user and check authentication
+    let userObj;
+    try {
+      const { data: { user }, error: userError } = await window.supabaseApi.supabase.auth.getUser();
+      if (userError) {
+        postError.textContent = 'Failed to verify authentication: ' + userError.message;
+        return;
+      }
+      if (!user) {
+        postError.textContent = "You must be logged in to post.";
+        return;
+      }
+      userObj = user;
+    } catch (err) {
+      postError.textContent = "Authentication check failed: " + (err.message || err);
+      return;
+    }
+
     // Upload images/videos to Supabase Storage (if any)
     let imageUrls = [];
     let videoUrls = [];
@@ -44,7 +62,8 @@ document.addEventListener('DOMContentLoaded', function () {
       let { data, error } = await storage.from(bucket).upload(filePath, file, { upsert: false });
       if (error) return { error };
       // Get public URL
-      let { data: pub } = storage.from(bucket).getPublicUrl(filePath);
+      let { data: pub, error: urlError } = storage.from(bucket).getPublicUrl(filePath);
+      if (urlError) return { error: urlError };
       return { url: pub && pub.publicUrl };
     }
 
@@ -52,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function () {
     for (let img of images) {
       let { url, error } = await uploadFile(img, 'images');
       if (error) {
-        postError.textContent = 'Error uploading image. Try again.';
+        postError.textContent = 'Error uploading image: ' + (error.message || error.error_description || error);
         return;
       }
       imageUrls.push(url);
@@ -61,24 +80,25 @@ document.addEventListener('DOMContentLoaded', function () {
     for (let vid of videos) {
       let { url, error } = await uploadFile(vid, 'videos');
       if (error) {
-        postError.textContent = 'Error uploading video. Try again.';
+        postError.textContent = 'Error uploading video: ' + (error.message || error.error_description || error);
         return;
       }
       videoUrls.push(url);
     }
 
-    // Create thread with media URLs
+    // Create thread with media URLs, including user_id
     const { data, error } = await window.supabaseApi.supabase
       .from('threads')
       .insert([{
         content,
         image_urls: imageUrls,
         video_urls: videoUrls,
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
+        user_id: userObj.id // Add this if your schema requires it
       }]);
 
     if (error) {
-      postError.textContent = 'Failed to post thread. Try again.';
+      postError.textContent = 'Failed to post thread: ' + (error.message || error.error_description || error);
       return;
     }
 
