@@ -1,43 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Explore Users - Zooom</title>
   <link rel="stylesheet" href="css/main.css">
   <style>
-    html, body {
-      width: 100vw;
-      min-width: 100vw;
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    body {
-      background:#f7f7fa;
-      min-width: 100vw;
-      width: 100vw;
-      overflow-x: hidden;
-    }
-    main {
-      width: 100vw;
-      max-width: 100vw;
-      box-sizing: border-box;
-    }
     .users-list {
       display: flex;
       flex-wrap: wrap;
       gap: 1.5rem;
       padding: 1.5rem 0.5rem;
       justify-content: flex-start;
-      width: 100vw;
-      box-sizing: border-box;
-      max-width: 100vw;
-      min-height: 0;
     }
     .user-card {
       background: #fff;
       border-radius: 10px;
-      box-shadow: 0 4px 16px #0002;
+      box-shadow: 0 1px 8px #0001;
       padding: 1.1rem 1.2rem 1.1rem 1.2rem;
       max-width: 260px;
       min-width: 220px;
@@ -45,7 +24,7 @@
       flex-direction: column;
       align-items: center;
       border: 1.5px solid #ececec;
-      transition: box-shadow 0.15s, border-color 0.15s;
+      transition: box-shadow 0.15s;
       margin-bottom: 1rem;
     }
     .user-card:hover {
@@ -123,10 +102,10 @@
   </style>
 </head>
 <body>
-  <!-- Navbar include -->
+  <!-- Navbar include (worldclass-navbar compatible) -->
   <div id="navbar-include"></div>
   <script>
-    // Load navbar (compatible with project structure)
+    // Load navbar (do not include FontAwesome or duplicate navbar logic/styles)
     fetch('components/navbar.html')
       .then(res => res.ok ? res.text() : '')
       .then(html => {
@@ -134,68 +113,74 @@
       });
   </script>
   <main>
-    <h1 style="text-align:center; margin-top: 1.5rem;">
-      <i class="fa-solid fa-users" style="color:#3b82f6;margin-right:0.3em;"></i>
-      Explore Users
-    </h1>
+    <h1 style="text-align:center; margin-top: 1.5rem;">Explore Users</h1>
     <div id="users-list" class="users-list"></div>
-    <div id="users-error" style="text-align:center;color:#a33;"></div>
   </main>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script src="js/supabase.js"></script>
   <script>
-    // Render users from Supabase (replace mock with real fetch)
-    async function renderUsersFromSupabase() {
-      const usersList = document.getElementById('users-list');
-      const errorDiv = document.getElementById('users-error');
-      usersList.innerHTML = '';
-      errorDiv.textContent = '';
-      try {
-        // Use your Supabase helper
-        const { data, error } = await window.supabaseApi.supabase
-          .from('users')
-          .select('*')
-          .order('created_at', { ascending: false });
-        if (error) {
-          errorDiv.textContent = error.message || 'Failed to fetch users.';
-          return;
-        }
-        if (!data || data.length === 0) {
-          usersList.innerHTML = '<em>No users found.</em>';
-          return;
-        }
-        data.forEach(user => {
-          const card = document.createElement('div');
-          card.className = 'user-card';
-          card.innerHTML = `
-            <img src="${user.avatar_url || 'assets/avatar.png'}" class="user-avatar" loading="lazy" alt="${user.name || user.username || ''}" onerror="this.src='assets/avatar.png'">
-            <div class="user-username">${user.name || user.username || ''}</div>
-            <div class="user-handle">@${user.username || ''}</div>
-            <div class="user-bio">${user.bio || ''}</div>
-            <div class="user-meta">${user.location ? `📍 ${user.location}` : ''}</div>
-            <div class="user-meta">
-              <span title="Followers">👥 <b>${user.followers ?? 0}</b></span>
-              &nbsp; | &nbsp;
-              <span title="Following">🔗 <b>${user.following ?? 0}</b></span>
-              &nbsp; | &nbsp;
-              <span title="Threads">🧵 <b>${user.threads ?? 0}</b></span>
-            </div>
-            <div class="user-links">
-              ${user.website ? `<a href="${user.website}" target="_blank" title="Website"><i class="fa-solid fa-link"></i></a>` : ''}
-              ${user.twitter ? `<a href="https://twitter.com/${user.twitter}" target="_blank" title="Twitter"><i class="fa-brands fa-x-twitter"></i></a>` : ''}
-              <a href="profile.html?user=${encodeURIComponent(user.username || '')}" title="View Profile"><i class="fa-solid fa-user"></i></a>
-            </div>
-            <button class="user-follow-btn" onclick="alert('Followed @${user.username || ''}!')">Follow</button>
-          `;
-          usersList.appendChild(card);
-        });
-      } catch (err) {
-        errorDiv.textContent = err.message || 'Unknown error.';
-      }
+    function renderUsers(users) {
+      const list = document.getElementById('users-list');
+      list.innerHTML = '';
+      users.forEach(user => {
+        // Fallbacks to match your previous mock structure; adjust keys if your Supabase schema is different!
+        const avatar = user.avatar || user.avatar_url || 'assets/avatar.png';
+        const name = user.name || user.username || '';
+        const username = user.username || (user.name ? user.name.replace(/\s/g, '').toLowerCase() : '');
+        const bio = user.bio || '';
+        const location = user.location || '';
+        const website = user.website;
+        const twitter = user.twitter;
+        const followers = user.followers ?? 0;
+        const following = user.following ?? 0;
+        const threads = user.threads ?? 0;
+        const card = document.createElement('div');
+        card.className = 'user-card';
+        card.innerHTML = `
+          <img src="${avatar}" class="user-avatar" loading="lazy" alt="${name}" onerror="this.src='assets/avatar.png'">
+          <div class="user-username">${name}</div>
+          <div class="user-handle">@${username}</div>
+          <div class="user-bio">${bio}</div>
+          <div class="user-meta">${location ? `📍 ${location}` : ''}</div>
+          <div class="user-meta">
+            <span title="Followers">👥 <b>${followers}</b></span>
+            &nbsp; | &nbsp;
+            <span title="Following">🔗 <b>${following}</b></span>
+            &nbsp; | &nbsp;
+            <span title="Threads">🧵 <b>${threads}</b></span>
+          </div>
+          <div class="user-links">
+            ${website ? `<a href="${website}" target="_blank" rel="noopener noreferrer" title="Website"><i class="fa-solid fa-link"></i></a>` : ''}
+            ${twitter ? `<a href="https://twitter.com/${twitter}" target="_blank" rel="noopener noreferrer" title="Twitter"><i class="fa-brands fa-x-twitter"></i></a>` : ''}
+            <a href="profile.html?user=${encodeURIComponent(username)}" title="View Profile"><i class="fa-solid fa-user"></i></a>
+          </div>
+          <button class="user-follow-btn" onclick="alert('Followed @${username}!')">Follow</button>
+        `;
+        list.appendChild(card);
+      });
     }
 
-    // On DOM ready, fetch users from Supabase
-    document.addEventListener('DOMContentLoaded', renderUsersFromSupabase);
+    // Load users from Supabase instead of mock data
+    async function fetchAndRenderSupabaseUsers() {
+      if (!window.supabaseApi || !window.supabaseApi.supabase) {
+        // Supabase not loaded yet, try again later
+        setTimeout(fetchAndRenderSupabaseUsers, 100);
+        return;
+      }
+      // Adjust the select statement if your users table uses different keys!
+      const { data: users, error } = await window.supabaseApi.supabase
+        .from('users')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (error) {
+        document.getElementById('users-list').innerHTML = `<div style="color:red;">Error loading users: ${error.message}</div>`;
+        return;
+      }
+      renderUsers(users || []);
+    }
+
+    document.addEventListener('DOMContentLoaded', fetchAndRenderSupabaseUsers);
   </script>
+  <!-- Load Supabase client and your Supabase API helpers -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="js/supabase.js"></script>
 </body>
 </html>
