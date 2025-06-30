@@ -98,7 +98,14 @@ document.addEventListener('DOMContentLoaded', function () {
       }]);
 
     if (error) {
-      postError.textContent = 'Failed to post thread: ' + (error.message || error.error_description || error);
+      // Enhanced error output for RLS/permission errors
+      if (error.code === '42501' || /permission denied/i.test(error.message)) {
+        postError.textContent = 'You do not have permission to post a thread. Please ensure you are logged in and have the necessary rights. If this persists, contact support.';
+      } else if (/row-level security/i.test(error.message)) {
+        postError.textContent = 'Your account does not have permission to insert threads due to Row Level Security (RLS) policy. Please contact an admin.';
+      } else {
+        postError.textContent = 'Failed to post thread: ' + (error.message || error.error_description || error);
+      }
       return;
     }
 
