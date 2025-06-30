@@ -16,7 +16,6 @@
   <script src="js/main.js"></script>
   <script src="js/feed.js"></script>
   <script>
-    // Load navbar at the very end of the body so it will always be on top visually
     fetch('components/navbar.html').then(r => r.text()).then(html => {
       document.getElementById('navbar').innerHTML = html;
     });
