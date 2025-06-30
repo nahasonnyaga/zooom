@@ -1,34 +1,25 @@
-<nav class="navbar threads-navbar worldclass-navbar" aria-label="Main Navigation">
-  <div class="navbar-left">
-    <a href="index.html" class="navbar-logo" title="Home" tabindex="0" aria-label="Go to Home">
-      <img src="assets/logo.png" alt="Zooom Logo" class="navbar-logo-img" onerror="this.style.display='none'">
-    </a>
-  </div>
+<nav class="navbar threads-navbar worldclass-navbar" id="mainNavbar" aria-label="Main Navigation">
   <div class="navbar-center" id="navbar-center">
-    <a href="index.html" class="navbar-link" title="Feed" tabindex="0" aria-label="Feed">
+    <a href="index.html" class="navbar-link" title="Feed" aria-label="Feed">
       <i class="fa-solid fa-house navbar-icon"></i>
     </a>
-    <a href="explore.html" class="navbar-link" title="Explore" tabindex="0" aria-label="Explore">
+    <a href="explore.html" class="navbar-link" title="Explore" aria-label="Explore">
       <i class="fa-solid fa-hashtag navbar-icon"></i>
     </a>
-    <a href="explore-users.html" class="navbar-link" title="Users" tabindex="0" aria-label="Explore Users">
-      <i class="fa-solid fa-users navbar-icon"></i>
-    </a>
-    <a href="post.html" class="navbar-link thread-btn" title="Post" id="threadNavBtn" tabindex="0" aria-label="Create Post">
+    <a href="post.html" class="navbar-link thread-btn" title="Post" id="threadNavBtn" aria-label="Create Post">
       <i class="fa-solid fa-circle-plus navbar-icon"></i>
     </a>
-    <a href="notifications.html" class="navbar-link" title="Notifications" tabindex="0" aria-label="Notifications" style="position:relative;">
+    <a href="notifications.html" class="navbar-link" title="Notifications" aria-label="Notifications" style="position:relative;">
       <i class="fa-solid fa-bell navbar-icon"></i>
-      <span class="nav-alert-dot" id="navbarNotifDot" style="position:absolute;top:0.42em;right:0.7em;width:0.75em;height:0.75em;background:#fa5252;border-radius:50%;display:none;border:2.5px solid #fff;"></span>
+      <span class="nav-alert-dot" id="navbarNotifDot"></span>
     </a>
-    <a href="profile.html" class="navbar-link" title="Profile" tabindex="0" aria-label="Profile">
+    <a href="profile.html" class="navbar-link" title="Profile" aria-label="Profile">
       <i class="fa-solid fa-circle-user navbar-icon"></i>
     </a>
   </div>
   <div class="navbar-right" id="navbar-right">
-    <button class="navbar-avatar" id="navbarUserBtn" title="Account" aria-haspopup="true" aria-expanded="false" tabindex="0" style="border:none;background:none;padding:0;">
+    <button class="navbar-avatar" id="navbarUserBtn" title="Account" aria-haspopup="true" aria-expanded="false" style="border:none;background:none;padding:0;">
       <img src="assets/avatar.png" alt="User" class="navbar-avatar-img" onerror="this.src='assets/avatar.png'">
-      <i class="fa-solid fa-caret-down" style="margin-left:0.4em;font-size:1em;color:#3b82f6;"></i>
     </button>
     <div class="navbar-dropdown" id="navbarDropdown" style="display:none;" role="menu" aria-label="Account Menu">
       <div class="dropdown-profile">
@@ -38,14 +29,49 @@
         </div>
       </div>
       <hr>
-      <a href="profile.html" tabindex="0" title="Profile"><i class="fa-solid fa-user"></i></a>
-      <a href="settings.html" tabindex="0" title="Settings"><i class="fa-solid fa-gear"></i></a>
-      <a href="security.html" tabindex="0" title="Security"><i class="fa-solid fa-shield-halved"></i></a>
-      <a href="privacy.html" tabindex="0" title="Privacy"><i class="fa-solid fa-user-shield"></i></a>
-      <a href="password-update.html" tabindex="0" title="Update Password"><i class="fa-solid fa-key"></i></a>
-      <a href="password-reset.html" tabindex="0" title="Reset Password"><i class="fa-solid fa-unlock"></i></a>
-      <a href="#" id="navbarLogoutBtn" tabindex="0" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></a>
+      <a href="profile.html" title="Profile"><i class="fa-solid fa-user"></i></a>
+      <a href="settings.html" title="Settings"><i class="fa-solid fa-gear"></i></a>
+      <a href="security.html" title="Security"><i class="fa-solid fa-shield-halved"></i></a>
+      <a href="privacy.html" title="Privacy"><i class="fa-solid fa-user-shield"></i></a>
+      <a href="password-update.html" title="Update Password"><i class="fa-solid fa-key"></i></a>
+      <a href="password-reset.html" title="Reset Password"><i class="fa-solid fa-unlock"></i></a>
+      <a href="#" id="navbarLogoutBtn" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></a>
     </div>
   </div>
 </nav>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script>
+// Hide-on-scroll for bottom navbar
+let prevScroll = window.scrollY;
+let navbar = null;
+document.addEventListener("DOMContentLoaded", function() {
+  navbar = document.getElementById('mainNavbar');
+});
+window.addEventListener("scroll", function() {
+  if(!navbar) return;
+  let currScroll = window.scrollY;
+  if(currScroll > prevScroll && currScroll > 10) {
+    navbar.classList.add("navbar-hide");
+  } else {
+    navbar.classList.remove("navbar-hide");
+  }
+  prevScroll = currScroll;
+});
+
+// Dropdown/account logic (kept minimal and robust)
+document.addEventListener('DOMContentLoaded', function() {
+  const userBtn = document.getElementById('navbarUserBtn');
+  const dropdown = document.getElementById('navbarDropdown');
+  if(userBtn && dropdown) {
+    userBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    });
+    document.addEventListener('click', function(e) {
+      if (!dropdown.contains(e.target) && e.target !== userBtn) {
+        dropdown.style.display = 'none';
+      }
+    });
+  }
+});
+</script>
