@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <title>Thread - Threads 100</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/feed.css">
   <link rel="stylesheet" href="css/auth.css">
   <link rel="stylesheet" href="css/reply-card.css">
   <link rel="stylesheet" href="css/profile.css">
   <link href="https://fonts.googleapis.com/css?family=Inter:400,600&display=swap" rel="stylesheet">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     .main-col {
       max-width: 540px;
@@ -55,7 +55,16 @@
   </style>
 </head>
 <body style="background:#f6f6f6;">
+  <!-- Navbar include (worldclass-navbar compatible) -->
   <div id="navbar"></div>
+  <script>
+    // Navbar loader for compatibility
+    fetch('components/navbar.html')
+      .then(r => r.ok ? r.text() : '')
+      .then(html => {
+        document.getElementById('navbar').innerHTML = html;
+      });
+  </script>
   <div class="layout-container" style="display:flex;flex-wrap:wrap;gap:2rem;justify-content:center;">
     <main class="main-col">
       <div id="thread-container">
@@ -87,12 +96,6 @@
   <script src="js/supabase.js"></script>
   <script src="js/thread.js"></script>
   <script>
-    // Basic navbar injection
-    fetch('components/navbar.html')
-      .then(r=>r.text()).then(html => {
-        document.getElementById('navbar').innerHTML = html;
-      });
-
     // Show reply form only if logged in
     let LOGGED_IN_USER = null;
     async function checkAuth() {
