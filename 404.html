@@ -6,8 +6,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link rel="stylesheet" href="css/main.css">
   <link rel="icon" href="assets/logo.png">
-  <!-- Font Awesome for icons, if not included globally -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <!-- No FontAwesome CDN here; icons will be loaded via components/navbar.html -->
   <style>
     body {
       min-height: 100vh;
@@ -113,6 +112,14 @@
 <body>
   <!-- Navbar (reused from components/navbar.html) -->
   <div id="navbar-placeholder"></div>
+  <script>
+    // Navbar include (compatible with your file structure)
+    fetch('components/navbar.html')
+      .then(response => response.ok ? response.text() : '')
+      .then(html => {
+        document.getElementById('navbar-placeholder').innerHTML = html;
+      });
+  </script>
   <main class="notfound-main">
     <div class="notfound-container">
       <span class="notfound-icon">
@@ -132,13 +139,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="js/supabase.js"></script>
   <script>
-    // Navbar include (compatible with your file structure)
-    fetch('components/navbar.html')
-      .then(response => response.text())
-      .then(html => {
-        document.getElementById('navbar-placeholder').innerHTML = html;
-      });
-
     // Contact button: report broken link using Supabase
     document.addEventListener('DOMContentLoaded', function () {
       const btn = document.getElementById('contactBtn');
