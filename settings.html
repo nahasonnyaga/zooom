@@ -1,39 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Settings - Zooom</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <link rel="stylesheet" href="css/main.css" />
-  <link rel="stylesheet" href="css/auth.css" />
-  <!-- Do NOT include FontAwesome or navbar CSS/JS here; it is in components/navbar.html -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script src="js/supabase.js"></script>
-  <script src="js/settings.js" defer></script>
+  <meta charset="UTF-8">
+  <title>Settings | Zooom Forum</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Account settings for Zooom.">
+  <link rel="icon" href="assets/logo.png">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/profile.css">
+  <link rel="stylesheet" href="css/navbar.css">
 </head>
 <body>
-  <!-- Navbar (fetched, NOT copied inline) -->
   <div id="navbar"></div>
+  <main id="settings-container"></main>
+  <script src="js/supabase.js"></script>
+  <script src="js/settings.js"></script>
   <script>
-    fetch('components/navbar.html')
-      .then(r => r.ok ? r.text() : '')
-      .then(html => { document.getElementById('navbar').innerHTML = html; });
+    fetch('components/navbar.html').then(r => r.text()).then(html => {
+      document.getElementById('navbar').innerHTML = html;
+      import('./js/navbar.js');
+    });
   </script>
-  <main class="main-container">
-    <h2>Settings</h2>
-    <form id="settings-form">
-      <label for="display-name">Display Name:</label>
-      <input type="text" id="display-name" name="display-name" placeholder="Your Name" />
-
-      <label for="email">Email:</label>
-      <input type="email" id="email" name="email" placeholder="you@email.com" disabled />
-
-      <label for="password">Change Password:</label>
-      <input type="password" id="password" name="password" placeholder="New Password" />
-
-      <button type="submit" class="btn">Save Changes</button>
-    </form>
-    <div id="settings-msg"></div>
-  </main>
 </body>
 </html>
