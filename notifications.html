@@ -1,35 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Notifications - Zooom</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <link rel="stylesheet" href="css/main.css" />
-  <link rel="stylesheet" href="css/feed.css" />
-  <!-- Supabase client (required for notifications) -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <!-- Your notification logic, loads after DOM is ready -->
-  <script src="js/notifications.js" defer></script>
+  <meta charset="UTF-8">
+  <title>Notifications | Zooom Forum</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Your notifications on Zooom.">
+  <link rel="icon" href="assets/logo.png">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/navbar.css">
 </head>
 <body>
-  <!-- Navbar (worldclass-navbar compatible) -->
   <div id="navbar"></div>
+  <main id="notifications"></main>
+  <script src="js/supabase.js"></script>
+  <script src="js/notifications.js"></script>
   <script>
-    // Worldclass-navbar loader (do not duplicate navbar markup or fontawesome)
-    fetch('components/navbar.html')
-      .then(r => r.ok ? r.text() : '')
-      .then(html => {
-        document.getElementById('navbar').innerHTML = html;
-      });
+    fetch('components/navbar.html').then(r => r.text()).then(html => {
+      document.getElementById('navbar').innerHTML = html;
+      import('./js/navbar.js');
+    });
   </script>
-  <main class="main-container">
-    <h2>Notifications</h2>
-    <section id="notification-list">
-      <!-- Dynamically loaded notifications, e.g. use components/notification.html -->
-    </section>
-    <div class="feed-empty" id="notification-empty" style="display:none;text-align:center;color:#aaa;margin:2rem 0;">
-      No notifications yet.
-    </div>
-  </main>
 </body>
 </html>
