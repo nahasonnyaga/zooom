@@ -2,189 +2,37 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>404 - Page Not Found | Zooom</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <link rel="stylesheet" href="css/main.css">
+  <title>404 Not Found | Zooom Forum</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <link rel="icon" href="assets/logo.png">
-  <!-- No FontAwesome CDN here; icons will be loaded via components/navbar.html -->
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/topmenu.css">
+  <link rel="stylesheet" href="css/navbar.css">
   <style>
-    body {
-      min-height: 100vh;
-      background: #f7f7f7;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
-      color: #222;
-      margin: 0;
-    }
-    .notfound-main {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-    }
-    .notfound-container {
-      text-align: center;
-      background: #fff;
-      padding: 2.5rem 2.2rem 2.1rem 2.2rem;
-      border-radius: 12px;
-      box-shadow: 0 2px 14px #0002;
-      max-width: 480px;
-      margin: 2rem auto;
-      position: relative;
-    }
-    .notfound-container h1 {
-      font-size: 3.5rem;
-      color: #3b82f6;
-      margin-bottom: 0.3em;
-      font-family: inherit;
-      font-weight: 900;
-      letter-spacing: -1.2px;
-    }
-    .notfound-icon {
-      display: inline-block;
-      margin-bottom: 0.7em;
-      font-size: 3.3rem;
-      color: #3b82f6;
-      animation: bounce404 1.4s infinite alternate cubic-bezier(.68,-0.55,.27,1.55);
-    }
-    @keyframes bounce404 {
-      to { transform: translateY(-14px);}
-    }
-    .notfound-container p {
-      font-size: 1.22rem;
-      margin-bottom: 0.95em;
-      color: #444;
-      line-height: 1.5;
-    }
-    .notfound-hint {
-      font-size: 1.03rem;
-      margin-bottom: 1.2em;
-      color: #888;
-      display: block;
-    }
-    .notfound-actions {
-      margin-top: 1.1em;
-      display: flex;
-      justify-content: center;
-      gap: 1.2em;
-    }
-    .notfound-container a, .notfound-container button {
-      color: #fff;
-      background: linear-gradient(90deg, #3b82f6 65%, #60a5fa 100%);
-      padding: 0.8em 2.1em;
-      border-radius: 30px;
-      font-weight: 600;
-      text-decoration: none;
-      font-size: 1.08em;
-      border: none;
-      box-shadow: 0 2px 7px #3b82f511;
-      transition: background 0.18s, color 0.18s;
-      cursor: pointer;
-      outline: none;
-      display: flex;
-      align-items: center;
-      gap: 0.4em;
-    }
-    .notfound-container a:hover, .notfound-container button:hover {
-      background: linear-gradient(90deg, #2563eb 50%, #60a5fa 100%);
-      color: #fff;
-    }
-    .notfound-feedback {
-      margin-top: 1.2em;
-      color: #3b82f6;
-      font-size: 0.99em;
-      display: none;
-      font-weight: 600;
-    }
-    @media (max-width: 600px) {
-      .notfound-container {padding: 1.7rem 0.5rem;}
-      .notfound-container h1 {font-size: 2.3rem;}
-      .notfound-icon {font-size: 2.1rem;}
-      .notfound-actions {flex-direction: column; gap: 0.7em;}
-      .notfound-container a, .notfound-container button {font-size: 1em; padding: 0.7em 1.1em;}
-    }
+    .notfound-main { text-align: center; margin-top: 7em; }
+    .notfound-main img { width: 80px; margin-bottom: 1.5em; }
+    .notfound-main h1 { font-size: 2.5em; margin-bottom: 0.3em; }
+    .notfound-main p { color: #4b5563; }
   </style>
 </head>
 <body>
-  <!-- Navbar (reused from components/navbar.html) -->
-  <div id="navbar-placeholder"></div>
-  <script>
-    // Navbar include (compatible with your file structure)
-    fetch('components/navbar.html')
-      .then(response => response.ok ? response.text() : '')
-      .then(html => {
-        document.getElementById('navbar-placeholder').innerHTML = html;
-      });
-  </script>
+  <div id="topmenu"></div>
   <main class="notfound-main">
-    <div class="notfound-container">
-      <span class="notfound-icon">
-        <i class="fa-solid fa-magnifying-glass-location"></i>
-      </span>
-      <h1>404</h1>
-      <p>Oops! The page you are looking for does not exist or has been moved.</p>
-      <span class="notfound-hint">You may have mistyped the address or followed a broken link.</span>
-      <div class="notfound-actions">
-        <a href="index.html"><i class="fa-solid fa-house"></i> Home</a>
-        <a href="explore.html"><i class="fa-solid fa-hashtag"></i> Explore</a>
-        <button id="contactBtn"><i class="fa-solid fa-circle-question"></i> Contact</button>
-      </div>
-      <div class="notfound-feedback" id="feedbackMsg">Thank you! We'll look into this.</div>
-    </div>
+    <img src="assets/logo.png" alt="Zooom Logo">
+    <h1>404</h1>
+    <p>Sorry, the page you requested was not found.</p>
+    <p><a href="index.html">← Back to Home</a></p>
   </main>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script src="js/supabase.js"></script>
+  <div id="navbar"></div>
   <script>
-    // Contact button: report broken link using Supabase
-    document.addEventListener('DOMContentLoaded', function () {
-      const btn = document.getElementById('contactBtn');
-      const feedback = document.getElementById('feedbackMsg');
-      if (btn) {
-        btn.addEventListener('click', async function () {
-          btn.disabled = true;
-          btn.style.opacity = 0.7;
-          feedback.textContent = "Sending feedback...";
-          feedback.style.display = 'block';
-
-          // Try to insert feedback record in a 'feedback' table
-          let success = false;
-          try {
-            // Try get user (optional)
-            let user = null;
-            if (window.supabaseApi && window.supabaseApi.getUser) {
-              user = await window.supabaseApi.getUser();
-            }
-            const pageUrl = window.location.href;
-            const message = "404: " + pageUrl;
-            // Insert feedback to Supabase feedback table
-            if (window.supabaseApi && window.supabaseApi.supabase) {
-              const { error } = await window.supabaseApi.supabase
-                .from('feedback')
-                .insert([{
-                  message,
-                  page_url: pageUrl,
-                  user_id: user ? user.id : null,
-                  created_at: new Date().toISOString()
-                }]);
-              if (!error) success = true;
-            }
-          } catch (e) {
-            // Ignore
-          }
-          feedback.textContent = success
-            ? "Thank you! We'll look into this."
-            : "Thank you! We'll look into this.";
-          setTimeout(() => {
-            feedback.style.display = 'none';
-            btn.disabled = false;
-            btn.style.opacity = 1;
-          }, 2600);
-        });
-      }
+    fetch('components/topmenu.html').then(r => r.text()).then(html => {
+      document.getElementById('topmenu').innerHTML = html;
+      const script = document.createElement('script');
+      script.src = 'js/theme-topmenu.js';
+      document.body.appendChild(script);
+    });
+    fetch('components/navbar.html').then(r => r.text()).then(html => {
+      document.getElementById('navbar').innerHTML = html;
     });
   </script>
 </body>
