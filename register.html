@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Register | Zooom Forum</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Create your Zooom account.">
+  <link rel="icon" href="assets/logo.png">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/auth.css">
+  <link rel="stylesheet" href="css/navbar.css">
+</head>
+<body>
+  <div id="navbar"></div>
+  <main>
+    <form id="register-form" aria-label="Registration Form" autocomplete="on">
+      <h2>Register</h2>
+      <input type="text" id="reg-username" placeholder="Username" required aria-label="Username" autocomplete="username">
+      <input type="email" id="reg-email" placeholder="Email" required aria-label="Email" autocomplete="email">
+      <input type="password" id="reg-password" placeholder="Password" required aria-label="Password" autocomplete="new-password">
+      <button type="submit" aria-label="Register">Register</button>
+      <div id="register-error" class="form-error" role="alert"></div>
+    </form>
+  </main>
+  <script src="js/supabase.js"></script>
+  <script src="js/register.js"></script>
+  <script>
+    fetch('components/navbar.html').then(r => r.text()).then(html => {
+      document.getElementById('navbar').innerHTML = html;
+      import('./js/navbar.js');
+    });
+  </script>
+</body>
+</html>
