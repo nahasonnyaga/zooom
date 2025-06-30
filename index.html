@@ -4,61 +4,272 @@
   <meta charset="UTF-8">
   <title>Threads 100 Clone - Feed</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Styles -->
   <link rel="stylesheet" href="css/feed.css">
   <link rel="stylesheet" href="css/main.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <!-- Remove FontAwesome from here; it's loaded in components/navbar.html for full compatibility -->
+  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"> -->
+
+  <!-- PWA Manifest & Theme -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#3b82f6">
+  <!-- iOS support -->
   <link rel="apple-touch-icon" href="assets/logo.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="#3b82f6">
   <meta name="apple-mobile-web-app-title" content="Zooom">
+
   <style>
-    /* ... your styles here ... */
+    .thread-media {
+      min-height: 260px;
+      margin-top: 0.7em;
+      margin-bottom: 0.5em;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .thread-media img,
+    .thread-media video {
+      max-width: 96%;
+      border-radius: 6px;
+      background: #eee;
+      margin-bottom: 4px;
+      display: block;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      min-height: 120px;
+    }
+    .thread-media video {
+      max-height: 260px;
+    }
+    .floating-new-thread-btn {
+      position: fixed;
+      bottom: 2.1rem;
+      right: 2.1rem;
+      z-index: 200;
+      background: linear-gradient(90deg,#3b82f6 35%,#60a5fa 100%);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 3.5rem;
+      height: 3.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.1rem;
+      box-shadow: 0 2px 16px #3b82f522;
+      cursor: pointer;
+      outline: none;
+      transition: background 0.13s, box-shadow 0.13s;
+    }
+    .floating-new-thread-btn:hover {
+      background: linear-gradient(90deg,#2563eb 25%,#60a5fa 100%);
+      box-shadow: 0 6px 24px #3b82f540;
+    }
+    .feed-empty {
+      color: #aaa;
+      text-align: center;
+      margin: 4rem 0 2rem 0;
+      font-size: 1.18rem;
+    }
+    .action-btn.liked { color: #e11d48 !important; }
+    .action-btn.retweeted { color: #22d3ee !important; }
+    .action-btn.bookmarked { color: #fbbf24 !important; }
+    @media (max-width: 500px) {
+      .floating-new-thread-btn { right: 1rem; bottom: 1rem; width: 2.6rem; height: 2.6rem; font-size:1.3rem; }
+    }
   </style>
 </head>
-<body>
-  <!-- Navbar include -->
+<body style="background:#f7f7fa;">
+  <!-- Navbar include (modern Threads-like from components/navbar.html) -->
   <div id="navbar-include"></div>
   <script>
-    fetch('components/navbar.html').then(r=>r.text()).then(html=>{
+    fetch('components/navbar.html').then(r=>r.ok ? r.text() : '').then(html=>{
       document.getElementById('navbar-include').innerHTML = html;
     });
   </script>
 
   <main class="feed" aria-label="Threads feed">
-    <!-- ... your mock threads ... -->
+    <div id="thread-list"></div>
+    <div class="feed-empty" style="display:none;">No threads yet. Start a conversation!</div>
   </main>
 
   <!-- Floating new-thread button -->
-  <button class="floating-new-thread-btn" title="New Thread" onclick="window.location.href='post.html'">
+  <button class="floating-new-thread-btn" title="New Thread" type="button" onclick="window.location.href='post.html'">
     <i class="fa-solid fa-plus"></i>
   </button>
 
-  <!-- Notification component area -->
   <div id="modern-notification-area" style="position:fixed;top:1.7rem;right:1.6rem;z-index:205;"></div>
 
-  <!-- Supabase CDN and JS: MUST BE HERE -->
+  <!-- Supabase Client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="js/supabase.js"></script>
 
-  <!-- Notification loader: use global supabase -->
+  <!-- Feed rendering logic -->
   <script>
-    async function showNotifications() {
-      // Try to get logged-in user
-      const { data, error } = await supabase.auth.getUser();
-      const user = data?.user;
-      if (!user) return; // Not logged in
+    async function renderFeed() {
+      const list = document.getElementById('thread-list');
+      const emptyMsg = document.querySelector('.feed-empty');
+      // Fetch threads from Supabase
+      const { data: threads, error } = await window.supabaseApi.fetchThreads();
+      if (error) {
+        list.innerHTML = '<div class="feed-empty">Error loading threads.</div>';
+        return;
+      }
+      if (!threads || threads.length === 0) {
+        emptyMsg.style.display = "";
+        return;
+      }
+      emptyMsg.style.display = "none";
+      list.innerHTML = '';
+      for (const thread of threads) {
+        let user = thread.user || {};
+        let replies = thread.replies || [];
+        // Render media if you have media URLs (not in demo schema, but ready)
+        let mediaHtml = "";
+        if (thread.images || thread.videos) {
+          mediaHtml = renderThreadMedia(thread.images || [], thread.videos || []);
+        }
+        // Build replies HTML
+        let repliesHtml = replies.map(reply => `
+          <div class="reply-card" tabindex="0" aria-label="Reply by ${reply.user?.email || 'user'}">
+            <div style="display:flex;align-items:center;gap:0.5rem;">
+              <img src="assets/avatar.png" alt="${reply.user?.email || 'user'} avatar" style="width:1.5rem;height:1.5rem;border-radius:50%;background:#f2f2f2;">
+              <span style="font-weight:600;color:#374151;">@${reply.user?.email?.split('@')[0] || 'user'}</span>
+              <small style="color:#aaa;margin-left:auto;">${timeAgo(reply.created_at)}</small>
+            </div>
+            <p style="margin:0.6em 0 0.2em 0;">${reply.content || ''}</p>
+          </div>
+        `).join('');
+        // Thread card HTML
+        let threadCard = document.createElement('section');
+        threadCard.className = 'thread-card';
+        threadCard.tabIndex = 0;
+        threadCard.setAttribute('aria-label', `Thread by ${user.email || 'user'}: ${thread.content}`);
+        threadCard.innerHTML = `
+          <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.45rem;">
+            <img src="assets/avatar.png" alt="${user.email || 'user'} avatar" style="width:2.2rem;height:2.2rem;border-radius:50%;border:1px solid #eee;background:#f4f4f4;object-fit:cover;">
+            <span style="font-weight:600;color:#3b82f6;">@${user.email?.split('@')[0] || 'user'}</span>
+            <small style="color:#888;margin-left:auto;">${timeAgo(thread.created_at)}</small>
+          </div>
+          <a href="thread.html?id=${thread.id}" style="text-decoration:none;color:inherit;">
+            <p style="font-size:1.18rem;font-weight:500;margin-top:0.1em;">${thread.content || ''}</p>
+            ${mediaHtml}
+          </a>
+          <div class="thread-actions" aria-label="actions">
+            <button class="action-btn like-btn" title="Like" aria-label="Like" type="button">&#10084;</button>
+            <span class="like-count" aria-label="0 likes">0</span>
+            <button class="action-btn retweet-btn" title="Repost" aria-label="Repost" type="button">&#128257;</button>
+            <span class="retweet-count" aria-label="0 reposts">0</span>
+            <button class="action-btn bookmark-btn" title="Bookmark" aria-label="Bookmark" type="button">&#128278;</button>
+            <button class="action-btn" title="Reply" aria-label="Reply" type="button"><i class="fa-solid fa-reply"></i></button>
+            <button class="action-btn" title="Share" aria-label="Share" type="button"><i class="fa-solid fa-share-nodes"></i></button>
+          </div>
+          <div class="reply-section" aria-label="Replies">
+            ${repliesHtml}
+          </div>
+        `;
+        list.appendChild(threadCard);
+      }
+    }
 
-      // Fetch notifications
-      const { data: notifications, error: notifError } = await supabase
+    // Utility: time ago
+    function timeAgo(date) {
+      if (!date) return '';
+      const now = new Date();
+      const then = new Date(date);
+      const diff = Math.floor((now - then) / 1000);
+      if (diff < 60) return `${diff}s ago`;
+      if (diff < 3600) return `${Math.floor(diff/60)}m ago`;
+      if (diff < 86400) return `${Math.floor(diff/3600)}h ago`;
+      return then.toLocaleDateString();
+    }
+
+    // Thread media rendering (images/videos)
+    function renderThreadMedia(imageUrls = [], videoUrls = []) {
+      let html = '';
+      if (Array.isArray(imageUrls)) {
+        html += imageUrls.map(url =>
+          `<img src="${url}" alt="thread image" width="320" height="180" loading="lazy" style="aspect-ratio:16/9;">`
+        ).join('');
+      }
+      if (Array.isArray(videoUrls)) {
+        html += videoUrls.map(url =>
+          `<video controls width="320" height="180" style="aspect-ratio:16/9;" preload="none">
+             <source src="${url}" type="video/mp4">
+             Your browser does not support the video tag.
+           </video>`
+        ).join('');
+      }
+      return html ? `<div class="thread-media">${html}</div>` : "";
+    }
+
+    // Interactive actions
+    function setupActionButtons() {
+      document.querySelectorAll('.like-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          let countSpan = btn.nextElementSibling;
+          let count = parseInt(countSpan.textContent, 10) || 0;
+          btn.classList.toggle('liked');
+          if (btn.classList.contains('liked')) {
+            count++;
+            btn.style.color = '#e11d48';
+          } else {
+            count = Math.max(0, count - 1);
+            btn.style.color = '';
+          }
+          countSpan.textContent = count;
+        });
+      });
+      document.querySelectorAll('.retweet-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          let countSpan = btn.nextElementSibling;
+          let count = parseInt(countSpan.textContent, 10) || 0;
+          btn.classList.toggle('retweeted');
+          if (btn.classList.contains('retweeted')) {
+            count++;
+            btn.style.color = '#22d3ee';
+          } else {
+            count = Math.max(0, count - 1);
+            btn.style.color = '';
+          }
+          countSpan.textContent = count;
+        });
+      });
+      document.querySelectorAll('.bookmark-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          btn.classList.toggle('bookmarked');
+          if (btn.classList.contains('bookmarked')) {
+            btn.style.color = '#fbbf24';
+          } else {
+            btn.style.color = '';
+          }
+        });
+      });
+    }
+
+    // Run feed rendering and action setup
+    document.addEventListener('DOMContentLoaded', async function() {
+      await renderFeed();
+      setupActionButtons();
+    });
+  </script>
+
+  <!-- Notification fetch and render for current user -->
+  <script type="module">
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+    const SUPABASE_URL = 'https://kocbcrctlneqqxhxowbk.supabase.co'; // <-- replace with your project URL
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtvY2JjcmN0bG5lcXF4aHhvd2JrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAzNzc5MjksImV4cCI6MjA2NTk1MzkyOX0.pOL7LyfvmDAQ3IP7qzdpwyHzKaXGCJIN_t3jkx2ZoBI'; // <-- replace with your anon key
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    async function showNotifications() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data: notifications, error } = await supabase
         .from('notifications')
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(10);
-
       if (!notifications || notifications.length === 0) return;
       let area = document.getElementById('modern-notification-area');
       if (!area) {
@@ -70,12 +281,8 @@
         area.style.zIndex = "205";
         document.body.appendChild(area);
       }
-
       area.innerHTML = "";
-
-      // Load notification component template
       const tpl = await fetch('components/notification.html').then(r=>r.text());
-
       notifications.forEach(n => {
         let html = tpl;
         html = html.replace('<!-- message -->', n.message);
@@ -85,12 +292,8 @@
         area.appendChild(div.firstElementChild);
       });
     }
-    document.addEventListener('DOMContentLoaded', showNotifications);
-  </script>
 
-  <!-- Your other interactive scripts remain as they were -->
-  <script>
-    // ... like/retweet/bookmark logic ...
+    document.addEventListener('DOMContentLoaded', showNotifications);
   </script>
 
   <!-- PWA Service Worker registration -->
