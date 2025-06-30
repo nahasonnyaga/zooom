@@ -52,7 +52,8 @@
 <style>
 /* --- Worldclass Navbar Icon-only Responsive Styles --- */
 .navbar {
-  width: 100%;
+  width: 100vw;
+  min-width: 0;
   min-height: 58px;
   background: #fff;
   border-bottom: 1.5px solid #e5eaf1;
@@ -64,7 +65,9 @@
   position: sticky;
   top: 0;
   z-index: 102;
-  padding: 0 12px;
+  padding: 0 6px;
+  box-sizing: border-box;
+  overflow-x: auto;
 }
 .navbar-logo {
   display: flex;
@@ -74,6 +77,7 @@
   color: #1c1b22;
   text-decoration: none;
   transition: filter 0.13s;
+  min-width: 0;
 }
 .navbar-logo-img {
   width: 2em;
@@ -92,25 +96,29 @@
 }
 .navbar-center {
   display: flex;
-  gap: 1.3em;
+  gap: 0.7em;
   align-items: center;
   justify-content: center;
+  flex: 1 1 0%;
+  min-width: 0;
+  overflow-x: auto;
 }
 .navbar-link {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.38em 0.38em;
+  padding: 0.25em 0.25em;
   border-radius: 50%;
   text-decoration: none;
   color: #555;
   background: none;
-  font-size: 1.25em;
+  font-size: 1.08em;
   font-weight: 600;
   transition: background 0.13s, color 0.13s, box-shadow 0.13s, transform 0.13s;
   position: relative;
-  min-width: 2.15em; min-height:2.15em;
+  min-width: 2.1em; min-height:2.1em;
   aspect-ratio:1/1;
+  box-sizing: border-box;
 }
 .navbar-link:focus, .navbar-link:hover, .navbar-link.active {
   background: linear-gradient(94deg,#e0e7ff 62%,#f3f7fd 100%);
@@ -122,12 +130,12 @@
 .thread-btn {
   background: linear-gradient(90deg,#3b82f6 65%,#60a5fa 100%) !important;
   color: #fff !important;
-  box-shadow: 0 2px 16px #3b82f540;
+  box-shadow: 0 2px 12px #3b82f540;
   border: none !important;
   border-radius: 50% !important;
   font-weight: 900 !important;
-  min-width: 2.2em; min-height:2.2em;
-  font-size: 1.30em !important;
+  min-width: 2.1em; min-height:2.1em;
+  font-size: 1.12em !important;
 }
 .thread-btn:hover, .thread-btn:focus {
   filter: brightness(1.12);
@@ -135,7 +143,7 @@
   color: #fff !important;
 }
 .navbar-icon {
-  font-size: 1.18em;
+  font-size: 1.13em;
   color: inherit;
   transition: color 0.13s, text-shadow 0.13s;
   filter: drop-shadow(0 2px 3px #3b82f522);
@@ -146,6 +154,7 @@
   align-items: center;
   gap: 0.5em;
   position: relative;
+  min-width: 0;
 }
 .navbar-avatar {
   width: 2em;
@@ -161,6 +170,8 @@
   transition: box-shadow 0.13s, transform 0.13s;
   overflow: hidden;
   position: relative;
+  min-width: 2em;
+  min-height: 2em;
 }
 .navbar-avatar:hover, .navbar-avatar:focus {
   box-shadow: 0 2px 16px #3b82f540;
@@ -244,14 +255,15 @@
   z-index: 2;
 }
 @media (max-width: 900px) {
-  .navbar-center {gap: 0.7em;}
-  .navbar-link {padding:0.3em 0.3em;}
+  .navbar {padding: 0 1vw;}
+  .navbar-center {gap: 0.3em;}
+  .navbar-link {padding:0.17em 0.17em;}
 }
 @media (max-width: 650px) {
-  .navbar {padding:0 2px;}
+  .navbar {padding:0 0.5vw;}
   .navbar-logo-img {width:1.2em;height:1.2em;}
-  .navbar-center {gap:0.07em;}
-  .navbar-link {padding:0.22em;}
+  .navbar-center {gap:0.01em;}
+  .navbar-link {padding:0.12em;}
   .navbar-dropdown {top:2em;}
 }
 </style>
