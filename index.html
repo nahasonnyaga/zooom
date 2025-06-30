@@ -7,19 +7,18 @@
   <meta name="description" content="Welcome to Zooom, a worldclass forum built on Supabase.">
   <link rel="icon" href="assets/logo.png">
   <link rel="stylesheet" href="css/main.css">
-  <link rel="stylesheet" href="css/feed.css">
   <link rel="stylesheet" href="css/navbar.css">
 </head>
 <body>
-  <div id="navbar"></div>
   <main id="feed" aria-live="polite"></main>
+  <div id="navbar"></div>
   <script src="js/supabase.js"></script>
   <script src="js/main.js"></script>
   <script src="js/feed.js"></script>
   <script>
+    // Load navbar at the very end of the body so it will always be on top visually
     fetch('components/navbar.html').then(r => r.text()).then(html => {
       document.getElementById('navbar').innerHTML = html;
-      import('./js/navbar.js');
     });
   </script>
 </body>
