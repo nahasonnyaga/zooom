@@ -1,63 +1,25 @@
-// Ensure the user is logged in
-document.addEventListener('DOMContentLoaded', async () => {
-  // Wait for Supabase to be loaded
-  if (typeof supabase === 'undefined') return;
+import { supabase, getUser } from './supabase.js';
 
-  const { data: { user } } = await supabase.auth.getUser();
+document.addEventListener('DOMContentLoaded', async () => {
+  const user = await getUser();
   if (!user) {
     window.location.href = 'login.html';
     return;
   }
-
-  // Populate email
-  document.getElementById('email').value = user.email;
-  // Optional: If you have a profile table for display name:
-  // Fetch and populate display name
-  const { data: profile, error: profileError } = await supabase
-    .from('profiles')
-    .select('display_name')
-    .eq('id', user.id)
-    .single();
-  if (!profileError && profile && profile.display_name) {
-    document.getElementById('display-name').value = profile.display_name;
+  // Load profile info
+  const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+  if (profile) {
+    document.getElementById('settings-username').textContent = profile.username;
+    document.getElementById('settings-displayname').value = profile.displayname;
+    document.getElementById('settings-bio').value = profile.bio || '';
+    document.getElementById('settings-avatar').src = profile.avatar_url || 'assets/avatar.png';
   }
-
-  // Handle form submit
-  document.getElementById('settings-form').onsubmit = async function(e) {
+  // Save profile
+  document.getElementById('settings-form').onsubmit = async (e) => {
     e.preventDefault();
-    const displayName = document.getElementById('display-name').value.trim();
-    const newPassword = document.getElementById('password').value;
-    const msgDiv = document.getElementById('settings-msg');
-    msgDiv.textContent = '';
-    let updates = [];
-    // Update display name if changed (optional, needs profiles table)
-    if (displayName) {
-      const { error: updateError } = await supabase
-        .from('profiles')
-        .update({ display_name: displayName })
-        .eq('id', user.id);
-      if (updateError) {
-        msgDiv.textContent = "Error updating display name: " + updateError.message;
-        return;
-      } else {
-        updates.push('Display name updated.');
-      }
-    }
-    // Update password if provided
-    if (newPassword) {
-      const { error: pwError } = await supabase.auth.updateUser({ password: newPassword });
-      if (pwError) {
-        msgDiv.textContent = "Error updating password: " + pwError.message;
-        return;
-      } else {
-        updates.push('Password updated.');
-      }
-    }
-    if (updates.length) {
-      msgDiv.textContent = updates.join(' ');
-      document.getElementById('password').value = '';
-    } else {
-      msgDiv.textContent = 'No changes made.';
-    }
-  }
+    const displayname = document.getElementById('settings-displayname').value.trim();
+    const bio = document.getElementById('settings-bio').value.trim();
+    await supabase.from('profiles').update({ displayname, bio }).eq('id', user.id);
+    alert('Settings saved!');
+  };
 });
