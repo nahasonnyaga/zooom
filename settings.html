@@ -6,13 +6,19 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link rel="stylesheet" href="css/main.css" />
   <link rel="stylesheet" href="css/auth.css" />
+  <!-- Do NOT include FontAwesome or navbar CSS/JS here; it is in components/navbar.html -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="js/supabase.js"></script>
   <script src="js/settings.js" defer></script>
 </head>
 <body>
-  <!-- Navbar -->
+  <!-- Navbar (fetched, NOT copied inline) -->
   <div id="navbar"></div>
+  <script>
+    fetch('components/navbar.html')
+      .then(r => r.ok ? r.text() : '')
+      .then(html => { document.getElementById('navbar').innerHTML = html; });
+  </script>
   <main class="main-container">
     <h2>Settings</h2>
     <form id="settings-form">
@@ -29,11 +35,5 @@
     </form>
     <div id="settings-msg"></div>
   </main>
-  <script>
-    // Load navbar component
-    fetch('components/navbar.html').then(r => r.text()).then(html => {
-      document.getElementById('navbar').innerHTML = html;
-    });
-  </script>
 </body>
 </html>
