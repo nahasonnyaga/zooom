@@ -1,23 +1,53 @@
-<nav>
-  <a href="index.html">Home</a>
-  <a href="post.html">New Post</a>
-  <a href="profile.html">Profile</a>
-  <a href="login.html" id="login-link">Login</a>
-  <a href="register.html" id="register-link">Register</a>
-  <a href="#" id="logout-link" style="display:none;">Logout</a>
+<nav class="navbar threads-navbar worldclass-navbar" aria-label="Main Navigation">
+  <div class="navbar-left">
+    <a href="index.html" class="navbar-logo" title="Home" tabindex="0" aria-label="Go to Home">
+      <img src="assets/logo.png" alt="Zooom Logo" class="navbar-logo-img" onerror="this.style.display='none'">
+    </a>
+  </div>
+  <div class="navbar-center" id="navbar-center">
+    <a href="index.html" class="navbar-link" title="Feed" tabindex="0" aria-label="Feed">
+      <i class="fa-solid fa-house navbar-icon"></i>
+    </a>
+    <a href="explore.html" class="navbar-link" title="Explore" tabindex="0" aria-label="Explore">
+      <i class="fa-solid fa-hashtag navbar-icon"></i>
+    </a>
+    <a href="explore-users.html" class="navbar-link" title="Users" tabindex="0" aria-label="Explore Users">
+      <i class="fa-solid fa-users navbar-icon"></i>
+    </a>
+    <a href="post.html" class="navbar-link thread-btn" title="Post" id="threadNavBtn" tabindex="0" aria-label="Create Post">
+      <i class="fa-solid fa-circle-plus navbar-icon"></i>
+    </a>
+    <a href="notifications.html" class="navbar-link" title="Notifications" tabindex="0" aria-label="Notifications" style="position:relative;">
+      <i class="fa-solid fa-bell navbar-icon"></i>
+      <span class="nav-alert-dot" id="navbarNotifDot" style="position:absolute;top:0.42em;right:0.7em;width:0.75em;height:0.75em;background:#fa5252;border-radius:50%;display:none;border:2.5px solid #fff;"></span>
+    </a>
+    <a href="profile.html" class="navbar-link" title="Profile" tabindex="0" aria-label="Profile">
+      <i class="fa-solid fa-circle-user navbar-icon"></i>
+    </a>
+  </div>
+  <div class="navbar-right" id="navbar-right">
+    <button class="navbar-avatar" id="navbarUserBtn" title="Account" aria-haspopup="true" aria-expanded="false" tabindex="0" style="border:none;background:none;padding:0;">
+      <img src="assets/avatar.png" alt="User" class="navbar-avatar-img" onerror="this.src='assets/avatar.png'">
+      <i class="fa-solid fa-caret-down" style="margin-left:0.4em;font-size:1em;color:#3b82f6;"></i>
+    </button>
+    <div class="navbar-dropdown" id="navbarDropdown" style="display:none;" role="menu" aria-label="Account Menu">
+      <div class="dropdown-profile">
+        <img src="assets/avatar.png" alt="User" class="dropdown-avatar" onerror="this.src='assets/avatar.png'">
+        <div class="dropdown-user-info">
+          <span id="dropdownUsername" style="font-weight:700;color:#3b82f6;">@username</span>
+        </div>
+      </div>
+      <hr>
+      <a href="profile.html" tabindex="0"><i class="fa-solid fa-user"></i></a>
+      <a href="settings.html" tabindex="0"><i class="fa-solid fa-gear"></i></a>
+      <a href="security.html" tabindex="0"><i class="fa-solid fa-shield-halved"></i></a>
+      <a href="privacy.html" tabindex="0"><i class="fa-solid fa-user-shield"></i></a>
+      <a href="password-update.html" tabindex="0"><i class="fa-solid fa-key"></i></a>
+      <a href="password-reset.html" tabindex="0"><i class="fa-solid fa-unlock"></i></a>
+      <a href="#" id="navbarLogoutBtn" tabindex="0"><i class="fa-solid fa-right-from-bracket"></i></a>
+    </div>
+  </div>
 </nav>
-<script>
-  // Navbar login/logout logic
-  supabase.auth.getUser().then(({ data: { user } }) => {
-    if (user) {
-      document.getElementById('login-link').style.display = 'none';
-      document.getElementById('register-link').style.display = 'none';
-      document.getElementById('logout-link').style.display = '';
-    }
-  });
-  document.getElementById('logout-link').addEventListener('click', async (e) => {
-    e.preventDefault();
-    await supabase.auth.signOut();
-    window.location.href = 'login.html';
-  });
-</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="css/navbar.css">
+<script src="js/navbar.js"></script>
