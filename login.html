@@ -2,26 +2,32 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Login | Zooom</title>
+  <title>Login | Zooom Forum</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Login to your Zooom account.">
+  <link rel="icon" href="assets/logo.png">
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/auth.css">
-  <link rel="icon" type="image/png" href="assets/logo.png">
+  <link rel="stylesheet" href="css/navbar.css">
 </head>
 <body>
   <div id="navbar"></div>
   <main>
-    <form id="login-form" class="auth-form">
-      <h2>Sign in</h2>
-      <input type="email" id="email" placeholder="Email" required autocomplete="username">
-      <input type="password" id="password" placeholder="Password" required autocomplete="current-password">
-      <button type="submit">Login</button>
-      <div id="error-msg" class="auth-error"></div>
+    <form id="login-form" aria-label="Login Form" autocomplete="on">
+      <h2>Login</h2>
+      <input type="email" id="email" placeholder="Email" required autocomplete="email" aria-label="Email">
+      <input type="password" id="password" placeholder="Password" required autocomplete="current-password" aria-label="Password">
+      <button type="submit" aria-label="Login">Login</button>
+      <div id="login-error" class="form-error" role="alert"></div>
     </form>
-    <div class="auth-links">
-      <a href="register.html">Don't have an account? Register</a>
-    </div>
   </main>
-  <script type="module" src="js/auth.js"></script>
-  <script type="module" src="js/main.js"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    fetch('components/navbar.html').then(r => r.text()).then(html => {
+      document.getElementById('navbar').innerHTML = html;
+      import('./js/navbar.js');
+    });
+  </script>
 </body>
 </html>
