@@ -28,7 +28,7 @@
   <div class="navbar-right" id="navbar-right">
     <button class="navbar-avatar" id="navbarUserBtn" title="Account" aria-haspopup="true" aria-expanded="false" tabindex="0" style="border:none;background:none;padding:0;">
       <img src="assets/avatar.png" alt="User" class="navbar-avatar-img" onerror="this.src='assets/avatar.png'">
-      <i class="fa-solid fa-caret-down" style="margin-left:0.4em;font-size:1.25em;color:#3b82f6;"></i>
+      <i class="fa-solid fa-caret-down" style="margin-left:0.4em;font-size:1em;color:#3b82f6;"></i>
     </button>
     <div class="navbar-dropdown" id="navbarDropdown" style="display:none;" role="menu" aria-label="Account Menu">
       <div class="dropdown-profile">
@@ -50,10 +50,10 @@
 </nav>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
-/* --- Worldclass Navbar Enhanced Icon-only Styles --- */
+/* --- Worldclass Navbar Icon-only Responsive Styles --- */
 .navbar {
   width: 100%;
-  min-height: 62px;
+  min-height: 58px;
   background: #fff;
   border-bottom: 1.5px solid #e5eaf1;
   box-shadow: 0 2px 16px #3b82f510;
@@ -64,21 +64,21 @@
   position: sticky;
   top: 0;
   z-index: 102;
-  padding: 0 16px;
+  padding: 0 12px;
 }
 .navbar-logo {
   display: flex;
   align-items: center;
   gap: 0.36em;
-  font-size: 1.35rem;
+  font-size: 1.25rem;
   color: #1c1b22;
   text-decoration: none;
   transition: filter 0.13s;
 }
 .navbar-logo-img {
-  width: 2.6em;
-  height: 2.6em;
-  border-radius: 1.1em;
+  width: 2em;
+  height: 2em;
+  border-radius: 0.8em;
   background: #e0e7ff;
   box-shadow: 0 2px 8px #3b82f540;
   border: 1.5px solid #e5eafe;
@@ -88,11 +88,11 @@
 .navbar-logo:hover .navbar-logo-img,
 .navbar-logo:focus .navbar-logo-img {
   box-shadow: 0 4px 18px #3b82f540;
-  transform: scale(1.08) rotate(-4deg);
+  transform: scale(1.07) rotate(-4deg);
 }
 .navbar-center {
   display: flex;
-  gap: 2.7em;
+  gap: 1.3em;
   align-items: center;
   justify-content: center;
 }
@@ -100,24 +100,24 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.54em 0.9em;
+  padding: 0.38em 0.38em;
   border-radius: 50%;
   text-decoration: none;
   color: #555;
   background: none;
-  font-size: 1.35em;
+  font-size: 1.25em;
   font-weight: 600;
   transition: background 0.13s, color 0.13s, box-shadow 0.13s, transform 0.13s;
   position: relative;
-  min-width: 2.7em; min-height:2.7em;
+  min-width: 2.15em; min-height:2.15em;
   aspect-ratio:1/1;
 }
 .navbar-link:focus, .navbar-link:hover, .navbar-link.active {
   background: linear-gradient(94deg,#e0e7ff 62%,#f3f7fd 100%);
   color: #2563eb;
-  box-shadow: 0 2px 16px #3b82f528;
+  box-shadow: 0 2px 10px #3b82f528;
   outline: none;
-  transform: scale(1.13) rotate(-2deg);
+  transform: scale(1.08) rotate(-2deg);
 }
 .thread-btn {
   background: linear-gradient(90deg,#3b82f6 65%,#60a5fa 100%) !important;
@@ -126,8 +126,8 @@
   border: none !important;
   border-radius: 50% !important;
   font-weight: 900 !important;
-  min-width: 2.85em; min-height:2.85em;
-  font-size: 1.5em !important;
+  min-width: 2.2em; min-height:2.2em;
+  font-size: 1.30em !important;
 }
 .thread-btn:hover, .thread-btn:focus {
   filter: brightness(1.12);
@@ -135,21 +135,21 @@
   color: #fff !important;
 }
 .navbar-icon {
-  font-size: 1.45em;
+  font-size: 1.18em;
   color: inherit;
   transition: color 0.13s, text-shadow 0.13s;
-  filter: drop-shadow(0 3px 6px #3b82f522);
+  filter: drop-shadow(0 2px 3px #3b82f522);
 }
 .navbar-right {
   margin-left: auto;
   display: flex;
   align-items: center;
-  gap: 0.6em;
+  gap: 0.5em;
   position: relative;
 }
 .navbar-avatar {
-  width: 2.6em;
-  height: 2.6em;
+  width: 2em;
+  height: 2em;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -163,9 +163,9 @@
   position: relative;
 }
 .navbar-avatar:hover, .navbar-avatar:focus {
-  box-shadow: 0 2px 18px #3b82f540;
+  box-shadow: 0 2px 16px #3b82f540;
   outline: none;
-  transform: scale(1.1) rotate(-2deg);
+  transform: scale(1.07) rotate(-2deg);
 }
 .navbar-avatar-img {
   width: 100%;
@@ -176,31 +176,31 @@
 }
 .navbar-dropdown {
   position: absolute;
-  top: 3.5em;
+  top: 3em;
   right: 0.2em;
-  min-width: 72px;
+  min-width: 56px;
   background: #fff;
-  border-radius: 15px;
+  border-radius: 13px;
   box-shadow: 0 4px 24px #3b82f540;
   border: 1.5px solid #e5eafe;
-  padding: 1.2em 0.7em 1em 0.7em;
+  padding: 1em 0.6em 0.7em 0.6em;
   z-index: 210;
   display: none;
   animation: fadeInDropdown 0.18s;
 }
 @keyframes fadeInDropdown {
-  from { opacity: 0; transform: translateY(-18px);}
+  from { opacity: 0; transform: translateY(-12px);}
   to { opacity: 1; transform: translateY(0);}
 }
 .dropdown-profile {
   display: flex;
   align-items: center;
-  gap: 0.8em;
-  margin-bottom: 0.7em;
+  gap: 0.6em;
+  margin-bottom: 0.5em;
 }
 .dropdown-avatar {
-  width: 2.5em;
-  height: 2.5em;
+  width: 2em;
+  height: 2em;
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid #e0e7ff;
@@ -209,27 +209,27 @@
 .dropdown-user-info {
   display: flex;
   flex-direction: column;
-  font-size: 1.02em;
+  font-size: 0.97em;
 }
 .navbar-dropdown a {
   display: flex;
   align-items: center;
   justify-content: center;
   color: #374151;
-  padding: 0.5em 0.4em;
+  padding: 0.32em 0.32em;
   border-radius: 50%;
   text-decoration: none;
   font-weight: 700;
-  font-size: 1.25em;
+  font-size: 1.1em;
   transition: background 0.13s, color 0.13s, transform 0.13s;
-  margin-bottom: 0.2em;
-  min-width: 2.3em; min-height:2.3em;
+  margin-bottom: 0.18em;
+  min-width: 1.9em; min-height:1.9em;
   aspect-ratio:1/1;
 }
 .navbar-dropdown a:hover {
   background: linear-gradient(90deg,#e0e7ff 60%,#f3f7fd 100%);
   color: #2563eb;
-  transform: scale(1.18) rotate(-3deg);
+  transform: scale(1.13) rotate(-3deg);
 }
 .nav-alert-dot {
   background: #fa5252;
@@ -244,20 +244,20 @@
   z-index: 2;
 }
 @media (max-width: 900px) {
-  .navbar-center {gap: 1.1em;}
-  .navbar-link {padding:0.5em 0.5em;}
+  .navbar-center {gap: 0.7em;}
+  .navbar-link {padding:0.3em 0.3em;}
 }
 @media (max-width: 650px) {
-  .navbar {padding:0 3px;}
-  .navbar-logo-img {width:1.8em;height:1.8em;}
-  .navbar-center {gap:0.1em;}
-  .navbar-link {padding:0.35em;}
-  .navbar-dropdown {top:3em;}
+  .navbar {padding:0 2px;}
+  .navbar-logo-img {width:1.2em;height:1.2em;}
+  .navbar-center {gap:0.07em;}
+  .navbar-link {padding:0.22em;}
+  .navbar-dropdown {top:2em;}
 }
 </style>
 <script src="js/supabase.js"></script>
 <script>
-// --- Beautiful worldclass-navbar JS (Icon only) ---
+// --- Responsive worldclass-navbar JS (Icon only) ---
 const navbarUserBtn = document.getElementById('navbarUserBtn');
 const navbarDropdown = document.getElementById('navbarDropdown');
 const navbarNotifDot = document.getElementById('navbarNotifDot');
