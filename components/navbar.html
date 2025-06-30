@@ -2,7 +2,10 @@
   <div class="navbar-left">
     <a href="index.html" class="navbar-logo" title="Home" tabindex="0" aria-label="Go to Home">
       <img src="assets/logo.png" alt="Zooom Logo" class="navbar-logo-img" onerror="this.style.display='none'">
-      <span class="navbar-title">Zooom</span>
+      <span class="navbar-title" style="font-weight:900;letter-spacing:-1.5px;font-size:1.45rem;">
+        <i class="fa-solid fa-bolt" style="color:#3b82f6;margin-right:0.12em;font-size:1.18em;vertical-align:-1px;"></i>
+        Zooom
+      </span>
     </a>
   </div>
   <div class="navbar-center" id="navbar-center">
@@ -16,31 +19,32 @@
     </a>
     <a href="explore-users.html" class="navbar-link" title="Explore Users" tabindex="0" aria-label="Explore Users">
       <i class="fa-solid fa-users navbar-icon"></i>
-      <span class="nav-label">Explore Users</span>
+      <span class="nav-label">Users</span>
     </a>
-    <a href="post.html" class="navbar-link thread-btn" title="Post" id="threadNavBtn" tabindex="0" aria-label="Create Post">
+    <a href="post.html" class="navbar-link thread-btn" title="Post" id="threadNavBtn" tabindex="0" aria-label="Create Post" style="background:linear-gradient(90deg,#3b82f6 60%,#60a5fa 100%);color:#fff;border-radius:2em;padding:0.5em 1.4em;box-shadow:0 2px 12px #3b82f522;">
       <i class="fa-solid fa-circle-plus navbar-icon"></i>
-      <span class="nav-label">Post</span>
+      <span class="nav-label" style="font-weight:600;">Post</span>
     </a>
-    <a href="notifications.html" class="navbar-link" title="Notifications" tabindex="0" aria-label="Notifications">
+    <a href="notifications.html" class="navbar-link" title="Notifications" tabindex="0" aria-label="Notifications" style="position:relative;">
       <i class="fa-solid fa-bell navbar-icon"></i>
       <span class="nav-label">Alerts</span>
-      <span class="nav-alert-dot" id="navbarNotifDot"></span>
+      <span class="nav-alert-dot" id="navbarNotifDot" style="position:absolute;top:0.5em;right:0.8em;width:0.6em;height:0.6em;background:#fa5252;border-radius:50%;display:none;"></span>
     </a>
     <a href="profile.html" class="navbar-link" title="Profile" tabindex="0" aria-label="Profile">
-      <i class="fa-solid fa-user-circle navbar-icon"></i>
+      <i class="fa-solid fa-circle-user navbar-icon"></i>
       <span class="nav-label">Profile</span>
     </a>
   </div>
   <div class="navbar-right" id="navbar-right">
-    <button class="navbar-avatar" id="navbarUserBtn" title="Account" aria-haspopup="true" aria-expanded="false" tabindex="0">
+    <button class="navbar-avatar" id="navbarUserBtn" title="Account" aria-haspopup="true" aria-expanded="false" tabindex="0" style="border:none;background:none;padding:0;">
       <img src="assets/avatar.png" alt="User" class="navbar-avatar-img" onerror="this.src='assets/avatar.png'">
+      <i class="fa-solid fa-caret-down" style="margin-left:0.4em;font-size:1em;color:#3b82f6;"></i>
     </button>
     <div class="navbar-dropdown" id="navbarDropdown" style="display:none;" role="menu" aria-label="Account Menu">
       <div class="dropdown-profile">
         <img src="assets/avatar.png" alt="User" class="dropdown-avatar" onerror="this.src='assets/avatar.png'">
         <div class="dropdown-user-info">
-          <span id="dropdownUsername">@username</span>
+          <span id="dropdownUsername" style="font-weight:700;color:#3b82f6;">@username</span>
         </div>
       </div>
       <hr>
@@ -50,17 +54,259 @@
       <a href="privacy.html" tabindex="0"><i class="fa-solid fa-user-shield"></i> Privacy</a>
       <a href="password-update.html" tabindex="0"><i class="fa-solid fa-key"></i> Update Password</a>
       <a href="password-reset.html" tabindex="0"><i class="fa-solid fa-unlock"></i> Reset Password</a>
-      <a href="#" id="navbarLogoutBtn" tabindex="0"><i class="fa-solid fa-sign-out-alt"></i> Logout</a>
+      <a href="#" id="navbarLogoutBtn" tabindex="0"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
     </div>
   </div>
 </nav>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
-/* --- All your worldclass-navbar CSS goes here --- */
-/* (Paste all the CSS from your navbar markup here!) */
+/* --- Worldclass Navbar Enhanced Styles --- */
+.navbar {
+  width: 100%;
+  min-height: 58px;
+  background: #fff;
+  border-bottom: 1.5px solid #e5eaf1;
+  box-shadow: 0 2px 12px #3b82f508;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  position: sticky;
+  top: 0;
+  z-index: 102;
+  padding: 0 16px;
+}
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.55em;
+  font-size: 1.25rem;
+  color: #1c1b22;
+  text-decoration: none;
+}
+.navbar-logo-img {
+  width: 2.2em;
+  height: 2.2em;
+  border-radius: 12px;
+  background: #e0e7ff;
+  box-shadow: 0 2px 8px #3b82f540;
+  border: 1.5px solid #e5eafe;
+  object-fit: cover;
+}
+.navbar-title {
+  font-weight: 800;
+  color: #2563eb;
+  letter-spacing: -1px;
+  font-family: inherit;
+}
+.navbar-center {
+  display: flex;
+  gap: 2.3em;
+  align-items: center;
+  justify-content: center;
+}
+.navbar-link {
+  display: flex;
+  align-items: center;
+  gap: 0.46em;
+  padding: 0.48em 1.02em;
+  border-radius: 22px;
+  text-decoration: none;
+  color: #444;
+  background: none;
+  font-size: 1.08em;
+  font-weight: 600;
+  transition: background 0.13s, color 0.13s, box-shadow 0.13s;
+  position: relative;
+}
+.navbar-link:hover,
+.navbar-link.active,
+.navbar-link:focus {
+  background: linear-gradient(90deg,#e0e7ff 70%,#f3f7fd 100%);
+  color: #2563eb;
+  box-shadow: 0 2px 14px #3b82f528;
+  outline: none;
+}
+.thread-btn {
+  background: linear-gradient(90deg,#3b82f6 60%,#60a5fa 100%) !important;
+  color: #fff !important;
+  font-weight: 800 !important;
+  box-shadow: 0 2px 8px #3b82f540;
+  border: none !important;
+}
+.thread-btn:hover,
+.thread-btn:focus {
+  filter: brightness(1.08);
+  background: linear-gradient(90deg,#2563eb 60%,#60a5fa 100%) !important;
+  color: #fff !important;
+}
+.navbar-icon {
+  font-size: 1.25em;
+  margin-right: 0.18em;
+  color: inherit;
+  transition: color 0.13s;
+}
+.navbar-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.8em;
+  position: relative;
+}
+.navbar-avatar {
+  width: 2.25em;
+  height: 2.25em;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: #e0e7ff;
+  box-shadow: 0 2px 8px #3b82f522;
+  border: 1.5px solid #3b82f617;
+  transition: box-shadow 0.13s;
+  overflow: hidden;
+  position: relative;
+}
+.navbar-avatar:hover,
+.navbar-avatar:focus {
+  box-shadow: 0 2px 18px #3b82f540;
+  outline: none;
+}
+.navbar-avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #f1f1f7;
+}
+.navbar-dropdown {
+  position: absolute;
+  top: 3.3em;
+  right: 0.2em;
+  min-width: 220px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px #3b82f540;
+  border: 1.5px solid #e5eafe;
+  padding: 1.2em 0.7em 1em 0.7em;
+  z-index: 210;
+  display: none;
+  animation: fadeInDropdown 0.18s;
+}
+@keyframes fadeInDropdown {
+  from { opacity: 0; transform: translateY(-18px);}
+  to { opacity: 1; transform: translateY(0);}
+}
+.dropdown-profile {
+  display: flex;
+  align-items: center;
+  gap: 0.8em;
+  margin-bottom: 0.7em;
+}
+.dropdown-avatar {
+  width: 2.5em;
+  height: 2.5em;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #e0e7ff;
+  background: #f3f6f9;
+}
+.dropdown-user-info {
+  display: flex;
+  flex-direction: column;
+  font-size: 1.02em;
+}
+.navbar-dropdown a {
+  display: flex;
+  align-items: center;
+  gap: 0.64em;
+  color: #374151;
+  padding: 0.5em 0.4em;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.02em;
+  transition: background 0.13s, color 0.13s;
+}
+.navbar-dropdown a:hover {
+  background: linear-gradient(90deg,#e0e7ff 60%,#f3f7fd 100%);
+  color: #2563eb;
+}
+.nav-alert-dot {
+  background: #fa5252;
+  border-radius: 50%;
+  width: 0.7em;
+  height: 0.7em;
+  display: none;
+  position: absolute;
+  top: 0.38em;
+  right: 0.8em;
+  border: 2px solid #fff;
+  z-index: 2;
+}
+@media (max-width: 900px) {
+  .navbar-center {gap: 1.1em;}
+  .navbar-link .nav-label {display:none;}
+  .navbar-link {padding:0.6em 0.7em;}
+  .navbar-title {font-size:1.1em;}
+}
+@media (max-width: 650px) {
+  .navbar {padding:0 4px;}
+  .navbar-title {font-size:1em;}
+  .navbar-logo-img {width:1.6em;height:1.6em;}
+  .navbar-center {gap:0.2em;}
+  .navbar-link {padding:0.5em;}
+}
 </style>
 <script src="js/supabase.js"></script>
 <script>
-/* --- All your worldclass-navbar JavaScript goes here --- */
-/* (Paste all the JS from your navbar markup here!) */
+// --- Beautiful worldclass-navbar JS ---
+const navbarUserBtn = document.getElementById('navbarUserBtn');
+const navbarDropdown = document.getElementById('navbarDropdown');
+const navbarNotifDot = document.getElementById('navbarNotifDot');
+if (navbarUserBtn && navbarDropdown) {
+  navbarUserBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    const expanded = navbarUserBtn.getAttribute('aria-expanded') === 'true';
+    navbarDropdown.style.display = expanded ? 'none' : 'block';
+    navbarUserBtn.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+  });
+  document.addEventListener('click', function(e) {
+    if (!navbarDropdown.contains(e.target) && e.target !== navbarUserBtn) {
+      navbarDropdown.style.display = 'none';
+      navbarUserBtn.setAttribute('aria-expanded', 'false');
+    }
+  });
+}
+window.showNavbarNotifDot = function(show) {
+  if (navbarNotifDot) {
+    navbarNotifDot.style.display = show ? 'block' : 'none';
+  }
+};
+// If using Supabase for user info, set avatar and username
+(async ()=>{
+  if (window.supabaseApi && window.supabaseApi.getUser) {
+    const user = await window.supabaseApi.getUser();
+    if (user) {
+      document.querySelectorAll('.navbar-avatar-img, .dropdown-avatar').forEach(img => {
+        if (user.user_metadata && user.user_metadata.avatar_url)
+          img.src = user.user_metadata.avatar_url;
+      });
+      document.getElementById('dropdownUsername').textContent =
+        user.user_metadata?.username ? '@' + user.user_metadata.username : (user.email ? '@' + user.email.split('@')[0] : '@user');
+    }
+  }
+})();
+// Logout functionality (if using Supabase)
+const navbarLogoutBtn = document.getElementById('navbarLogoutBtn');
+if (navbarLogoutBtn) {
+  navbarLogoutBtn.addEventListener('click', async function(e) {
+    e.preventDefault();
+    if (window.supabaseApi && window.supabaseApi.signOut) {
+      await window.supabaseApi.signOut();
+      window.location.reload();
+    }
+  });
+}
 </script>
