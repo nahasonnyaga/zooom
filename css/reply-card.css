@@ -1,6 +1,1 @@
-<div class="thread-card">
-  <a href="#">
-    <p><!-- thread content --></p>
-  </a>
-  <small><!-- timestamp --></small>
-</div>
+.reply-card { border-top: 1px solid #e0e0e0; margin-top: 1rem; padding: 0.75rem 1rem; background: #f6f8fa; }
