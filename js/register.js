@@ -1,73 +1,54 @@
-// js/register.js
-// Handles user registration, avatar upload, and profile creation
-
 import { supabase } from './supabase.js';
 
-const form = document.getElementById('register-form');
-const errorMsg = document.getElementById('error-msg');
-const notif = document.getElementById('notification');
-
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  errorMsg.textContent = '';
-  showNotif('');
-
-  const email = form.email.value.trim();
-  const password = form.password.value;
-  const bio = form.bio.value.trim();
-  const avatarFile = form.avatar.files[0];
-
-  // 1. Sign up the user
-  const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-    email,
-    password,
+function setLoading(isLoading) {
+  const btn = document.querySelector('#register-form button[type="submit"]');
+  if (btn) btn.disabled = !!isLoading;
+}
+function clearError() {
+  const err = document.getElementById('error-msg');
+  if (err) err.textContent = '';
+}
+async function signUp(data) {
+  const { error, data: regData } = await supabase.auth.signUp({
+    email: data.email,
+    password: data.password,
+    options: { data: { displayname: data.displayname, username: data.username } }
   });
-
-  if (signUpError) {
-    errorMsg.textContent = signUpError.message;
+  if (!error) {
+    // Insert into profiles table
+    await supabase.from('profiles').insert({
+      id: regData.user.id,
+      displayname: data.displayname,
+      username: data.username,
+      avatar_url: '',
+      bio: ''
+    });
+  }
+  return { error };
+}
+document.getElementById('register-form').onsubmit = async (e) => {
+  e.preventDefault();
+  clearError();
+  setLoading(true);
+  const displayname = document.getElementById('displayname').value.trim();
+  const username = document.getElementById('username').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  if (!displayname || !username || !email || !password) {
+    document.getElementById('error-msg').textContent = 'Please fill all fields.';
+    setLoading(false);
     return;
   }
-
-  // 2. Get the user id
-  const user = signUpData.user;
-  if (!user) {
-    errorMsg.textContent = 'Signup failed. User object not returned.';
-    return;
-  }
-
-  // 3. Upload avatar if present
-  let avatar_url = '';
-  if (avatarFile) {
-    const { data: uploadData, error: uploadError } = await supabase
-      .storage
-      .from('avatars')
-      .upload(`public/${user.id}`, avatarFile, { upsert: true });
-
-    if (uploadError) {
-      errorMsg.textContent = 'Avatar upload failed: ' + uploadError.message;
+  try {
+    const { error } = await signUp({ displayname, username, email, password });
+    if (error) {
+      document.getElementById('error-msg').textContent = error.message || 'Registration failed.';
+      setLoading(false);
       return;
     }
-    avatar_url = uploadData?.path
-      ? supabase.storage.from('avatars').getPublicUrl(uploadData.path).data.publicUrl
-      : '';
+    window.location.href = 'index.html';
+  } catch (err) {
+    document.getElementById('error-msg').textContent = err.message || 'Unexpected error.';
+    setLoading(false);
   }
-
-  // 4. Insert profile row
-  const { error: profileError } = await supabase.from('profiles').insert([
-    { id: user.id, bio, avatar_url }
-  ]);
-  if (profileError) {
-    errorMsg.textContent = 'Profile creation failed: ' + profileError.message;
-    return;
-  }
-
-  showNotif('Signup successful! Please check your email to verify your account.');
-  form.reset();
-});
-
-function showNotif(msg) {
-  if (notif) {
-    notif.textContent = msg;
-    notif.style.display = msg ? 'block' : 'none';
-  }
-}
+};
