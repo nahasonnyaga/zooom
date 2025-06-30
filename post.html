@@ -157,6 +157,12 @@
 </head>
 <body>
   <div id="navbar"></div>
+  <script>
+    // --- NAVBAR LOAD ---
+    fetch('components/navbar.html')
+      .then(r => r.ok ? r.text() : '')
+      .then(html => { document.getElementById('navbar').innerHTML = html; });
+  </script>
   <main>
     <h1 style="text-align:center;">Post a New Thread</h1>
     <div id="must-login" style="display:none;">
@@ -182,20 +188,6 @@
   <script src="js/supabase.js"></script>
   <script src="js/post.js"></script>
   <script>
-    // --- NAVBAR LOAD ---
-    async function loadNavbar() {
-      const nav = document.getElementById('navbar');
-      if (nav) {
-        try {
-          const res = await fetch('components/navbar.html');
-          nav.innerHTML = await res.text();
-        } catch (e) {
-          nav.innerHTML = '<nav><a href="index.html">Feed</a> <a href="profile.html">Profile</a> <a href="post.html">New Thread</a></nav>';
-        }
-      }
-    }
-    loadNavbar();
-
     // --- AUTH CHECK AND FORM DISPLAY ---
     async function checkAuthAndToggleForm() {
       let user = null;
