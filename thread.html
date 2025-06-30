@@ -2,211 +2,28 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Thread - Threads 100</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Thread | Zooom</title>
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/feed.css">
-  <link rel="stylesheet" href="css/auth.css">
   <link rel="stylesheet" href="css/reply-card.css">
-  <link rel="stylesheet" href="css/profile.css">
-  <link href="https://fonts.googleapis.com/css?family=Inter:400,600&display=swap" rel="stylesheet">
-  <style>
-    .main-col {
-      max-width: 540px;
-      margin: 2rem auto;
-      padding: 1rem;
-      background: #fff;
-      border-radius: 10px;
-      box-shadow: 0 1px 8px #0001;
-    }
-    .reply-section {
-      margin-top: 2rem;
-      border-top: 1px solid #eee;
-      padding-top: 1rem;
-    }
-    .reply-form {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      margin-top: 1rem;
-    }
-    .reply-form textarea {
-      padding: 0.7rem;
-      border-radius: 5px;
-      border: 1px solid #ddd;
-      font-size: 1rem;
-      resize: vertical;
-    }
-    .reply-form button {
-      align-self: flex-end;
-      padding: 0.5rem 1.2rem;
-    }
-    #error-msg {
-      color: #d00;
-      margin-top: 0.5rem;
-      text-align: center;
-    }
-    .replies-list {
-      margin-top: 1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-  </style>
+  <link rel="icon" type="image/png" href="assets/logo.png">
 </head>
-<body style="background:#f6f6f6;">
-  <!-- Navbar include (worldclass-navbar compatible) -->
+<body>
   <div id="navbar"></div>
-  <script>
-    // Navbar loader for compatibility
-    fetch('components/navbar.html')
-      .then(r => r.ok ? r.text() : '')
-      .then(html => {
-        document.getElementById('navbar').innerHTML = html;
-      });
-  </script>
-  <div class="layout-container" style="display:flex;flex-wrap:wrap;gap:2rem;justify-content:center;">
-    <main class="main-col">
-      <div id="thread-container">
-        <!-- Thread content will be loaded here -->
-      </div>
-      <section class="reply-section">
-        <h3>Replies</h3>
-        <form id="reply-form" class="reply-form" style="display:none;">
-          <textarea id="reply-content" rows="3" maxlength="280" placeholder="Write your reply..." required></textarea>
-          <button type="submit">Reply</button>
-        </form>
-        <div id="error-msg"></div>
-        <div class="replies-list" id="replies-list">
-          <!-- Replies will be loaded here -->
-        </div>
-      </section>
-    </main>
-    <aside class="sidebar-col" style="min-width:260px;">
-      <section class="suggested-section" id="suggested-users">
-        <h3>Suggested Users to Follow</h3>
-      </section>
-      <section class="suggested-section">
-        <h3>Trending Hashtags</h3>
-        <ul class="hashtag-list" id="trending-hashtags"></ul>
-      </section>
-    </aside>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script src="js/supabase.js"></script>
-  <script src="js/thread.js"></script>
-  <script>
-    // Show reply form only if logged in
-    let LOGGED_IN_USER = null;
-    async function checkAuth() {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        LOGGED_IN_USER = user;
-      } catch {
-        LOGGED_IN_USER = null;
-      }
-      document.getElementById('reply-form').style.display = LOGGED_IN_USER ? '' : 'none';
-    }
-    checkAuth();
-
-    // Load thread details and replies
-    let threadId = null;
-    function getThreadIdFromUrl() {
-      const params = new URLSearchParams(window.location.search);
-      return params.get('id');
-    }
-    threadId = getThreadIdFromUrl();
-    if (!threadId) {
-      document.getElementById('thread-container').innerHTML = "<p>Thread not found.</p>";
-    }
-
-    async function loadThread() {
-      if (!threadId) return;
-      const { data: thread, error } = await supabase
-        .from('threads')
-        .select('*')
-        .eq('id', threadId)
-        .single();
-      if (error || !thread) {
-        document.getElementById('thread-container').innerHTML = "<p>Thread not found.</p>";
-        return;
-      }
-      // Render with thread-card.html component
-      fetch('components/thread-card.html')
-        .then(r=>r.text()).then(template => {
-          let html = template
-            .replace('<!-- thread content -->', escapeHTML(thread.content))
-            .replace('<!-- timestamp -->', thread.created_at ? new Date(thread.created_at).toLocaleString() : '');
-          document.getElementById('thread-container').innerHTML = html;
-        });
-    }
-
-    async function loadReplies() {
-      if (!threadId) return;
-      const { data: replies, error } = await supabase
-        .from('replies')
-        .select('*')
-        .eq('thread_id', threadId)
-        .order('created_at', { ascending: true });
-      const list = document.getElementById('replies-list');
-      if (error || !replies) {
-        list.innerHTML = "<p>No replies yet.</p>";
-        return;
-      }
-      if (!replies.length) {
-        list.innerHTML = "<p>No replies yet.</p>";
-        return;
-      }
-      // Render using reply-card.html
-      fetch('components/reply-card.html')
-        .then(r=>r.text()).then(template => {
-          list.innerHTML = replies.map(reply => {
-            let html = template
-              .replace('<!-- reply content -->', escapeHTML(reply.content))
-              .replace('<!-- timestamp -->', reply.created_at ? new Date(reply.created_at).toLocaleString() : '');
-            return html;
-          }).join('');
-        });
-    }
-
-    function escapeHTML(str) {
-      return String(str).replace(/[&<>"']/g, c =>
-        ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])
-      );
-    }
-
-    // Handle reply form
-    document.getElementById('reply-form').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      if (!LOGGED_IN_USER) {
-        document.getElementById('error-msg').textContent = "You must be logged in to reply.";
-        return;
-      }
-      const content = document.getElementById('reply-content').value.trim();
-      if (!content) return;
-      document.getElementById('error-msg').textContent = '';
-      const { error } = await supabase.from('replies').insert({
-        thread_id: threadId,
-        content,
-        user_id: LOGGED_IN_USER.id,
-        created_at: new Date().toISOString()
-      });
-      if (error) {
-        document.getElementById('error-msg').textContent = "Failed to post reply.";
-        return;
-      }
-      document.getElementById('reply-content').value = '';
-      loadReplies();
-    });
-
-    // Initial loads
-    document.addEventListener('DOMContentLoaded', function() {
-      loadThread();
-      loadReplies();
-      checkAuth();
-      // Optionally: trending hashtags, suggested users
-      // (implementations can be added in js/thread.js or js/feed.js)
-    });
-  </script>
+  <main>
+    <section id="thread-section">
+      <div id="thread-container"></div>
+      <div id="actions-container"></div>
+      <h3>Replies</h3>
+      <div id="replies-list"></div>
+      <form id="reply-form">
+        <textarea id="reply-content" maxlength="400" placeholder="Write a reply..." required></textarea>
+        <button type="submit">Reply</button>
+        <div id="reply-error" class="form-error"></div>
+      </form>
+    </section>
+  </main>
+  <script type="module" src="js/thread.js"></script>
+  <script type="module" src="js/main.js"></script>
 </body>
 </html>
