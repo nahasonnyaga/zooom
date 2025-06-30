@@ -4,21 +4,29 @@
   <meta charset="UTF-8">
   <title>Feed | Zooom Forum</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Welcome to Zooom, a worldclass forum built on Supabase.">
   <link rel="icon" href="assets/logo.png">
   <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/topmenu.css">
   <link rel="stylesheet" href="css/navbar.css">
 </head>
 <body>
+  <div id="topmenu"></div>
   <main id="feed" aria-live="polite"></main>
   <div id="navbar"></div>
   <script src="js/supabase.js"></script>
-  <script src="js/main.js"></script>
-  <script src="js/feed.js"></script>
   <script>
+    fetch('components/topmenu.html').then(r => r.text()).then(html => {
+      document.getElementById('topmenu').innerHTML = html;
+      // Load theme/menu logic after menu is in DOM
+      const script = document.createElement('script');
+      script.src = 'js/theme-topmenu.js';
+      document.body.appendChild(script);
+    });
     fetch('components/navbar.html').then(r => r.text()).then(html => {
       document.getElementById('navbar').innerHTML = html;
     });
   </script>
+  <script src="js/main.js"></script>
+  <script src="js/feed.js"></script>
 </body>
 </html>
