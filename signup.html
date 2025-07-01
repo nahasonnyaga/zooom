@@ -23,9 +23,11 @@
       <a href="login.html">Already have an account? Sign in</a>
     </div>
   </main>
+  <!-- Supabase.js core and project-wide helpers -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="js/supabase.js"></script>
   <script>
+    // Navbar and theme
     fetch('components/navbar.html').then(r=>r.text()).then(html=>{
       document.getElementById('navbar').innerHTML = html;
       if(window.lucide) lucide.createIcons();
@@ -34,14 +36,33 @@
       document.body.classList.remove('theme-light');
       document.body.classList.add('theme-dark');
     }
+
+    /**
+     * On sign up, create user in auth and trigger DB insert (via Supabase trigger).
+     * If trigger is not set, you may want to upsert into 'profiles' here as well.
+     */
     document.getElementById('signup-form').onsubmit = async function(e) {
       e.preventDefault();
       const username = document.getElementById('username').value.trim();
       const email = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value;
-      const { error } = await supabase.auth.signUp({ email, password, options: { data: { username } } });
+
+      // Use the global supabase client from js/supabase.js
+      const { error } = await window.supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { username }
+        }
+      });
+
       document.getElementById('signup-error').textContent = error ? error.message : "";
-      if (!error) window.location.href = "home.html";
+      // If successful, redirect or show confirmation
+      if (!error) {
+        // If email confirmation required, show a message
+        // Otherwise, redirect to home
+        window.location.href = "home.html";
+      }
     }
   </script>
 </body>
