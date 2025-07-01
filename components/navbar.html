@@ -1,8 +1,34 @@
-<nav class="navbar {{position}}">
-  <a href="index.html" aria-label="Home"><img src="/assets/home.svg" alt="Home"></a>
-  <a href="post.html" aria-label="New Post"><img src="/assets/plus.svg" alt="Post"></a>
-  <a href="profile.html" aria-label="Profile"><img src="/assets/user.svg" alt="Profile"></a>
-  <a href="javascript:void(0)" onclick="supabase.auth.signOut().then(()=>location.href='login.html')" aria-label="Logout">
-    <img src="/assets/logout.svg" alt="Logout">
+<!-- Not used directly, see index.html for modern implementation. 
+     You may still use this for other pages if you want. -->
+<nav class="navbar navbar-top horizontal-scroll">
+  <a class="nav-pill" href="index.html" aria-label="Home">
+    <img src="assets/home-fill.svg" alt="Home">
+    <span>Home</span>
   </a>
+  <a class="nav-pill" href="search.html" aria-label="Search">
+    <img src="assets/search.svg" alt="Search">
+    <span>Search</span>
+  </a>
+  <a class="nav-pill" href="notifications.html" aria-label="Notifications">
+    <img src="assets/bell.svg" alt="Notifications">
+    <span>Notifications</span>
+  </a>
+  <a class="nav-pill" href="messages.html" aria-label="Messages">
+    <img src="assets/mail.svg" alt="Messages">
+    <span>Messages</span>
+  </a>
+  <a class="nav-pill" href="profile.html" aria-label="Profile">
+    <img src="assets/user.svg" alt="Profile">
+    <span>Profile</span>
+  </a>
+  <a class="nav-pill" href="settings.html" aria-label="Settings">
+    <img src="assets/settings.svg" alt="Settings">
+    <span>Settings</span>
+  </a>
+</nav>
+<nav class="navbar navbar-bottom glassy">
+  <a href="index.html" aria-label="Home"><img src="assets/home-fill.svg" alt="Home"></a>
+  <a href="post.html" aria-label="Compose"><img src="assets/plus-circle.svg" alt="Compose"></a>
+  <a href="notifications.html" aria-label="Notifications"><img src="assets/bell.svg" alt="Notifications"></a>
+  <a href="profile.html" aria-label="Profile"><img src="assets/user.svg" alt="Profile"></a>
 </nav>
