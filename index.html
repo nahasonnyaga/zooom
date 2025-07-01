@@ -16,6 +16,62 @@
   <link rel="stylesheet" href="css/theme.css">
   <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    .loader {
+      width: 38px; height: 38px;
+      border: 4px solid #c7e1fc;
+      border-top: 4px solid #2563eb;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 3em auto 2em auto;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    #feed-container { min-height: 65vh; }
+    .x-topbar-row { background: #fff; }
+    body.theme-dark .x-topbar-row { background: #181b23; }
+    .x-topbar-profile.open .profile-dropdown {
+      display: flex;
+    }
+    .profile-dropdown {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 110%;
+      background: #f4faff;
+      border-radius: 12px;
+      box-shadow: 0 2px 16px #1da1f233;
+      min-width: 170px;
+      flex-direction: column;
+      z-index: 200;
+    }
+    .profile-dropdown a, .profile-dropdown button {
+      padding: 1em 1.2em;
+      border: none;
+      background: none;
+      text-align: left;
+      color: #222;
+      font-size: 1.06em;
+      cursor: pointer;
+      font-family: inherit;
+      text-decoration: none;
+      display: flex;
+      gap: 0.5em;
+      align-items: center;
+      border-bottom: 1px solid #e6eaf4;
+      transition: background 0.13s;
+    }
+    .profile-dropdown a:last-child, .profile-dropdown button:last-child {
+      border-bottom: none;
+    }
+    .profile-dropdown a:hover, .profile-dropdown button:hover {
+      background: #e7f1ff;
+    }
+    @media (max-width: 700px) {
+      #feed-container { min-height: 55vh; }
+    }
+  </style>
 </head>
 <body class="theme-light">
   <!-- TOP NAVBAR -->
@@ -31,11 +87,11 @@
         <button class="x-tab" data-section="notifications"><i data-lucide="bell"></i><span>Notifications</span></button>
         <button class="x-tab" data-section="media"><i data-lucide="image"></i><span>Media</span></button>
       </nav>
-      <div class="x-topbar-profile" id="x-topbar-profile">
+      <div class="x-topbar-profile" id="x-topbar-profile" style="position: relative;">
         <button id="theme-toggle-btn" class="theme-toggle-btn" title="Toggle theme">
           <i data-lucide="moon"></i>
         </button>
-        <button id="profile-btn" class="profile-btn" style="display:none">
+        <button id="profile-btn" class="profile-btn" style="display:none;position:relative;">
           <img id="profile-avatar" src="assets/default-avatar.png" alt="Profile" />
           <div id="profile-dropdown" class="profile-dropdown">
             <a href="profile.html"><i data-lucide="user"></i>Profile</a>
@@ -51,17 +107,18 @@
   </header>
 
   <main id="feed-container">
-    <!-- Content here -->
+    <!-- Feed content loaded here -->
   </main>
 
   <!-- BOTTOM NAVBAR -->
   <nav id="bottom-navbar" class="navbar navbar-bottom glassy">
     <a href="index.html" aria-label="Home"><i data-lucide="home"></i></a>
-    <a href="post.html" aria-label="Compose"><i data-lucide="plus-circle"></i></a>
+    <a href="new-post.html" aria-label="Compose"><i data-lucide="plus-circle"></i></a>
     <a href="notifications.html" aria-label="Notifications"><i data-lucide="bell"></i></a>
     <a href="profile.html" aria-label="Profile"><i data-lucide="user"></i></a>
   </nav>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="js/supabase.js"></script>
   <script src="js/main.js"></script>
   <script src="js/feed.js"></script>
@@ -69,7 +126,7 @@
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       lucide.createIcons();
-      // Profile/Login logic (same as before)
+      // Profile/Login logic
       async function updateProfileNav() {
         let session = null;
         if (typeof supabase !== "undefined") {
@@ -88,6 +145,7 @@
         lucide.createIcons();
       }
       updateProfileNav();
+
       // Profile dropdown
       const btn = document.getElementById('profile-btn');
       if (btn) {
@@ -100,7 +158,7 @@
       // Login button
       const loginBtn = document.getElementById('login-btn');
       if (loginBtn) {
-        loginBtn.onclick = () => window.location.href = 'login.html';
+        loginBtn.onclick = () => window.location.href = 'auth.html?tab=login';
       }
       // Logout button
       const logoutBtn = document.getElementById('logout-btn');
@@ -112,7 +170,22 @@
       }
     });
 
-    // Tab switching logic
+    // Theme toggle
+    document.addEventListener('DOMContentLoaded', () => {
+      const themeBtn = document.getElementById('theme-toggle-btn');
+      if (themeBtn) {
+        themeBtn.onclick = () => {
+          const body = document.body;
+          const isDark = body.classList.contains('theme-dark');
+          body.classList.toggle('theme-light', isDark);
+          body.classList.toggle('theme-dark', !isDark);
+          localStorage.setItem('zooom-theme', isDark ? 'light' : 'dark');
+          lucide.createIcons();
+        };
+      }
+    });
+
+    // Topbar tab switching/section logic
     document.addEventListener("DOMContentLoaded", () => {
       document.querySelectorAll('.x-tab').forEach(tab => {
         tab.addEventListener('click', function() {
@@ -121,13 +194,18 @@
           window.loadXSection(this.dataset.section);
         });
       });
-      window.loadXSection = function(section) {
+      window.loadXSection = async function(section) {
         lucide.createIcons();
         const feed = document.getElementById('feed-container');
         feed.innerHTML = '<div class="loader"></div>';
-        setTimeout(() => {
-          feed.innerHTML = `<h2 style="text-align:center;color:#1da1f2;margin-top:2em;">${section.replace(/-/g,' ').toUpperCase()} feed coming soon...</h2>`;
-        }, 400);
+        // Modular: load real data from js/feed.js for each section
+        if (window.renderXSection) {
+          await window.renderXSection(section, feed);
+        } else {
+          setTimeout(() => {
+            feed.innerHTML = `<h2 style="text-align:center;color:#1da1f2;margin-top:2em;">${section.replace(/-/g,' ').toUpperCase()} feed coming soon...</h2>`;
+          }, 400);
+        }
       };
       window.loadXSection('for-you');
     });
