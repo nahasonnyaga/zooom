@@ -4,14 +4,12 @@ html, body {
   background: #181818; color: #fff;
   min-height: 100vh;
 }
-
 main {
   max-width: 600px;
   margin: 70px auto 80px auto; /* account for navbars */
   padding: 0 16px;
   min-height: 80vh;
 }
-
 a { color: #1da1f2; text-decoration: none; }
 .error { color: #ff5555; }
 .avatar { width: 48px; height: 48px; border-radius: 50%; }
