@@ -19,19 +19,37 @@
   <div class="welcome">
     <h1>Welcome to Zooom Forum</h1>
     <p>Discuss, connect, and share. Your space for trending conversations.</p>
-    <a class="compose-btn" href="signup.html">Sign Up</a>
-    <a class="compose-btn" href="login.html">Sign In</a>
-    <a class="compose-btn" href="home.html">Go to Home</a>
+    <a class="compose-btn" href="signup.html" id="signup-link">Sign Up</a>
+    <a class="compose-btn" href="login.html" id="login-link">Sign In</a>
+    <a class="compose-btn" href="home.html" id="home-link">Go to Home</a>
   </div>
+  <!-- Supabase core and project-wide connector -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="js/supabase.js"></script>
   <script>
+    // Inject navbar
     fetch('components/navbar.html').then(r=>r.text()).then(html=>{
       document.getElementById('navbar').innerHTML = html;
       if(window.lucide) lucide.createIcons();
     });
+
+    // Theme
     if(localStorage.getItem('zooom-theme')==='dark') {
       document.body.classList.remove('theme-light');
       document.body.classList.add('theme-dark');
     }
+
+    // Efficient UX: if logged in, hide Sign In/Sign Up and highlight Home
+    (async () => {
+      if (!window.supabase) return; // Ensure supabase.js loaded
+      const user = await window.getCurrentUser?.();
+      if (user) {
+        document.getElementById('signup-link').style.display = 'none';
+        document.getElementById('login-link').style.display = 'none';
+        document.getElementById('home-link').textContent = "Go to your Feed";
+        document.getElementById('home-link').classList.add('active');
+      }
+    })();
   </script>
 </body>
 </html>
