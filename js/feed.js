@@ -1,24 +1,25 @@
-document.addEventListener('DOMContentLoaded', async () => {
-  const feed = document.getElementById('feed');
-  feed.innerHTML = '<div class="loading">Loading threads...</div>';
-  const { data: threads, error } = await supabase
-    .from('threads')
-    .select('*')
-    .order('created_at', { ascending: false });
+async function loadFeed() {
+  const { data, error } = await supabase
+    .from('posts')
+    .select('*, author:profiles(username,avatar_url)')
+    .order('created_at', { ascending: false })
+    .limit(50);
+
+  const container = document.getElementById('feed-container');
   if (error) {
-    feed.innerHTML = '<p class="error">Error loading threads.</p>';
+    container.innerHTML = `<p class="error">Failed to load feed.</p>`;
     return;
   }
-  if (!threads.length) {
-    feed.innerHTML = '<p>No threads yet. Be the first to post!</p>';
-    return;
+  container.innerHTML = '';
+  for (const post of data) {
+    const card = await fetch('components/thread-card.html').then(r=>r.text());
+    container.innerHTML += card
+      .replace('{{username}}', post.author?.username ?? 'unknown')
+      .replace('{{avatar_url}}', post.author?.avatar_url ?? '/assets/default-avatar.png')
+      .replace('{{content}}', post.content)
+      .replace('{{created_at}}', new Date(post.created_at).toLocaleString())
+      .replace(/{{post_id}}/g, post.id);
   }
-  for (const thread of threads) {
-    let card = await fetch('components/thread-card.html').then(r => r.text());
-    card = card.replace('{{title}}', thread.title)
-      .replace('{{content}}', thread.content)
-      .replace('{{author}}', thread.author)
-      .replace('{{id}}', thread.id);
-    feed.innerHTML += card;
-  }
-});
+}
+
+document.addEventListener('DOMContentLoaded', loadFeed);
