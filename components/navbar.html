@@ -1,131 +1,38 @@
-<!-- TOP NAVBAR (X-style, horizontally scrollable, right-aligned profile/login/out) -->
-<header id="x-topbar-outer" class="x-topbar-outer" style="box-shadow:0 2px 12px #2563eb0a;position:sticky;top:0;z-index:60;">
-  <div class="x-topbar-scroll horizontal-scroll" id="x-topbar-scroll" style="display:flex;overflow-x:auto;gap:0.25em;padding:0.2em 0.3em 0.2em 0.7em;scrollbar-width:thin;background:var(--navbar-bg,#fff);border-bottom:1.5px solid #f0f4fc;">
-    <button class="x-tab" data-section="for-you" onclick="window.location.href='feed.html#for-you'" aria-label="For You"><i data-lucide="sparkles"></i><span>For You</span></button>
-    <button class="x-tab" data-section="following" onclick="window.location.href='feed.html#following'" aria-label="Following"><i data-lucide="users"></i><span>Following</span></button>
-    <button class="x-tab" data-section="mentions" onclick="window.location.href='feed.html#mentions'" aria-label="Mentions"><i data-lucide="at-sign"></i><span>Mentions</span></button>
-    <button class="x-tab" data-section="hashtags" onclick="window.location.href='feed.html#hashtags'" aria-label="Hashtags"><i data-lucide="hash"></i><span>#Hashtags</span></button>
-    <button class="x-tab" data-section="trending" onclick="window.location.href='feed.html#trending'" aria-label="Trending"><i data-lucide="trending-up"></i><span>Trending</span></button>
-    <button class="x-tab" data-section="new-users" onclick="window.location.href='feed.html#new-users'" aria-label="New Users"><i data-lucide="user-plus"></i><span>New Users</span></button>
-    <button class="x-tab" data-section="notifications" onclick="window.location.href='notifications.html'" aria-label="Notifications"><i data-lucide="bell"></i><span>Notifications</span></button>
-    <button class="x-tab" data-section="media" onclick="window.location.href='feed.html#media'" aria-label="Media"><i data-lucide="image"></i><span>Media</span></button>
-    <a class="compose-btn" href="post.html" title="Compose" aria-label="Compose" style="margin-left:0.7em;background:linear-gradient(90deg,#2563eb 60%,#60a5fa 100%);color:#fff;padding:0.5em 1em;border-radius:1.3em;font-weight:700;display:flex;align-items:center;gap:0.53em;box-shadow:0 1px 8px #2563eb1a;"><i data-lucide="plus-circle" style="height:1.2em;width:1.2em;"></i><span style="font-size:1.08em;letter-spacing:0.01em;">Post</span></a>
-  </div>
-  <div class="x-topbar-profile" id="x-topbar-profile" style="display:flex;align-items:center;gap:0.6em;padding-right:1em;">
-    <button id="theme-toggle-btn" class="theme-toggle-btn" title="Toggle theme" style="background:none;border:none;padding:0.1em 0.5em;cursor:pointer;">
-      <i data-lucide="moon"></i>
-    </button>
-    <button id="profile-btn" class="profile-btn" style="display:none;background:none;border:none;position:relative;padding:0.2em 0.4em;cursor:pointer;">
-      <img id="profile-avatar" src="assets/default-avatar.png" alt="Profile" style="width:2.3em;height:2.3em;border-radius:50%;box-shadow:0 1px 6px #2563eb14;">
-      <div id="profile-dropdown" class="profile-dropdown" style="right:0;top:110%;">
-        <a href="profile.html"><i data-lucide="user"></i> Profile</a>
-        <a href="settings.html"><i data-lucide="settings"></i> Settings</a>
-        <button id="logout-btn"><i data-lucide="log-out"></i> Logout</button>
-      </div>
-    </button>
-    <button id="login-btn" class="login-btn" style="display:none;background:linear-gradient(90deg,#2563eb 60%,#60a5fa 100%);color:#fff;padding:0.39em 1.25em;border-radius:1.2em;font-weight:600;font-size:1em;box-shadow:0 1px 8px #2563eb1a;border:none;cursor:pointer;">
-      <i data-lucide="log-in"></i> Login
-    </button>
-  </div>
-</header>
-
-<!-- BOTTOM NAVBAR (glassy, large Lucide icons, always visible, project-wide) -->
-<nav id="bottom-navbar" class="navbar navbar-bottom glassy" style="backdrop-filter:blur(8px);background:rgba(255,255,255,0.92);border-top:1px solid #e3eafb;position:fixed;left:0;right:0;bottom:0;z-index:99;display:flex;justify-content:space-around;align-items:center;height:62px;">
-  <a href="feed.html" aria-label="Home" style="flex:1;text-align:center;"><i data-lucide="home"></i><div style="font-size:0.92em;">Home</div></a>
-  <a href="explore.html" aria-label="Explore" style="flex:1;text-align:center;"><i data-lucide="search"></i><div style="font-size:0.92em;">Explore</div></a>
-  <a href="post.html" aria-label="Compose" style="flex:1;text-align:center;"><i data-lucide="plus-circle"></i><div style="font-size:0.92em;">Post</div></a>
-  <a href="notifications.html" aria-label="Notifications" style="flex:1;text-align:center;position:relative;">
-    <i data-lucide="bell"></i>
-    <div style="font-size:0.92em;">Alerts</div>
-    <span id="notif-dot" style="display:none;position:absolute;top:7px;right:calc(50% - 1.05em);width:10px;height:10px;background:#e11d48;border-radius:50%;"></span>
-  </a>
-  <a href="profile.html" aria-label="Profile" style="flex:1;text-align:center;"><i data-lucide="user"></i><div style="font-size:0.92em;">Me</div></a>
-</nav>
-<script>
-  // Top: Mark correct tab as active based on URL/hash (for UX consistency)
-  (function() {
-    let hash = location.hash.replace("#","");
-    if (!hash) hash = "for-you";
-    document.querySelectorAll('.x-tab').forEach(tab => {
-      tab.classList.toggle('active', tab.dataset.section === hash);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Threads - Zooom</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/feed.css">
+  <link rel="stylesheet" href="css/theme.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="theme-light">
+  <div id="navbar"></div>
+  <main style="max-width:600px;margin:2.5em auto 5em auto;">
+    <h1>All Threads</h1>
+    <div id="threads-list"></div>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="js/supabase.js"></script>
+  <script>
+    fetch('components/navbar.html').then(r=>r.text()).then(html=>{
+      document.getElementById('navbar').innerHTML = html;
+      if(window.lucide) lucide.createIcons();
     });
-  })();
-
-  // Profile/login/logout logic: expects supabase.js and lucide loaded
-  document.addEventListener("DOMContentLoaded", () => {
-    if (window.lucide) lucide.createIcons();
-    // Profile/Login logic
-    async function updateProfileNav() {
-      let session = null;
-      if (typeof supabase !== "undefined") {
-        const { data } = await supabase.auth.getSession();
-        session = data.session;
-      }
-      if (session && session.user) {
-        document.getElementById('profile-btn').style.display = '';
-        document.getElementById('login-btn').style.display = 'none';
-        if (supabase) {
-          const { data: profile } = await supabase.from('profiles').select('avatar_url').eq('id', session.user.id).single();
-          document.getElementById('profile-avatar').src = profile?.avatar_url || "assets/default-avatar.png";
-        }
-      } else {
-        document.getElementById('profile-btn').style.display = 'none';
-        document.getElementById('login-btn').style.display = '';
-      }
-      if (window.lucide) lucide.createIcons();
+    if(localStorage.getItem('zooom-theme')==='dark') {
+      document.body.classList.remove('theme-light');
+      document.body.classList.add('theme-dark');
     }
-    updateProfileNav();
-    // Profile dropdown
-    const btn = document.getElementById('profile-btn');
-    if (btn) {
-      btn.onclick = e => {
-        e.stopPropagation();
-        btn.classList.toggle('open');
-      };
-      document.body.addEventListener('click', () => btn.classList.remove('open'));
-    }
-    // Login button
-    const loginBtn = document.getElementById('login-btn');
-    if (loginBtn) {
-      loginBtn.onclick = () => window.location.href = 'auth.html?tab=login';
-    }
-    // Logout button
-    const logoutBtn = document.getElementById('logout-btn');
-    if (logoutBtn) {
-      logoutBtn.onclick = async () => {
-        await supabase.auth.signOut();
-        window.location.reload();
-      };
-    }
-    // Theme toggle
-    const themeBtn = document.getElementById('theme-toggle-btn');
-    if (themeBtn) {
-      themeBtn.onclick = () => {
-        const body = document.body;
-        const isDark = body.classList.contains('theme-dark');
-        body.classList.toggle('theme-light', isDark);
-        body.classList.toggle('theme-dark', !isDark);
-        localStorage.setItem('zooom-theme', isDark ? 'light' : 'dark');
-        if (window.lucide) lucide.createIcons();
-      };
-    }
-
-    // Show notification dot if there are unread notifications
-    async function checkNotifications() {
-      if (!window.supabase) return;
-      const { data } = await supabase.auth.getSession();
-      const user = data?.session?.user;
-      if (!user) return;
-      const { data: notifications } = await supabase
-        .from('notifications')
-        .select('id')
-        .eq('user_id', user.id)
-        .eq('read', false)
-        .limit(1);
-      if (notifications && notifications.length > 0) {
-        document.getElementById('notif-dot').style.display = 'block';
-      }
-    }
-    checkNotifications();
-  });
-</script>
+    // Example: Load threads
+    (async () => {
+      const { data: threads } = await supabase.from('threads').select('*').order('created_at', {ascending: false});
+      document.getElementById('threads-list').innerHTML = threads && threads.length
+        ? threads.map(t=>`<div class='feed-post-card' style="margin-bottom:1em;"><a href="thread.html?id=${t.id}"><b>${t.title}</b></a><br><span style="color:#888;">${new Date(t.created_at).toLocaleString()}</span></div>`).join('')
+        : '<div style="color:#888;">No threads found.</div>';
+    })();
+  </script>
+</body>
+</html>
