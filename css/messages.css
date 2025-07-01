@@ -1,0 +1,3 @@
+.dm-card { background: #232323; margin-bottom: 8px; padding: 10px; border-radius: 8px; cursor: pointer;}
+.message-card { background: #292929; margin-bottom: 4px; padding: 8px; border-radius: 6px;}
+.message-card.self { background: #1da1f2; color: #fff; text-align: right;}
