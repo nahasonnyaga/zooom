@@ -1,4 +1,3 @@
-// js/explore.js
 document.addEventListener('DOMContentLoaded', async () => {
   const feed = document.getElementById('explore-feed');
   feed.innerHTML = '<div class="loading">Loading trending threads...</div>';
