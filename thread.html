@@ -13,12 +13,14 @@
 <body>
   <div id="navbar"></div>
   <main id="thread-container" aria-live="polite"></main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="js/supabase.js"></script>
   <script src="js/thread.js"></script>
   <script>
     fetch('components/navbar.html').then(r => r.text()).then(html => {
       document.getElementById('navbar').innerHTML = html;
-      import('./js/navbar.js');
+      // Optionally load navbar behavior if needed
+      if (typeof import === "function") import('./js/navbar.js');
     });
   </script>
 </body>
