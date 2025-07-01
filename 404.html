@@ -1,20 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>404 - Not Found</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="css/main.css" />
-  <link rel="icon" href="assets/icon-192.png" />
+  <meta charset="UTF-8">
+  <title>404 | Zooom</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/theme.css">
   <style>
-    body { text-align: center; margin-top: 14vh; color: #888;}
-    h1 { font-size: 4em; color: #1da1f2; }
-    a { color: #1da1f2; }
+    .notfound {text-align:center;margin:7em auto 2em auto;}
+    .notfound h1 {font-size:2.7em;}
   </style>
 </head>
-<body>
-  <h1>404</h1>
-  <p>Page not found.</p>
-  <a href="index.html">Go Home</a>
+<body class="theme-light">
+  <div id="navbar"></div>
+  <div class="notfound">
+    <h1>404</h1>
+    <p>Page not found.</p>
+    <a class="compose-btn" href="home.html">Go Home</a>
+  </div>
+  <script>
+    fetch('components/navbar.html').then(r=>r.text()).then(html=>{
+      document.getElementById('navbar').innerHTML = html;
+      if(window.lucide) lucide.createIcons();
+    });
+    if(localStorage.getItem('zooom-theme')==='dark') {
+      document.body.classList.remove('theme-light');
+      document.body.classList.add('theme-dark');
+    }
+  </script>
 </body>
 </html>
