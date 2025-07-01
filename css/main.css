@@ -4,15 +4,27 @@ html, body {
   background: #181818; color: #fff;
   min-height: 100vh;
 }
+
 main {
   max-width: 600px;
   margin: 70px auto 80px auto; /* account for navbars */
   padding: 0 16px;
   min-height: 80vh;
 }
+
 a { color: #1da1f2; text-decoration: none; }
 .error { color: #ff5555; }
 .avatar { width: 48px; height: 48px; border-radius: 50%; }
+.loader {
+  margin: 40px auto;
+  border: 5px solid #232323;
+  border-top: 5px solid #1da1f2;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 @media (max-width: 700px) {
   main { max-width: 100vw; padding: 0 4px; }
 }
