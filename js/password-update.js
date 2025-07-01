@@ -1,12 +1,22 @@
 // js/password-update.js
-document.getElementById('password-update-form').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const newPassword = document.getElementById('new-password').value;
-  // Current password check would be handled server-side; here we just update
-  const { error } = await supabase.auth.updateUser({ password: newPassword });
-  if (error) document.getElementById('password-update-error').innerText = error.message;
-  else {
-    alert('Password updated successfully!');
-    window.location.href = 'profile.html';
-  }
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('password-update-form');
+  if (!form) return;
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const newPassword = document.getElementById('new-password').value;
+    const errorDiv = document.getElementById('password-update-error');
+    errorDiv.innerText = '';
+    try {
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) {
+        errorDiv.innerText = error.message;
+      } else {
+        alert('Password updated successfully!');
+        window.location.href = 'profile.html';
+      }
+    } catch {
+      errorDiv.innerText = "Unexpected error. Please try again.";
+    }
+  });
 });
