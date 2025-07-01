@@ -1,9 +1,7 @@
-// js/utils.js
-
 /**
  * Linkify hashtags, mentions, and URLs in content.
- * - Mentions (@user) ➔ <a href="profile.html?username=user" class="mention">@user</a>
- * - Hashtags (#topic) ➔ <a href="index.html?hashtag=topic" class="hashtag">#topic</a>
+ * - Mentions (@user) ➔ <a href="profile.html?user=username" class="mention">@user</a>
+ * - Hashtags (#topic) ➔ <a href="feed.html#hashtag-topic" class="hashtag">#topic</a>
  * - URLs ➔ <a href="..." class="external-link">...</a>
  * Escapes HTML to prevent XSS.
  * @param {string} text
@@ -37,16 +35,17 @@ function linkifyContent(text) {
     }
   );
 
-  // Linkify mentions
+  // Linkify mentions (for Supabase, the username is unique, we use "user" param)
+  // Only match word boundaries, not emails
   safe = safe.replace(
-    /@(\w+)/g,
-    '<a href="profile.html?username=$1" class="mention">@$1</a>'
+    /(^|[^a-zA-Z0-9_])@([a-zA-Z0-9_]{1,32})\b/g,
+    '$1<a href="profile.html?user=$2" class="mention">@$2</a>'
   );
 
-  // Linkify hashtags
+  // Linkify hashtags (route to feed.html with hash for proper X-style UX)
   safe = safe.replace(
-    /#(\w+)/g,
-    '<a href="index.html?hashtag=$1" class="hashtag">#$1</a>'
+    /(^|[^a-zA-Z0-9_])#([a-zA-Z0-9_]+)/g,
+    '$1<a href="feed.html#hashtag-$2" class="hashtag">#$2</a>'
   );
 
   return safe;
