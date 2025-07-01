@@ -1,3 +1,124 @@
-body.light { background: #fff; color: #222; }
-body.light .navbar { background: #f7faff; }
-body.light .thread-card, body.light .profile-card, body.light .notification-card { background: #f3f3f3; color: #222; }
+/* Default is light mode */
+body.theme-light {
+  background: #fff;
+  color: #111;
+}
+body.theme-light .x-topbar-outer,
+body.theme-light .navbar-bottom,
+body.theme-light .x-topbar-scroll,
+body.theme-light .profile-dropdown {
+  background: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+body.theme-light .x-tab {
+  color: #1a202c;
+}
+body.theme-light .x-tab.active,
+body.theme-light .x-tab:hover,
+body.theme-light .x-tab:focus {
+  background: linear-gradient(90deg, #1da1f2 90%, #1d51f2 100%);
+  color: #fff;
+}
+body.theme-light .x-tab i {
+  color: #555;
+}
+body.theme-light .x-tab.active i,
+body.theme-light .x-tab:hover i,
+body.theme-light .x-tab:focus i {
+  color: #fff;
+}
+body.theme-light .thread-card,
+body.theme-light .profile-btn .profile-dropdown {
+  background: #f3f7fa !important;
+  color: #1a202c;
+}
+body.theme-light .login-btn {
+  background: #1da1f2;
+  color: #fff;
+}
+body.theme-light .loader {
+  border: 5px solid #ddd;
+  border-top: 5px solid #1da1f2;
+}
+body.theme-light .navbar-bottom a i {
+  color: #1a202c;
+}
+body.theme-light .navbar-bottom a:hover i,
+body.theme-light .navbar-bottom a:active i {
+  color: #1da1f2;
+}
+
+body.theme-dark {
+  background: #181818;
+  color: #fff;
+}
+body.theme-dark .x-topbar-outer,
+body.theme-dark .navbar-bottom,
+body.theme-dark .x-topbar-scroll,
+body.theme-dark .profile-dropdown {
+  background: #181e28 !important;
+  border-color: #232a35 !important;
+}
+body.theme-dark .x-tab {
+  color: #e8f0fe;
+}
+body.theme-dark .x-tab.active,
+body.theme-dark .x-tab:hover,
+body.theme-dark .x-tab:focus {
+  background: linear-gradient(90deg, #1da1f2 90%, #1d51f2 100%);
+  color: #fff;
+}
+body.theme-dark .x-tab i {
+  color: #a9b7c6;
+}
+body.theme-dark .x-tab.active i,
+body.theme-dark .x-tab:hover i,
+body.theme-dark .x-tab:focus i {
+  color: #fff;
+}
+body.theme-dark .thread-card,
+body.theme-dark .profile-btn .profile-dropdown {
+  background: #232323 !important;
+  color: #fff;
+}
+body.theme-dark .login-btn {
+  background: #1da1f2;
+  color: #fff;
+}
+body.theme-dark .loader {
+  border: 5px solid #232323;
+  border-top: 5px solid #1da1f2;
+}
+body.theme-dark .navbar-bottom a i {
+  color: #e8f0fe;
+}
+body.theme-dark .navbar-bottom a:hover i,
+body.theme-dark .navbar-bottom a:active i {
+  color: #1da1f2;
+}
+
+/* Theme Toggle Button */
+.theme-toggle-btn {
+  border: none;
+  background: none;
+  margin-right: 8px;
+  padding: 5px 7px 5px 5px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.13s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.theme-toggle-btn i {
+  width: 27px;
+  height: 27px;
+  color: #1da1f2;
+  transition: color 0.13s;
+}
+.theme-toggle-btn:hover {
+  background: #1da1f2;
+}
+.theme-toggle-btn:hover i {
+  color: #fff;
+}
