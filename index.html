@@ -18,7 +18,7 @@
   <link rel="stylesheet" href="css/feed.css">
   <link rel="stylesheet" href="css/navbar.css">
   <link rel="stylesheet" href="css/x-topbar.css">
-  <!-- Lucide Icons CDN - MIT Licensed, worldclass icons -->
+  <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@latest"></script>
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
@@ -30,47 +30,39 @@
   </script>
 </head>
 <body>
-  <!-- X-style Topbar: horizontally scrollable, sections as tabs -->
-  <header id="x-topbar" class="x-topbar horizontal-scroll">
-    <button class="x-tab active" data-section="for-you">
-      <i data-lucide="sparkles"></i>
-      <span>For You</span>
-    </button>
-    <button class="x-tab" data-section="following">
-      <i data-lucide="users"></i>
-      <span>Following</span>
-    </button>
-    <button class="x-tab" data-section="mentions">
-      <i data-lucide="at-sign"></i>
-      <span>Mentions</span>
-    </button>
-    <button class="x-tab" data-section="hashtags">
-      <i data-lucide="hash"></i>
-      <span>#Hashtags</span>
-    </button>
-    <button class="x-tab" data-section="trending">
-      <i data-lucide="trending-up"></i>
-      <span>Trending</span>
-    </button>
-    <button class="x-tab" data-section="new-users">
-      <i data-lucide="user-plus"></i>
-      <span>New Users</span>
-    </button>
-    <button class="x-tab" data-section="notifications">
-      <i data-lucide="bell"></i>
-      <span>Notifications</span>
-    </button>
-    <button class="x-tab" data-section="media">
-      <i data-lucide="image"></i>
-      <span>Media</span>
-    </button>
+  <!-- X-style Topbar: horizontally scrollable, right-aligned profile/login/out -->
+  <header id="x-topbar-outer" class="x-topbar-outer">
+    <div class="x-topbar-scroll horizontal-scroll" id="x-topbar-scroll">
+      <button class="x-tab active" data-section="for-you"><i data-lucide="sparkles"></i><span>For You</span></button>
+      <button class="x-tab" data-section="following"><i data-lucide="users"></i><span>Following</span></button>
+      <button class="x-tab" data-section="mentions"><i data-lucide="at-sign"></i><span>Mentions</span></button>
+      <button class="x-tab" data-section="hashtags"><i data-lucide="hash"></i><span>#Hashtags</span></button>
+      <button class="x-tab" data-section="trending"><i data-lucide="trending-up"></i><span>Trending</span></button>
+      <button class="x-tab" data-section="new-users"><i data-lucide="user-plus"></i><span>New Users</span></button>
+      <button class="x-tab" data-section="notifications"><i data-lucide="bell"></i><span>Notifications</span></button>
+      <button class="x-tab" data-section="media"><i data-lucide="image"></i><span>Media</span></button>
+    </div>
+    <div class="x-topbar-profile" id="x-topbar-profile">
+      <!-- Populated by JS: profile pic OR login/logout button -->
+      <button id="profile-btn" class="profile-btn" style="display:none">
+        <img id="profile-avatar" src="assets/default-avatar.png" alt="Profile" />
+        <div id="profile-dropdown" class="profile-dropdown">
+          <a href="profile.html"><i data-lucide="user"></i> Profile</a>
+          <a href="settings.html"><i data-lucide="settings"></i> Settings</a>
+          <button id="logout-btn"><i data-lucide="log-out"></i> Logout</button>
+        </div>
+      </button>
+      <button id="login-btn" class="login-btn" style="display:none">
+        <i data-lucide="log-in"></i> Login
+      </button>
+    </div>
   </header>
 
   <main id="feed-container">
     <!-- Dynamically loaded content based on the selected x-tab -->
   </main>
 
-  <!-- Bottom Navbar: essential actions only, X-style glassy, large Lucide icons -->
+  <!-- Bottom Navbar: essential actions, glassy -->
   <nav id="bottom-navbar" class="navbar navbar-bottom glassy">
     <a href="index.html" aria-label="Home"><i data-lucide="home"></i></a>
     <a href="post.html" aria-label="Compose"><i data-lucide="plus-circle"></i></a>
@@ -85,28 +77,72 @@
     // Lucide icon rendering
     document.addEventListener("DOMContentLoaded", () => {
       lucide.createIcons();
+      // Profile/Login logic
+      async function updateProfileNav() {
+        let session = null;
+        if (typeof supabase !== "undefined") {
+          const { data } = await supabase.auth.getSession();
+          session = data.session;
+        }
+        if (session && session.user) {
+          // Show profile button
+          document.getElementById('profile-btn').style.display = '';
+          document.getElementById('login-btn').style.display = 'none';
+          // Set avatar if available
+          const { data: profile } = await supabase.from('profiles').select('avatar_url').eq('id', session.user.id).single();
+          document.getElementById('profile-avatar').src = profile?.avatar_url || "assets/default-avatar.png";
+        } else {
+          // Show login button
+          document.getElementById('profile-btn').style.display = 'none';
+          document.getElementById('login-btn').style.display = '';
+        }
+        lucide.createIcons();
+      }
+      updateProfileNav();
+
+      // Profile dropdown
+      const btn = document.getElementById('profile-btn');
+      if (btn) {
+        btn.onclick = e => {
+          e.stopPropagation();
+          btn.classList.toggle('open');
+        };
+        document.body.addEventListener('click', () => btn.classList.remove('open'));
+      }
+      // Login button
+      const loginBtn = document.getElementById('login-btn');
+      if (loginBtn) {
+        loginBtn.onclick = () => window.location.href = 'login.html';
+      }
+      // Logout button
+      const logoutBtn = document.getElementById('logout-btn');
+      if (logoutBtn) {
+        logoutBtn.onclick = async () => {
+          await supabase.auth.signOut();
+          window.location.reload();
+        };
+      }
     });
 
     // Tab switching logic
-    document.querySelectorAll('.x-tab').forEach(tab => {
-      tab.addEventListener('click', function() {
-        document.querySelectorAll('.x-tab').forEach(t => t.classList.remove('active'));
-        this.classList.add('active');
-        window.loadXSection(this.dataset.section);
+    document.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll('.x-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+          document.querySelectorAll('.x-tab').forEach(t => t.classList.remove('active'));
+          this.classList.add('active');
+          window.loadXSection(this.dataset.section);
+        });
       });
+      window.loadXSection = function(section) {
+        lucide.createIcons();
+        const feed = document.getElementById('feed-container');
+        feed.innerHTML = '<div class="loader"></div>';
+        setTimeout(() => {
+          feed.innerHTML = `<h2 style="text-align:center;color:#1da1f2;margin-top:2em;">${section.replace(/-/g,' ').toUpperCase()} feed coming soon...</h2>`;
+        }, 400);
+      };
+      window.loadXSection('for-you');
     });
-
-    // Section loading logic (simplified, implement per-section loading in js/feed.js or similar)
-    window.loadXSection = function(section) {
-      lucide.createIcons();
-      const feed = document.getElementById('feed-container');
-      feed.innerHTML = '<div class="loader"></div>';
-      setTimeout(() => {
-        feed.innerHTML = `<h2 style="text-align:center;color:#1da1f2;margin-top:2em;">${section.replace(/-/g,' ').toUpperCase()} feed coming soon...</h2>`;
-      }, 400);
-    };
-    // Initial load
-    window.loadXSection('for-you');
   </script>
 </body>
 </html>
