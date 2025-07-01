@@ -1,0 +1,8 @@
+<a class="search-result" href="{{href}}">
+  <img src="{{avatar_url}}" alt="">
+  <div>
+    <div class="primary">{{primary}}</div>
+    <div class="secondary">{{secondary}}</div>
+    <span class="type">{{type}}</span>
+  </div>
+</a>
