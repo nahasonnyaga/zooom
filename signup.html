@@ -1,74 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Sign Up - Zooom</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="css/main.css">
-  <link rel="stylesheet" href="css/auth.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/theme.css" />
+  <link rel="icon" href="assets/icon-192.png" />
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body style="background:#f6f6fa;">
-  <!-- Universal Navbar Loader -->
-  <div id="navbar"></div>
-  <script>
-    fetch('components/navbar.html')
-      .then(r => r.ok ? r.text() : '')
-      .then(html => { document.getElementById('navbar').innerHTML = html; });
-  </script>
-  <!-- Main page content below -->
-  <main>
-    <div class="auth-container">
-      <h2>Sign Up</h2>
-      <form class="auth-form" id="signup-form" autocomplete="on">
-        <label for="signup-username">Username</label>
-        <input id="signup-username" type="text" name="username" required placeholder="yourusername" maxlength="30" autocomplete="username" />
-        <label for="signup-email">Email</label>
-        <input id="signup-email" type="email" name="email" required autocomplete="email" placeholder="you@email.com" />
-        <label for="signup-password">Password</label>
-        <input id="signup-password" type="password" name="password" required autocomplete="new-password" placeholder="Password (min 6 chars)" minlength="6" />
-        <button type="submit" id="signup-btn">Sign Up</button>
-        <div class="auth-error" id="signup-error"></div>
-      </form>
-      <div class="auth-extra-links">
-        <span>Already have an account?</span>
-        <a href="login.html">Log In</a><br>
-        <a href="password-reset.html">Forgot Password?</a>
-      </div>
-    </div>
+<body class="theme-light">
+  <main style="max-width: 360px; margin: 90px auto;">
+    <h2 style="text-align:center;">Create your Zooom account</h2>
+    <form id="signup-form" autocomplete="on" style="display:flex;flex-direction:column;gap:18px;margin-top:34px;">
+      <input type="email" id="email" placeholder="Email" required style="font-size:1.1em;padding:10px;border-radius:7px;border:1px solid #bbb;">
+      <input type="password" id="password" placeholder="Password" required minlength="6" style="font-size:1.1em;padding:10px;border-radius:7px;border:1px solid #bbb;">
+      <button type="submit" style="background:#1da1f2;color:#fff;padding:12px;font-size:1.1em;border:none;border-radius:7px;cursor:pointer;">Sign Up</button>
+      <div id="signup-error" class="error" style="min-height:20px;"></div>
+    </form>
+    <p style="text-align:center;margin-top:20px;">Already have an account?
+      <a href="login.html">Sign in</a>
+    </p>
   </main>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="js/supabase.js"></script>
   <script>
-    document.getElementById('signup-form').addEventListener('submit', async function(e) {
+    lucide.createIcons();
+    const form = document.getElementById('signup-form');
+    const errorDiv = document.getElementById('signup-error');
+    form.onsubmit = async (e) => {
       e.preventDefault();
-      document.getElementById('signup-error').textContent = '';
-      const username = document.getElementById('signup-username').value.trim();
-      const email = document.getElementById('signup-email').value.trim();
-      const password = document.getElementById('signup-password').value;
-      if (!username || !email || !password) {
-        document.getElementById('signup-error').textContent = 'Please fill in all fields.';
-        return;
+      errorDiv.textContent = '';
+      const email = form.email.value.trim();
+      const password = form.password.value;
+      const { error } = await supabase.auth.signUp({ email, password });
+      if (error) {
+        errorDiv.textContent = error.message || "Signup failed.";
+      } else {
+        window.location.href = "index.html";
       }
-      document.getElementById('signup-btn').disabled = true;
-      try {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: { data: { username } }
-        });
-        if (error) {
-          document.getElementById('signup-error').textContent = error.message || "Could not sign up.";
-        } else {
-          localStorage.setItem('username', username);
-          const params = new URLSearchParams(window.location.search);
-          const returnTo = params.get('returnTo') || "index.html";
-          window.location.href = returnTo;
-        }
-      } catch (err) {
-        document.getElementById('signup-error').textContent = "Something went wrong.";
-      }
-      document.getElementById('signup-btn').disabled = false;
-    });
+    };
   </script>
 </body>
 </html>
