@@ -6,14 +6,31 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/profile.css">
+  <link rel="stylesheet" href="css/theme.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body>
-  <div id="top-navbar"></div>
+<body class="theme-light">
+  <!-- Unified Top & Bottom Navbars for Interconnected UX -->
+  <div id="navbar"></div>
   <main id="profile-main">
     <!-- Profile info and posts loaded by js/profile.js -->
   </main>
-  <div id="bottom-navbar"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="js/supabase.js"></script>
   <script src="js/profile.js"></script>
+  <script src="js/utils.js"></script>
   <script>
-    fetch('components/navbar.html').then(r
+    // Inject modern, interconnected navbars
+    fetch('components/navbar.html').then(r=>r.text()).then(html=>{
+      document.getElementById('navbar').innerHTML = html;
+      if(window.lucide) lucide.createIcons();
+    });
+
+    // Apply theme (dark/light) from localStorage for consistency
+    if(localStorage.getItem('zooom-theme') === 'dark') {
+      document.body.classList.remove('theme-light');
+      document.body.classList.add('theme-dark');
+    }
+  </script>
+</body>
+</html>
