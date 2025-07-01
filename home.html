@@ -18,6 +18,8 @@
   </main>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="js/supabase.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/feed.js"></script>
   <script>
     // Load navbar and icons, consistent with other pages
     fetch('components/navbar.html').then(r => r.text()).then(html => {
@@ -32,43 +34,6 @@
       document.body.classList.remove('theme-light');
       document.body.classList.add('theme-dark');
     }
-
-    // FEED: Load posts and display
-    (async () => {
-      // Use the shared global Supabase client
-      const { data: posts, error } = await window.supabase
-        .from('posts')
-        .select('id, title, created_at, user_id')
-        .order('created_at', { ascending: false });
-
-      const feedList = document.getElementById('feed-list');
-      if (error) {
-        feedList.innerHTML = `<div style="color:#e11d48;">Failed to load posts: ${error.message}</div>`;
-        return;
-      }
-
-      // Optionally, map user_id to username/avatar if you want richer feed cards
-      if (posts && posts.length) {
-        // Fetch author profiles if you want to show avatars/usernames (optional)
-        // Example: const { data: profiles } = await window.supabase.from('profiles').select('id,username,avatar_url');
-        feedList.innerHTML = posts
-          .map(p => `
-            <div class='feed-post-card' style="margin-bottom:1em;">
-              <a href="thread.html?id=${encodeURIComponent(p.id)}"><b>${p.title || '(no title)'}</b></a><br>
-              <span style="color:#888;">${new Date(p.created_at).toLocaleString()}</span>
-            </div>
-          `).join('');
-      } else {
-        feedList.innerHTML = '<div style="color:#888;">No posts found.</div>';
-      }
-    })();
-
-    // Listen for auth state changes if you want to refresh feed or navbar
-    window.addEventListener('zooomAuth', e => {
-      if(window.refreshNavbarProfile) window.refreshNavbarProfile();
-      // Optionally: reload feed on sign-in/out
-      // location.reload();
-    });
   </script>
 </body>
 </html>
