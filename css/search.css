@@ -1,0 +1,5 @@
+#search-input { width: 100%; padding: 12px; margin-top: 16px; font-size: 1.1em; border-radius: 8px; border: 0; }
+.search-result { display: flex; align-items: center; gap: 10px; background: #232323; border-radius: 8px; padding: 10px; margin: 6px 0; text-decoration: none; color: inherit; }
+.search-result img { width: 40px; height: 40px; border-radius: 50%; }
+.search-result .primary { font-weight: bold; }
+.search-result .type { font-size: 0.85em; color: #1da1f2; }
