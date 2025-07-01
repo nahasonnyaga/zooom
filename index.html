@@ -18,6 +18,8 @@
   <link rel="stylesheet" href="css/feed.css">
   <link rel="stylesheet" href="css/navbar.css">
   <link rel="stylesheet" href="css/x-topbar.css">
+  <!-- Lucide Icons CDN - MIT Licensed, worldclass icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
   <script>
@@ -31,35 +33,35 @@
   <!-- X-style Topbar: horizontally scrollable, sections as tabs -->
   <header id="x-topbar" class="x-topbar horizontal-scroll">
     <button class="x-tab active" data-section="for-you">
-      <img src="assets/home-fill.svg" alt="For You" />
+      <i data-lucide="sparkles"></i>
       <span>For You</span>
     </button>
     <button class="x-tab" data-section="following">
-      <img src="assets/users.svg" alt="Following" />
+      <i data-lucide="users"></i>
       <span>Following</span>
     </button>
     <button class="x-tab" data-section="mentions">
-      <img src="assets/at-sign.svg" alt="Mentions" />
+      <i data-lucide="at-sign"></i>
       <span>Mentions</span>
     </button>
     <button class="x-tab" data-section="hashtags">
-      <img src="assets/hash.svg" alt="Hashtags" />
+      <i data-lucide="hash"></i>
       <span>#Hashtags</span>
     </button>
     <button class="x-tab" data-section="trending">
-      <img src="assets/trending-up.svg" alt="Trending" />
+      <i data-lucide="trending-up"></i>
       <span>Trending</span>
     </button>
     <button class="x-tab" data-section="new-users">
-      <img src="assets/user-plus.svg" alt="New Users" />
+      <i data-lucide="user-plus"></i>
       <span>New Users</span>
     </button>
     <button class="x-tab" data-section="notifications">
-      <img src="assets/bell.svg" alt="Notifications" />
+      <i data-lucide="bell"></i>
       <span>Notifications</span>
     </button>
     <button class="x-tab" data-section="media">
-      <img src="assets/image.svg" alt="Images/Videos" />
+      <i data-lucide="image"></i>
       <span>Media</span>
     </button>
   </header>
@@ -68,18 +70,23 @@
     <!-- Dynamically loaded content based on the selected x-tab -->
   </main>
 
-  <!-- Bottom Navbar: essential actions only, X-style glassy -->
+  <!-- Bottom Navbar: essential actions only, X-style glassy, large Lucide icons -->
   <nav id="bottom-navbar" class="navbar navbar-bottom glassy">
-    <a href="index.html" aria-label="Home"><img src="assets/home-fill.svg" alt="Home"></a>
-    <a href="post.html" aria-label="Compose"><img src="assets/plus-circle.svg" alt="Compose"></a>
-    <a href="notifications.html" aria-label="Notifications"><img src="assets/bell.svg" alt="Notifications"></a>
-    <a href="profile.html" aria-label="Profile"><img src="assets/user.svg" alt="Profile"></a>
+    <a href="index.html" aria-label="Home"><i data-lucide="home"></i></a>
+    <a href="post.html" aria-label="Compose"><i data-lucide="plus-circle"></i></a>
+    <a href="notifications.html" aria-label="Notifications"><i data-lucide="bell"></i></a>
+    <a href="profile.html" aria-label="Profile"><i data-lucide="user"></i></a>
   </nav>
 
   <script src="js/supabase.js"></script>
   <script src="js/main.js"></script>
   <script src="js/feed.js"></script>
   <script>
+    // Lucide icon rendering
+    document.addEventListener("DOMContentLoaded", () => {
+      lucide.createIcons();
+    });
+
     // Tab switching logic
     document.querySelectorAll('.x-tab').forEach(tab => {
       tab.addEventListener('click', function() {
@@ -89,12 +96,11 @@
       });
     });
 
-    // Section loading logic (simplified, you should implement per-section loading in js/feed.js or similar)
+    // Section loading logic (simplified, implement per-section loading in js/feed.js or similar)
     window.loadXSection = function(section) {
+      lucide.createIcons();
       const feed = document.getElementById('feed-container');
-      feed.innerHTML = '<div class="loader"></div>'; // Show loader
-      // Here you would call the relevant JS to load each section
-      // e.g. loadTrendingFeed(), loadMentions(), loadHashtags(), etc.
+      feed.innerHTML = '<div class="loader"></div>';
       setTimeout(() => {
         feed.innerHTML = `<h2 style="text-align:center;color:#1da1f2;margin-top:2em;">${section.replace(/-/g,' ').toUpperCase()} feed coming soon...</h2>`;
       }, 400);
