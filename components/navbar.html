@@ -1,34 +1,52 @@
-<!-- Not used directly, see index.html for modern implementation. 
-     You may still use this for other pages if you want. -->
-<nav class="navbar navbar-top horizontal-scroll">
-  <a class="nav-pill" href="index.html" aria-label="Home">
-    <img src="assets/home-fill.svg" alt="Home">
-    <span>Home</span>
-  </a>
-  <a class="nav-pill" href="search.html" aria-label="Search">
-    <img src="assets/search.svg" alt="Search">
-    <span>Search</span>
-  </a>
-  <a class="nav-pill" href="notifications.html" aria-label="Notifications">
-    <img src="assets/bell.svg" alt="Notifications">
-    <span>Notifications</span>
-  </a>
-  <a class="nav-pill" href="messages.html" aria-label="Messages">
-    <img src="assets/mail.svg" alt="Messages">
-    <span>Messages</span>
-  </a>
-  <a class="nav-pill" href="profile.html" aria-label="Profile">
-    <img src="assets/user.svg" alt="Profile">
-    <span>Profile</span>
-  </a>
-  <a class="nav-pill" href="settings.html" aria-label="Settings">
-    <img src="assets/settings.svg" alt="Settings">
-    <span>Settings</span>
-  </a>
-</nav>
-<nav class="navbar navbar-bottom glassy">
-  <a href="index.html" aria-label="Home"><img src="assets/home-fill.svg" alt="Home"></a>
-  <a href="post.html" aria-label="Compose"><img src="assets/plus-circle.svg" alt="Compose"></a>
-  <a href="notifications.html" aria-label="Notifications"><img src="assets/bell.svg" alt="Notifications"></a>
-  <a href="profile.html" aria-label="Profile"><img src="assets/user.svg" alt="Profile"></a>
-</nav>
+.navbar {
+  display: flex;
+  align-items: center;
+  background: #181e28;
+  z-index: 1000;
+}
+.navbar-bottom {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 66px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0 14vw;
+  border-top: 1.5px solid #232a35;
+  background: rgba(24, 30, 40, 0.7);
+  box-shadow: 0 8px 32px 0 rgba(31,38,135,0.25);
+  backdrop-filter: blur(12px);
+}
+.glassy {
+  background: rgba(24, 30, 40, 0.8);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 0 16px 0 rgba(31,38,135,0.11);
+}
+.navbar-bottom a {
+  flex: 1 0 0;
+  display: flex;
+  justify-content: center; align-items: center;
+  height: 50px; width: 50px;
+  margin: 0 8px;
+  border-radius: 50%;
+  background: none;
+  transition: background .2s;
+}
+.navbar-bottom a i {
+  width: 32px;
+  height: 32px;
+  color: #e8f0fe;
+  transition: color .16s;
+}
+.navbar-bottom a:active, .navbar-bottom a:hover {
+  background: rgba(29,161,242,0.12);
+}
+.navbar-bottom a:active i, .navbar-bottom a:hover i {
+  color: #1da1f2;
+}
+@media (max-width: 700px) {
+  .navbar-bottom {padding: 0 2vw;}
+}
+@media (max-width: 480px) {
+  .navbar-bottom {padding: 0;}
+}
