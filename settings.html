@@ -5,6 +5,7 @@
   <title>Settings - Zooom</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="description" content="Edit your profile and account settings.">
+  <link rel="icon" href="assets/logo.png">
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/settings.css">
 </head>
@@ -13,23 +14,52 @@
   <main>
     <h1>Settings</h1>
     <form id="settings-form" autocomplete="off">
-      <label>Username<input type="text" id="settings-username"></label>
+      <label>Username<input type="text" id="settings-username" required></label>
       <label>Bio<textarea id="settings-bio"></textarea></label>
       <label>Avatar URL<input type="url" id="settings-avatar"></label>
       <button type="submit">Save</button>
       <div id="settings-success"></div>
+      <div id="settings-error" style="color:#e11d48;"></div>
     </form>
     <button id="theme-toggle">Toggle Theme</button>
+    <div style="margin-top:2em;">
+      <a href="profile.html">Back to Profile</a> | 
+      <a href="password-update.html">Change Password</a> | 
+      <a href="login.html" id="logout-link">Logout</a>
+    </div>
   </main>
   <div id="bottom-navbar"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="js/supabase.js"></script>
   <script src="js/settings.js"></script>
   <script src="js/theme.js"></script>
   <script>
-    fetch('components/navbar.html').then(r=>r.text()).then(t=>{
+    // Load navbars
+    fetch('components/navbar.html').then(r => r.text()).then(t => {
       document.getElementById('top-navbar').innerHTML = t.replace('{{position}}', 'top');
       document.getElementById('bottom-navbar').innerHTML = t.replace('{{position}}', 'bottom');
+      if (window.refreshNavbarProfile) window.refreshNavbarProfile();
     });
+
+    // Theme button
+    document.getElementById('theme-toggle').onclick = function() {
+      if (document.body.classList.contains('theme-dark')) {
+        document.body.classList.remove('theme-dark');
+        document.body.classList.add('theme-light');
+        localStorage.setItem('zooom-theme', 'light');
+      } else {
+        document.body.classList.remove('theme-light');
+        document.body.classList.add('theme-dark');
+        localStorage.setItem('zooom-theme', 'dark');
+      }
+    };
+
+    // Logout link
+    document.getElementById('logout-link').onclick = async function(e) {
+      e.preventDefault();
+      await window.supabase.auth.signOut();
+      window.location.href = 'login.html';
+    };
   </script>
 </body>
 </html>
