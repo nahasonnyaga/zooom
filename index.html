@@ -13,10 +13,11 @@
   <link rel="stylesheet" href="css/feed.css">
   <link rel="stylesheet" href="css/navbar.css">
   <link rel="stylesheet" href="css/x-topbar.css">
+  <link rel="stylesheet" href="css/theme.css">
   <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body>
+<body class="theme-light">
   <!-- TOP NAVBAR -->
   <header class="x-topbar-outer">
     <div class="x-topbar-row">
@@ -31,6 +32,9 @@
         <button class="x-tab" data-section="media"><i data-lucide="image"></i><span>Media</span></button>
       </nav>
       <div class="x-topbar-profile" id="x-topbar-profile">
+        <button id="theme-toggle-btn" class="theme-toggle-btn" title="Toggle theme">
+          <i data-lucide="moon"></i>
+        </button>
         <button id="profile-btn" class="profile-btn" style="display:none">
           <img id="profile-avatar" src="assets/default-avatar.png" alt="Profile" />
           <div id="profile-dropdown" class="profile-dropdown">
@@ -61,10 +65,11 @@
   <script src="js/supabase.js"></script>
   <script src="js/main.js"></script>
   <script src="js/feed.js"></script>
+  <script src="js/theme.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       lucide.createIcons();
-      // Profile/Login logic (same as previous)
+      // Profile/Login logic (same as before)
       async function updateProfileNav() {
         let session = null;
         if (typeof supabase !== "undefined") {
