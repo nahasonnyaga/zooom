@@ -2,138 +2,28 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>New Post | Zooom Forum</title>
+  <title>New Post - Zooom</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Create a new post on Zooom.">
-  <link rel="icon" href="assets/logo.png">
   <link rel="stylesheet" href="css/main.css">
-  <link rel="stylesheet" href="css/navbar.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <style>
-    main {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background: #f8fafc;
-      padding-top: 3.5em;
-    }
-    #post-form {
-      background: #fff;
-      border-radius: 15px;
-      box-shadow: 0 2px 18px #0002;
-      max-width: 420px;
-      width: 94vw;
-      padding: 2em 1.6em 1.3em 1.6em;
-      display: flex;
-      flex-direction: column;
-      gap: 1.1em;
-      margin-top: 2.5em;
-      align-items: stretch;
-    }
-    #post-form h2 {
-      margin: 0 0 0.2em 0;
-      font-size: 1.35em;
-      color: #1d4ed8;
-      text-align: left;
-      font-weight: 700;
-    }
-    #post-title {
-      border: none;
-      border-bottom: 2.5px solid #3b82f6;
-      font-size: 1.2em;
-      padding: 0.7em 0.4em;
-      background: #f4f8ff;
-      border-radius: 7px 7px 0 0;
-      outline: none;
-      font-weight: 600;
-      color: #222;
-      transition: border 0.18s;
-      margin-bottom: 0.1em;
-    }
-    #post-title:focus {
-      border-bottom: 2.5px solid #1d4ed8;
-      background: #fff;
-    }
-    #post-content {
-      border: 1.3px solid #dbeafe;
-      border-radius: 8px;
-      font-size: 1.06em;
-      min-height: 110px;
-      padding: 0.9em 0.7em;
-      background: #f4f8ff;
-      color: #222;
-      outline: none;
-      transition: border 0.18s;
-      resize: vertical;
-      margin-bottom: 0.3em;
-    }
-    #post-content:focus {
-      border-color: #3b82f6;
-      background: #fff;
-    }
-    #post-form button[type="submit"] {
-      background: linear-gradient(90deg, #3b82f6 65%, #60a5fa 100%);
-      color: #fff;
-      font-weight: 700;
-      font-size: 1.05em;
-      border: none;
-      border-radius: 30px;
-      padding: 0.85em 0;
-      margin-top: 0.2em;
-      cursor: pointer;
-      transition: background 0.18s, opacity 0.1s;
-      box-shadow: 0 1px 6px #3b82f622;
-      letter-spacing: 0.01em;
-    }
-    #post-form button[type="submit"]:hover:not(:disabled) {
-      filter: brightness(1.06);
-      background: linear-gradient(90deg, #2563eb 65%, #3b82f6 100%);
-    }
-    #post-form button[type="submit"]:disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
-    }
-    .form-error {
-      color: #a33;
-      min-height: 1.3em;
-      font-size: 1em;
-      margin-top: 0.2em;
-      text-align: left;
-      padding-left: 0.2em;
-    }
-    @media (max-width: 600px) {
-      #post-form {
-        padding: 1.2em 0.4em 1em 0.4em;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="css/feed.css">
 </head>
 <body>
-  <div id="navbar"></div>
-  <main>
-    <form id="post-form" aria-label="Create Post" autocomplete="off">
-      <h2><i class="fa-solid fa-pen-to-square" style="margin-right:0.5em;color:#3b82f6;"></i>Create New Post</h2>
-      <input type="text" id="post-title" placeholder="What's happening?" required aria-label="Title" maxlength="100" autocomplete="off">
-      <textarea id="post-content" placeholder="Share your thoughts..." required aria-label="Content" maxlength="1200"></textarea>
-      <button type="submit" aria-label="Post">Post</button>
-      <div id="post-error" class="form-error" role="alert"></div>
+  <div id="top-navbar"></div>
+  <main class="post-main">
+    <h2>Compose a Post</h2>
+    <form id="post-form">
+      <textarea id="post-content" placeholder="What's happening?" maxlength="500" required></textarea>
+      <button type="submit">Post</button>
+      <div id="post-error"></div>
     </form>
   </main>
+  <div id="bottom-navbar"></div>
   <script src="js/supabase.js"></script>
   <script src="js/post.js"></script>
-  <script type="module">
-    fetch('components/navbar.html').then(r => r.text()).then(html => {
-      const container = document.getElementById('navbar');
-      container.innerHTML = html;
-      container.querySelectorAll("script").forEach(oldScript => {
-        const newScript = document.createElement('script');
-        if (oldScript.src) newScript.src = oldScript.src;
-        else newScript.textContent = oldScript.textContent;
-        document.body.appendChild(newScript);
-        document.body.removeChild(newScript);
-      });
-      import('./js/navbar.js').catch(() => {});
+  <script>
+    fetch('components/navbar.html').then(r=>r.text()).then(t=>{
+      document.getElementById('top-navbar').innerHTML = t.replace('{{position}}', 'top');
+      document.getElementById('bottom-navbar').innerHTML = t.replace('{{position}}', 'bottom');
     });
   </script>
 </body>
