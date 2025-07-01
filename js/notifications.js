@@ -1,6 +1,13 @@
 document.addEventListener('DOMContentLoaded', async () => {
-  const container = document.getElementById('notifications');
-  container.innerHTML = '<div class="loading">Loading notifications...</div>';
-  // This is a placeholder; implement real notification fetching logic as needed
-  container.innerHTML = '<p>No notifications yet. 🎉</p>';
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) return location.href = 'login.html';
+  const userId = session.user.id;
+  // Fetch notifications (assume supabase table 'notifications')
+  const { data: notifs } = await supabase.from('notifications').select('*').eq('user_id', userId).order('created_at', { ascending: false }).limit(50);
+  let html = '';
+  for (const n of notifs ?? []) {
+    const card = await fetch('components/notification-card.html').then(r=>r.text());
+    html += card.replace('{{content}}', n.content).replace('{{created_at}}', new Date(n.created_at).toLocaleString());
+  }
+  document.getElementById('notifications-list').innerHTML = html || '<p>No notifications.</p>';
 });
