@@ -54,18 +54,23 @@
   // Profile/login/logout logic: expects supabase.js and lucide loaded
   document.addEventListener("DOMContentLoaded", () => {
     if (window.lucide) lucide.createIcons();
-    // Profile/Login logic
+
+    // Profile/Login logic - use window.supabase from js/supabase.js
     async function updateProfileNav() {
       let session = null;
-      if (typeof supabase !== "undefined") {
-        const { data } = await supabase.auth.getSession();
+      if (window.supabase) {
+        const { data } = await window.supabase.auth.getSession();
         session = data.session;
       }
       if (session && session.user) {
         document.getElementById('profile-btn').style.display = '';
         document.getElementById('login-btn').style.display = 'none';
-        if (supabase) {
-          const { data: profile } = await supabase.from('profiles').select('avatar_url').eq('id', session.user.id).single();
+        if (window.supabase) {
+          const { data: profile } = await window.supabase
+            .from('profiles')
+            .select('avatar_url')
+            .eq('id', session.user.id)
+            .single();
           document.getElementById('profile-avatar').src = profile?.avatar_url || "assets/default-avatar.png";
         }
       } else {
@@ -75,6 +80,7 @@
       if (window.lucide) lucide.createIcons();
     }
     updateProfileNav();
+
     // Profile dropdown
     const btn = document.getElementById('profile-btn');
     if (btn) {
@@ -87,13 +93,13 @@
     // Login button
     const loginBtn = document.getElementById('login-btn');
     if (loginBtn) {
-      loginBtn.onclick = () => window.location.href = 'auth.html?tab=login';
+      loginBtn.onclick = () => window.location.href = 'login.html';
     }
     // Logout button
     const logoutBtn = document.getElementById('logout-btn');
     if (logoutBtn) {
       logoutBtn.onclick = async () => {
-        await supabase.auth.signOut();
+        await window.supabase.auth.signOut();
         window.location.reload();
       };
     }
@@ -109,14 +115,13 @@
         if (window.lucide) lucide.createIcons();
       };
     }
-
     // Show notification dot if there are unread notifications
     async function checkNotifications() {
       if (!window.supabase) return;
-      const { data } = await supabase.auth.getSession();
+      const { data } = await window.supabase.auth.getSession();
       const user = data?.session?.user;
       if (!user) return;
-      const { data: notifications } = await supabase
+      const { data: notifications } = await window.supabase
         .from('notifications')
         .select('id')
         .eq('user_id', user.id)
