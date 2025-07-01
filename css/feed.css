@@ -1,10 +1,11 @@
-#feed-container { display: flex; flex-direction: column; gap: 8px;}
+#feed-container { display: flex; flex-direction: column; gap: 12px;}
 .thread-card {
   display: flex; gap: 12px; background: #232323;
-  border-radius: 12px; padding: 12px; cursor: pointer;
+  border-radius: 16px; padding: 15px 16px; cursor: pointer;
   transition: background .2s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
-.thread-card:hover { background: #292929; }
+.thread-card:hover { background: #262c36; }
 .thread-card .avatar { margin-right: 8px; }
 .thread-card .username { font-weight: bold; }
 .thread-card .date { color: #aaa; font-size: 0.85em; margin-left: 8px; }
