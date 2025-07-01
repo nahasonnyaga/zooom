@@ -1,0 +1,3 @@
+body.light { background: #fff; color: #222; }
+body.light .navbar { background: #f7faff; }
+body.light .thread-card, body.light .profile-card, body.light .notification-card { background: #f3f3f3; color: #222; }
