@@ -1,47 +1,8 @@
-<nav class="navbar threads-navbar worldclass-navbar" id="mainNavbar" aria-label="Main Navigation">
-  <div class="navbar-center" id="navbar-center">
-    <a href="index.html" class="navbar-link" title="Feed" aria-label="Feed">
-      <i class="fa-solid fa-house navbar-icon"></i>
-    </a>
-    <a href="explore.html" class="navbar-link" title="Explore" aria-label="Explore">
-      <i class="fa-solid fa-hashtag navbar-icon"></i>
-    </a>
-    <a href="explore-users.html" class="navbar-link" title="Users" aria-label="Explore Users">
-      <i class="fa-solid fa-users navbar-icon"></i>
-    </a>
-    <a href="post.html" class="navbar-link thread-btn" title="Post" id="threadNavBtn" aria-label="Create Post">
-      <i class="fa-solid fa-circle-plus navbar-icon"></i>
-    </a>
-    <a href="notifications.html" class="navbar-link" title="Notifications" aria-label="Notifications" style="position:relative;">
-      <i class="fa-solid fa-bell navbar-icon"></i>
-      <span class="nav-alert-dot" id="navbarNotifDot" style="display:none;"></span>
-    </a>
-    <a href="profile.html" class="navbar-link" title="Profile" aria-label="Profile">
-      <i class="fa-solid fa-circle-user navbar-icon"></i>
-    </a>
-  </div>
-  <div class="navbar-right" id="navbar-right">
-    <button class="navbar-avatar" id="navbarUserBtn" title="Account" aria-haspopup="true" aria-expanded="false" tabindex="0" style="border:none;background:none;padding:0;">
-      <img src="assets/avatar.png" alt="User" class="navbar-avatar-img" onerror="this.src='assets/avatar.png'">
-    </button>
-    <div class="navbar-dropdown" id="navbarDropdown" style="display:none;" role="menu" aria-label="Account Menu">
-      <div class="dropdown-profile">
-        <img src="assets/avatar.png" alt="User" class="dropdown-avatar" onerror="this.src='assets/avatar.png'">
-        <div class="dropdown-user-info">
-          <span id="dropdownUsername" style="font-weight:700;color:#3b82f6;">@username</span>
-        </div>
-      </div>
-      <hr>
-      <a href="profile.html" title="Profile"><i class="fa-solid fa-user"></i></a>
-      <a href="settings.html" title="Settings"><i class="fa-solid fa-gear"></i></a>
-      <a href="security.html" title="Security"><i class="fa-solid fa-shield-halved"></i></a>
-      <a href="privacy.html" title="Privacy"><i class="fa-solid fa-user-shield"></i></a>
-      <a href="password-update.html" title="Update Password"><i class="fa-solid fa-key"></i></a>
-      <a href="password-reset.html" title="Reset Password"><i class="fa-solid fa-unlock"></i></a>
-      <a href="#" id="navbarLogoutBtn" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></a>
-    </div>
-  </div>
+<nav class="navbar {{position}}">
+  <a href="index.html" aria-label="Home"><img src="/assets/home.svg" alt="Home"></a>
+  <a href="post.html" aria-label="New Post"><img src="/assets/plus.svg" alt="Post"></a>
+  <a href="profile.html" aria-label="Profile"><img src="/assets/user.svg" alt="Profile"></a>
+  <a href="javascript:void(0)" onclick="supabase.auth.signOut().then(()=>location.href='login.html')" aria-label="Logout">
+    <img src="/assets/logout.svg" alt="Logout">
+  </a>
 </nav>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link rel="stylesheet" href="css/navbar.css">
-<script src="js/navbar.js" type="module"></script>
