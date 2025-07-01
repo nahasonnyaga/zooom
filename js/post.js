@@ -68,5 +68,5 @@ document.getElementById('post-form').onsubmit = async function(e) {
     submitBtn.disabled = false;
     return;
   }
-  window.location.href = "home.html";
+  window.location.href = "index.html";
 };
