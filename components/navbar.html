@@ -1,14 +1,14 @@
 <!-- TOP NAVBAR (X-style, horizontally scrollable, right-aligned profile/login/out) -->
 <header id="x-topbar-outer" class="x-topbar-outer" style="box-shadow:0 2px 12px #2563eb0a;position:sticky;top:0;z-index:60;">
   <div class="x-topbar-scroll horizontal-scroll" id="x-topbar-scroll" style="display:flex;overflow-x:auto;gap:0.25em;padding:0.2em 0.3em 0.2em 0.7em;scrollbar-width:thin;background:var(--navbar-bg,#fff);border-bottom:1.5px solid #f0f4fc;">
-    <button class="x-tab" data-section="for-you" onclick="window.location.href='index.html#for-you'" aria-label="For You"><i data-lucide="sparkles"></i><span>For You</span></button>
-    <button class="x-tab" data-section="following" onclick="window.location.href='index.html#following'" aria-label="Following"><i data-lucide="users"></i><span>Following</span></button>
-    <button class="x-tab" data-section="mentions" onclick="window.location.href='index.html#mentions'" aria-label="Mentions"><i data-lucide="at-sign"></i><span>Mentions</span></button>
-    <button class="x-tab" data-section="hashtags" onclick="window.location.href='index.html#hashtags'" aria-label="Hashtags"><i data-lucide="hash"></i><span>#Hashtags</span></button>
-    <button class="x-tab" data-section="trending" onclick="window.location.href='index.html#trending'" aria-label="Trending"><i data-lucide="trending-up"></i><span>Trending</span></button>
-    <button class="x-tab" data-section="new-users" onclick="window.location.href='index.html#new-users'" aria-label="New Users"><i data-lucide="user-plus"></i><span>New Users</span></button>
-    <button class="x-tab" data-section="notifications" onclick="window.location.href='index.html#notifications'" aria-label="Notifications"><i data-lucide="bell"></i><span>Notifications</span></button>
-    <button class="x-tab" data-section="media" onclick="window.location.href='index.html#media'" aria-label="Media"><i data-lucide="image"></i><span>Media</span></button>
+    <button class="x-tab" data-section="for-you" onclick="window.location.href='feed.html#for-you'" aria-label="For You"><i data-lucide="sparkles"></i><span>For You</span></button>
+    <button class="x-tab" data-section="following" onclick="window.location.href='feed.html#following'" aria-label="Following"><i data-lucide="users"></i><span>Following</span></button>
+    <button class="x-tab" data-section="mentions" onclick="window.location.href='feed.html#mentions'" aria-label="Mentions"><i data-lucide="at-sign"></i><span>Mentions</span></button>
+    <button class="x-tab" data-section="hashtags" onclick="window.location.href='feed.html#hashtags'" aria-label="Hashtags"><i data-lucide="hash"></i><span>#Hashtags</span></button>
+    <button class="x-tab" data-section="trending" onclick="window.location.href='feed.html#trending'" aria-label="Trending"><i data-lucide="trending-up"></i><span>Trending</span></button>
+    <button class="x-tab" data-section="new-users" onclick="window.location.href='feed.html#new-users'" aria-label="New Users"><i data-lucide="user-plus"></i><span>New Users</span></button>
+    <button class="x-tab" data-section="notifications" onclick="window.location.href='notifications.html'" aria-label="Notifications"><i data-lucide="bell"></i><span>Notifications</span></button>
+    <button class="x-tab" data-section="media" onclick="window.location.href='feed.html#media'" aria-label="Media"><i data-lucide="image"></i><span>Media</span></button>
     <a class="compose-btn" href="post.html" title="Compose" aria-label="Compose" style="margin-left:0.7em;background:linear-gradient(90deg,#2563eb 60%,#60a5fa 100%);color:#fff;padding:0.5em 1em;border-radius:1.3em;font-weight:700;display:flex;align-items:center;gap:0.53em;box-shadow:0 1px 8px #2563eb1a;"><i data-lucide="plus-circle" style="height:1.2em;width:1.2em;"></i><span style="font-size:1.08em;letter-spacing:0.01em;">Post</span></a>
   </div>
   <div class="x-topbar-profile" id="x-topbar-profile" style="display:flex;align-items:center;gap:0.6em;padding-right:1em;">
@@ -29,15 +29,20 @@
   </div>
 </header>
 
-<!-- BOTTOM NAVBAR (glassy, large Lucide icons, always visible) -->
-<nav id="bottom-navbar" class="navbar navbar-bottom glassy" style="backdrop-filter:blur(8px);background:rgba(255,255,255,0.92);border-top:1px solid #e3eafb;">
-  <a href="index.html" aria-label="Home"><i data-lucide="home"></i></a>
-  <a href="post.html" aria-label="Compose"><i data-lucide="plus-circle"></i></a>
-  <a href="notifications.html" aria-label="Notifications"><i data-lucide="bell"></i></a>
-  <a href="profile.html" aria-label="Profile"><i data-lucide="user"></i></a>
+<!-- BOTTOM NAVBAR (glassy, large Lucide icons, always visible, project-wide) -->
+<nav id="bottom-navbar" class="navbar navbar-bottom glassy" style="backdrop-filter:blur(8px);background:rgba(255,255,255,0.92);border-top:1px solid #e3eafb;position:fixed;left:0;right:0;bottom:0;z-index:99;display:flex;justify-content:space-around;align-items:center;height:62px;">
+  <a href="feed.html" aria-label="Home" style="flex:1;text-align:center;"><i data-lucide="home"></i><div style="font-size:0.92em;">Home</div></a>
+  <a href="explore.html" aria-label="Explore" style="flex:1;text-align:center;"><i data-lucide="search"></i><div style="font-size:0.92em;">Explore</div></a>
+  <a href="post.html" aria-label="Compose" style="flex:1;text-align:center;"><i data-lucide="plus-circle"></i><div style="font-size:0.92em;">Post</div></a>
+  <a href="notifications.html" aria-label="Notifications" style="flex:1;text-align:center;position:relative;">
+    <i data-lucide="bell"></i>
+    <div style="font-size:0.92em;">Alerts</div>
+    <span id="notif-dot" style="display:none;position:absolute;top:7px;right:calc(50% - 1.05em);width:10px;height:10px;background:#e11d48;border-radius:50%;"></span>
+  </a>
+  <a href="profile.html" aria-label="Profile" style="flex:1;text-align:center;"><i data-lucide="user"></i><div style="font-size:0.92em;">Me</div></a>
 </nav>
 <script>
-  // Mark correct tab as active based on URL/hash (for UX consistency)
+  // Top: Mark correct tab as active based on URL/hash (for UX consistency)
   (function() {
     let hash = location.hash.replace("#","");
     if (!hash) hash = "for-you";
@@ -45,6 +50,7 @@
       tab.classList.toggle('active', tab.dataset.section === hash);
     });
   })();
+
   // Profile/login/logout logic: expects supabase.js and lucide loaded
   document.addEventListener("DOMContentLoaded", () => {
     if (window.lucide) lucide.createIcons();
@@ -103,5 +109,23 @@
         if (window.lucide) lucide.createIcons();
       };
     }
+
+    // Show notification dot if there are unread notifications
+    async function checkNotifications() {
+      if (!window.supabase) return;
+      const { data } = await supabase.auth.getSession();
+      const user = data?.session?.user;
+      if (!user) return;
+      const { data: notifications } = await supabase
+        .from('notifications')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('read', false)
+        .limit(1);
+      if (notifications && notifications.length > 0) {
+        document.getElementById('notif-dot').style.display = 'block';
+      }
+    }
+    checkNotifications();
   });
 </script>
