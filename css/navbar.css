@@ -1,39 +1,95 @@
 .navbar {
-  width: 100vw;
-  min-width: 0;
-  min-height: 62px;
-  background: #fff;
-  border-bottom: 1.5px solid #e5eaf1;
-  box-shadow: 0 2px 16px #3b82f510;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
-  position: sticky;
-  top: 0;
-  z-index: 102;
-  padding: 0 10px;
-  box-sizing: border-box;
-  overflow-x: auto;
+  background: #181e28;
+  z-index: 1000;
 }
-.navbar-hide { transform: translateY(-100%); transition: transform 0.22s; }
-.navbar-logo-img { width: 2.2em; height: 2.2em; border-radius: 0.8em; background: #e0e7ff; }
-.navbar-center { display: flex; gap: 2.6em; align-items: center; justify-content: center; flex: 1 1 0%; min-width: 0; overflow-x: auto; padding-left: 0.2em; padding-right: 0.2em; }
-.navbar-link { display: flex; align-items: center; justify-content: center; padding: 0.48em; border-radius: 50%; text-decoration: none; color: #555; background: none; font-size: 1.48em; font-weight: 600; transition: background 0.13s, color 0.13s, box-shadow 0.13s, transform 0.13s; min-width: 2.55em; min-height:2.55em; aspect-ratio:1/1; box-sizing: border-box; }
-.navbar-link:focus, .navbar-link:hover, .navbar-link.active { background: linear-gradient(94deg,#e0e7ff 62%,#f3f7fd 100%); color: #2563eb; box-shadow: 0 2px 12px #3b82f528; outline: none; transform: scale(1.09) rotate(-2deg);}
-.thread-btn { background: linear-gradient(90deg,#3b82f6 65%,#60a5fa 100%)!important; color: #fff!important; box-shadow: 0 2px 12px #3b82f540; border: none!important; border-radius: 50%!important; font-weight: 900!important; min-width: 2.8em; min-height:2.8em; font-size: 1.6em!important;}
-.thread-btn:hover, .thread-btn:focus { filter: brightness(1.12); background: linear-gradient(90deg,#2563eb 60%,#60a5fa 100%)!important; color: #fff!important;}
-.navbar-icon { font-size: 1em; color: inherit; filter: drop-shadow(0 2px 3px #3b82f522);}
-.navbar-right { margin-left: auto; display: flex; align-items: center; gap: 0.5em; position: relative;}
-.navbar-avatar { width: 2.2em; height: 2.2em; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; background: #e0e7ff; box-shadow: 0 2px 8px #3b82f522; border: 1.5px solid #3b82f617; transition: box-shadow 0.13s, transform 0.13s; overflow: hidden;}
-.navbar-avatar:hover, .navbar-avatar:focus { box-shadow: 0 2px 16px #3b82f540; outline: none; transform: scale(1.07) rotate(-2deg);}
-.navbar-avatar-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: #f1f1f7; }
-.navbar-dropdown { position: absolute; top: 3.3em; right: 0.2em; min-width: 56px; background: #fff; border-radius: 13px; box-shadow: 0 4px 24px #3b82f540; border: 1.5px solid #e5eafe; padding: 1em 0.6em 0.7em 0.6em; z-index: 210; display: none;}
-.dropdown-profile { display: flex; align-items: center; gap: 0.6em; margin-bottom: 0.5em;}
-.dropdown-avatar { width: 2em; height: 2em; border-radius: 50%; object-fit: cover; border: 2px solid #e0e7ff; background: #f3f6f9;}
-.dropdown-user-info { display: flex; flex-direction: column; font-size: 0.97em;}
-.navbar-dropdown a { display: flex; align-items: center; justify-content: center; color: #374151; padding: 0.32em; border-radius: 50%; text-decoration: none; font-weight: 700; font-size: 1.22em; margin-bottom: 0.18em; min-width: 2.1em; min-height:2.1em; aspect-ratio:1/1;}
-.navbar-dropdown a:hover { background: linear-gradient(90deg,#e0e7ff 60%,#f3f7fd 100%); color: #2563eb; transform: scale(1.13) rotate(-3deg);}
-.nav-alert-dot { background: #fa5252; border-radius: 50%; width: 0.8em; height: 0.8em; display: none; position: absolute; top: 0.35em; right: 0.7em; border: 2px solid #fff; z-index: 2;}
-@media (max-width: 900px) { .navbar {padding: 0 1vw;} .navbar-center {gap: 1.4em;} .navbar-link {padding:0.32em 0.32em;} }
-@media (max-width: 650px) { .navbar {padding:0 0.5vw;} .navbar-logo-img {width:1.6em;height:1.6em;} .navbar-center {gap:0.7em;} .navbar-link {padding:0.18em;} .navbar-dropdown {top:2.3em;} }
+.navbar-top {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 60px;
+  overflow-x: auto;
+  border-bottom: 1.5px solid #232a35;
+  padding: 0 0.5rem;
+  /* horizontal scroll effect */
+  scrollbar-width: none;
+}
+.navbar-top::-webkit-scrollbar { display: none; }
+.horizontal-scroll {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 0.5rem;
+}
+/* nav pills: X/Twitter style, active highlight, pill shape */
+.nav-pill {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 72px;
+  padding: 6px 16px;
+  border-radius: 22px;
+  text-decoration: none;
+  color: #e8f0fe;
+  font-size: 0.95em;
+  transition: background 0.16s, color 0.16s;
+  margin: 6px 0;
+}
+.nav-pill img {
+  width: 24px; height: 24px;
+  margin-bottom: 2px;
+  filter: invert(86%) sepia(14%) saturate(326%) hue-rotate(176deg) brightness(91%) contrast(88%);
+}
+.nav-pill.active,
+.nav-pill:hover {
+  background: linear-gradient(90deg, #1da1f2 80%, #1d51f2 100%);
+  color: #fff;
+}
+.nav-pill.active img,
+.nav-pill:hover img {
+  filter: none;
+}
+.navbar-bottom {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 66px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0 14vw;
+  border-top: 1.5px solid #232a35;
+  background: rgba(24, 30, 40, 0.7);
+  box-shadow: 0 8px 32px 0 rgba(31,38,135,0.25);
+  backdrop-filter: blur(12px);
+}
+.glassy {
+  background: rgba(24, 30, 40, 0.8);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 0 16px 0 rgba(31,38,135,0.11);
+}
+.navbar-bottom a {
+  flex: 1 0 0;
+  display: flex;
+  justify-content: center; align-items: center;
+  height: 50px; width: 50px;
+  margin: 0 8px;
+  border-radius: 50%;
+  background: none;
+  transition: background .2s;
+}
+.navbar-bottom a img {
+  width: 28px;
+  height: 28px;
+  filter: invert(95%) sepia(6%) saturate(334%) hue-rotate(176deg) brightness(99%) contrast(89%);
+}
+.navbar-bottom a:active, .navbar-bottom a:hover {
+  background: rgba(29,161,242,0.12);
+}
+@media (max-width: 700px) {
+  .navbar-bottom {padding: 0 2vw;}
+  .navbar-top {height: 54px;}
+  .nav-pill {min-width: 60px; padding: 4px 10px; font-size: 0.90em;}
+}
+@media (max-width: 480px) {
+  .navbar-bottom {padding: 0;}
+}
