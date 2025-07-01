@@ -2,25 +2,24 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Thread | Zooom Forum</title>
+  <title>Thread - Zooom</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="View thread and replies on Zooom.">
-  <link rel="icon" href="assets/logo.png">
   <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/feed.css">
   <link rel="stylesheet" href="css/reply-card.css">
-  <link rel="stylesheet" href="css/navbar.css">
 </head>
 <body>
-  <div id="navbar"></div>
-  <main id="thread-container" aria-live="polite"></main>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <div id="top-navbar"></div>
+  <main id="thread-container">
+    <!-- Thread + replies populated by js/thread.js -->
+  </main>
+  <div id="bottom-navbar"></div>
   <script src="js/supabase.js"></script>
   <script src="js/thread.js"></script>
   <script>
-    fetch('components/navbar.html').then(r => r.text()).then(html => {
-      document.getElementById('navbar').innerHTML = html;
-      // Optionally load navbar behavior if needed
-      if (typeof import === "function") import('./js/navbar.js');
+    fetch('components/navbar.html').then(r=>r.text()).then(t=>{
+      document.getElementById('top-navbar').innerHTML = t.replace('{{position}}', 'top');
+      document.getElementById('bottom-navbar').innerHTML = t.replace('{{position}}', 'bottom');
     });
   </script>
 </body>
