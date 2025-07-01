@@ -2,36 +2,38 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Zooom - Feed</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="css/feed.css">
+  <title>Feed | Zooom</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Your Zooom feed.">
+  <link rel="icon" href="assets/logo.png">
   <link rel="stylesheet" href="css/main.css">
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#3b82f6">
-  <link rel="apple-touch-icon" href="assets/logo.png">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="#3b82f6">
-  <meta name="apple-mobile-web-app-title" content="Zooom">
-  <style>
-    body { padding-bottom:70px; }
-    /* ... Keep existing styles ... */
-  </style>
+  <link rel="stylesheet" href="css/feed.css">
+  <link rel="stylesheet" href="css/theme.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body style="background:#f7f7fa;">
+<body class="theme-light">
   <div id="navbar"></div>
-  <main class="feed" aria-label="Threads feed">
-    <div id="thread-list"></div>
-    <div class="feed-empty" style="display:none;">No threads yet. Start a conversation!</div>
+  <main style="max-width:600px;margin:2em auto 5em auto;">
+    <div id="feed-list">Loading...</div>
   </main>
-  <div id="modern-notification-area" style="position:fixed;top:1.7rem;right:1.6rem;z-index:205;"></div>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="js/supabase.js"></script>
   <script>
+    fetch('components/navbar.html').then(r=>r.text()).then(html=>{
+      document.getElementById('navbar').innerHTML = html;
+      if(window.lucide) lucide.createIcons();
+    });
     if(localStorage.getItem('zooom-theme')==='dark') {
       document.body.classList.remove('theme-light');
       document.body.classList.add('theme-dark');
     }
-    // ...Your feed rendering logic...
+    // Example: Load feed
+    (async () => {
+      const { data: posts } = await supabase.from('posts').select('*').order('created_at', {ascending: false});
+      document.getElementById('feed-list').innerHTML = posts && posts.length
+        ? posts.map(p=>`<div class='feed-post-card' style="margin-bottom:1em;"><a href="thread.html?id=${p.id}"><b>${p.title||'(no title)'}</b></a><br><span style="color:#888;">${new Date(p.created_at).toLocaleString()}</span></div>`).join('')
+        : '<div style="color:#888;">No posts found.</div>';
+    })();
   </script>
 </body>
 </html>
