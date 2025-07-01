@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Search - Zooom</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Search posts and users on Zooom.">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/search.css">
+</head>
+<body>
+  <div id="top-navbar"></div>
+  <main>
+    <input id="search-input" placeholder="Search posts, users..." autocomplete="off" aria-label="Search" autofocus>
+    <div id="search-results"></div>
+  </main>
+  <div id="bottom-navbar"></div>
+  <script src="js/supabase.js"></script>
+  <script src="js/search.js"></script>
+  <script>
+    fetch('components/navbar.html').then(r=>r.text()).then(t=>{
+      document.getElementById('top-navbar').innerHTML = t.replace('{{position}}', 'top');
+      document.getElementById('bottom-navbar').innerHTML = t.replace('{{position}}', 'bottom');
+    });
+  </script>
+</body>
+</html>
