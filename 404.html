@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/topmenu.css">
   <link rel="stylesheet" href="css/navbar.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     .notfound-main { text-align: center; margin-top: 7em; }
     .notfound-main img { width: 80px; margin-bottom: 1.5em; }
@@ -25,14 +26,28 @@
   </main>
   <div id="navbar"></div>
   <script>
+    // Topmenu dynamic include and script
     fetch('components/topmenu.html').then(r => r.text()).then(html => {
       document.getElementById('topmenu').innerHTML = html;
       const script = document.createElement('script');
       script.src = 'js/theme-topmenu.js';
       document.body.appendChild(script);
     });
+
+    // Navbar dynamic include (with scripts re-execution)
     fetch('components/navbar.html').then(r => r.text()).then(html => {
-      document.getElementById('navbar').innerHTML = html;
+      const container = document.getElementById('navbar');
+      container.innerHTML = html;
+      // Re-execute any scripts in the included HTML
+      container.querySelectorAll("script").forEach(oldScript => {
+        const newScript = document.createElement('script');
+        if (oldScript.src) newScript.src = oldScript.src;
+        else newScript.textContent = oldScript.textContent;
+        document.body.appendChild(newScript);
+        document.body.removeChild(newScript);
+      });
+      // Optionally import navbar.js module if needed:
+      // import('./js/navbar.js').catch(() => {});
     });
   </script>
 </body>
