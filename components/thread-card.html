@@ -1,6 +1,8 @@
-<div class="thread-card">
-  <h3>{{title}}</h3>
-  <p>{{content}}</p>
-  <div class="author">Posted by: {{author}}</div>
-  <a href="thread.html?id={{id}}">View Thread</a>
+<div class="thread-card" onclick="window.location='thread.html?id={{post_id}}'">
+  <img class="avatar" src="{{avatar_url}}" alt="{{username}}">
+  <div>
+    <span class="username">@{{username}}</span>
+    <span class="date">{{created_at}}</span>
+    <p>{{content}}</p>
+  </div>
 </div>
