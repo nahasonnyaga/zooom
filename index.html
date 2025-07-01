@@ -2,213 +2,36 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Zooom</title>
+  <title>Zooom Forum</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#1da1f2">
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="assets/icon-192.png">
-  <link rel="apple-touch-icon" href="assets/icon-192.png">
+  <meta name="description" content="Welcome to Zooom Forum">
+  <link rel="icon" href="assets/logo.png">
   <link rel="stylesheet" href="css/main.css">
-  <link rel="stylesheet" href="css/feed.css">
-  <link rel="stylesheet" href="css/navbar.css">
-  <link rel="stylesheet" href="css/x-topbar.css">
   <link rel="stylesheet" href="css/theme.css">
-  <!-- Lucide Icons CDN -->
-  <script src="https://unpkg.com/lucide@latest"></script>
   <style>
-    .loader {
-      width: 38px; height: 38px;
-      border: 4px solid #c7e1fc;
-      border-top: 4px solid #2563eb;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin: 3em auto 2em auto;
-    }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-    #feed-container { min-height: 65vh; }
-    .x-topbar-row { background: #fff; }
-    body.theme-dark .x-topbar-row { background: #181b23; }
-    .x-topbar-profile.open .profile-dropdown {
-      display: flex;
-    }
-    .profile-dropdown {
-      display: none;
-      position: absolute;
-      right: 0;
-      top: 110%;
-      background: #f4faff;
-      border-radius: 12px;
-      box-shadow: 0 2px 16px #1da1f233;
-      min-width: 170px;
-      flex-direction: column;
-      z-index: 200;
-    }
-    .profile-dropdown a, .profile-dropdown button {
-      padding: 1em 1.2em;
-      border: none;
-      background: none;
-      text-align: left;
-      color: #222;
-      font-size: 1.06em;
-      cursor: pointer;
-      font-family: inherit;
-      text-decoration: none;
-      display: flex;
-      gap: 0.5em;
-      align-items: center;
-      border-bottom: 1px solid #e6eaf4;
-      transition: background 0.13s;
-    }
-    .profile-dropdown a:last-child, .profile-dropdown button:last-child {
-      border-bottom: none;
-    }
-    .profile-dropdown a:hover, .profile-dropdown button:hover {
-      background: #e7f1ff;
-    }
-    @media (max-width: 700px) {
-      #feed-container { min-height: 55vh; }
-    }
+    .welcome {text-align:center;margin:5em auto 2em auto;}
+    .welcome h1 {font-size:2.3em;}
+    .welcome a {margin:1em 0.7em;display:inline-block;}
   </style>
 </head>
 <body class="theme-light">
-  <!-- TOP NAVBAR -->
-  <header class="x-topbar-outer">
-    <div class="x-topbar-row">
-      <nav class="x-topbar-scroll" id="x-topbar-scroll">
-        <button class="x-tab active" data-section="for-you"><i data-lucide="sparkles"></i><span>For You</span></button>
-        <button class="x-tab" data-section="following"><i data-lucide="users"></i><span>Following</span></button>
-        <button class="x-tab" data-section="mentions"><i data-lucide="at-sign"></i><span>Mentions</span></button>
-        <button class="x-tab" data-section="hashtags"><i data-lucide="hash"></i><span>#Hashtags</span></button>
-        <button class="x-tab" data-section="trending"><i data-lucide="trending-up"></i><span>Trending</span></button>
-        <button class="x-tab" data-section="new-users"><i data-lucide="user-plus"></i><span>New Users</span></button>
-        <button class="x-tab" data-section="notifications"><i data-lucide="bell"></i><span>Notifications</span></button>
-        <button class="x-tab" data-section="media"><i data-lucide="image"></i><span>Media</span></button>
-      </nav>
-      <div class="x-topbar-profile" id="x-topbar-profile" style="position: relative;">
-        <button id="theme-toggle-btn" class="theme-toggle-btn" title="Toggle theme">
-          <i data-lucide="moon"></i>
-        </button>
-        <button id="profile-btn" class="profile-btn" style="display:none;position:relative;">
-          <img id="profile-avatar" src="assets/default-avatar.png" alt="Profile" />
-          <div id="profile-dropdown" class="profile-dropdown">
-            <a href="profile.html"><i data-lucide="user"></i>Profile</a>
-            <a href="settings.html"><i data-lucide="settings"></i>Settings</a>
-            <button id="logout-btn"><i data-lucide="log-out"></i>Logout</button>
-          </div>
-        </button>
-        <button id="login-btn" class="login-btn" style="display:none">
-          <i data-lucide="log-in"></i> Login
-        </button>
-      </div>
-    </div>
-  </header>
-
-  <main id="feed-container">
-    <!-- Feed content loaded here -->
-  </main>
-
-  <!-- BOTTOM NAVBAR -->
-  <nav id="bottom-navbar" class="navbar navbar-bottom glassy">
-    <a href="index.html" aria-label="Home"><i data-lucide="home"></i></a>
-    <a href="new-post.html" aria-label="Compose"><i data-lucide="plus-circle"></i></a>
-    <a href="notifications.html" aria-label="Notifications"><i data-lucide="bell"></i></a>
-    <a href="profile.html" aria-label="Profile"><i data-lucide="user"></i></a>
-  </nav>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script src="js/supabase.js"></script>
-  <script src="js/main.js"></script>
-  <script src="js/feed.js"></script>
-  <script src="js/theme.js"></script>
+  <div id="navbar"></div>
+  <div class="welcome">
+    <h1>Welcome to Zooom Forum</h1>
+    <p>Discuss, connect, and share. Your space for trending conversations.</p>
+    <a class="compose-btn" href="signup.html">Sign Up</a>
+    <a class="compose-btn" href="login.html">Sign In</a>
+    <a class="compose-btn" href="home.html">Go to Home</a>
+  </div>
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      lucide.createIcons();
-      // Profile/Login logic
-      async function updateProfileNav() {
-        let session = null;
-        if (typeof supabase !== "undefined") {
-          const { data } = await supabase.auth.getSession();
-          session = data.session;
-        }
-        if (session && session.user) {
-          document.getElementById('profile-btn').style.display = '';
-          document.getElementById('login-btn').style.display = 'none';
-          const { data: profile } = await supabase.from('profiles').select('avatar_url').eq('id', session.user.id).single();
-          document.getElementById('profile-avatar').src = profile?.avatar_url || "assets/default-avatar.png";
-        } else {
-          document.getElementById('profile-btn').style.display = 'none';
-          document.getElementById('login-btn').style.display = '';
-        }
-        lucide.createIcons();
-      }
-      updateProfileNav();
-
-      // Profile dropdown
-      const btn = document.getElementById('profile-btn');
-      if (btn) {
-        btn.onclick = e => {
-          e.stopPropagation();
-          btn.classList.toggle('open');
-        };
-        document.body.addEventListener('click', () => btn.classList.remove('open'));
-      }
-      // Login button
-      const loginBtn = document.getElementById('login-btn');
-      if (loginBtn) {
-        loginBtn.onclick = () => window.location.href = 'auth.html?tab=login';
-      }
-      // Logout button
-      const logoutBtn = document.getElementById('logout-btn');
-      if (logoutBtn) {
-        logoutBtn.onclick = async () => {
-          await supabase.auth.signOut();
-          window.location.reload();
-        };
-      }
+    fetch('components/navbar.html').then(r=>r.text()).then(html=>{
+      document.getElementById('navbar').innerHTML = html;
+      if(window.lucide) lucide.createIcons();
     });
-
-    // Theme toggle
-    document.addEventListener('DOMContentLoaded', () => {
-      const themeBtn = document.getElementById('theme-toggle-btn');
-      if (themeBtn) {
-        themeBtn.onclick = () => {
-          const body = document.body;
-          const isDark = body.classList.contains('theme-dark');
-          body.classList.toggle('theme-light', isDark);
-          body.classList.toggle('theme-dark', !isDark);
-          localStorage.setItem('zooom-theme', isDark ? 'light' : 'dark');
-          lucide.createIcons();
-        };
-      }
-    });
-
-    // Topbar tab switching/section logic
-    document.addEventListener("DOMContentLoaded", () => {
-      document.querySelectorAll('.x-tab').forEach(tab => {
-        tab.addEventListener('click', function() {
-          document.querySelectorAll('.x-tab').forEach(t => t.classList.remove('active'));
-          this.classList.add('active');
-          window.loadXSection(this.dataset.section);
-        });
-      });
-      window.loadXSection = async function(section) {
-        lucide.createIcons();
-        const feed = document.getElementById('feed-container');
-        feed.innerHTML = '<div class="loader"></div>';
-        // Modular: load real data from js/feed.js for each section
-        if (window.renderXSection) {
-          await window.renderXSection(section, feed);
-        } else {
-          setTimeout(() => {
-            feed.innerHTML = `<h2 style="text-align:center;color:#1da1f2;margin-top:2em;">${section.replace(/-/g,' ').toUpperCase()} feed coming soon...</h2>`;
-          }, 400);
-        }
-      };
-      window.loadXSection('for-you');
-    });
+    if(localStorage.getItem('zooom-theme')==='dark') {
+      document.body.classList.remove('theme-light');
+      document.body.classList.add('theme-dark');
+    }
   </script>
 </body>
 </html>
