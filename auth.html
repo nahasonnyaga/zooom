@@ -3,213 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <title>Authenticate - Zooom</title>
-  <link rel="stylesheet" href="css/main.css">
-  <link rel="stylesheet" href="css/auth.css">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    body {
-      min-height: 100vh;
-      min-width: 100vw;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      background: #f7f7f7;
-      font-family: Arial, sans-serif;
-      color: #222;
-      margin: 0;
-      padding: 0;
-    }
-    main {
-      width: 100vw;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      background: #fff;
-    }
-    .auth-card {
-      background: #fff;
-      border-radius: 14px;
-      max-width: 360px;
-      width: 94vw;
-      box-shadow: 0 2px 16px #0001;
-      padding: 2.2em 1.5em 1.5em 1.5em;
-      margin: 2.2em 0;
-      text-align: center;
-      position: relative;
-    }
-    .auth-tabs {
-      display: flex;
-      justify-content: center;
-      gap: 1.5em;
-      margin-bottom: 2em;
-    }
-    .auth-tab {
-      font-weight: 600;
-      font-size: 1.07em;
-      color: #3b82f6;
-      background: none;
-      border: none;
-      cursor: pointer;
-      border-bottom: 2.5px solid transparent;
-      padding: 0.3em 0.8em 0.4em 0.8em;
-      transition: color 0.15s, border 0.15s;
-      outline: none;
-    }
-    .auth-tab.active {
-      color: #1d4ed8;
-      border-bottom: 2.5px solid #1d4ed8;
-    }
-    .auth-form {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-    }
-    .auth-form.active {
-      display: flex;
-    }
-    .auth-form input[type="email"],
-    .auth-form input[type="password"] {
-      width: 95%;
-      padding: 0.75em;
-      margin-bottom: 1.1em;
-      border: 1px solid #d1d5db;
-      border-radius: 7px;
-      font-size: 1em;
-    }
-    .auth-form button {
-      background: linear-gradient(90deg, #3b82f6 65%, #60a5fa 100%);
-      color: #fff;
-      padding: 0.7em 2.1em;
-      border-radius: 30px;
-      font-weight: 600;
-      font-size: 1em;
-      border: none;
-      outline: none;
-      cursor: pointer;
-      margin-top: 0.2em;
-      margin-bottom: 0.3em;
-      transition: background 0.18s;
-    }
-    .auth-form button:disabled {
-      opacity: 0.7;
-    }
-    .auth-error {
-      color: #a33;
-      margin-top: 0.5em;
-      font-size: 0.99em;
-      min-height: 1.4em;
-    }
-    .auth-switch {
-      margin-top: 1.5em;
-      font-size: 1.08em;
-      color: #333;
-    }
-    .auth-switch a {
-      color: #3b82f6;
-      text-decoration: none;
-    }
-    .auth-switch a:hover {
-      text-decoration: underline;
-      color: #1d4ed8;
-    }
-    .reset-link {
-      display: block;
-      margin-top: 0.7rem;
-      font-size: 1.09rem;
-      text-align: center;
-      color: #3b82f6;
-      cursor: pointer;
-      background: none;
-      border: none;
-      padding: 0;
-    }
-    .reset-link:hover {
-      text-decoration: underline;
-      color: #2563eb;
-    }
-    .reset-modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0; top: 0; width: 100vw; height: 100vh;
-      background: rgba(0,0,0,0.18);
-      justify-content: center;
-      align-items: center;
-    }
-    .reset-modal.active { display: flex; }
-    .reset-modal-content {
-      background: #fff;
-      border-radius: 10px;
-      box-shadow: 0 2px 14px #0002;
-      padding: 2rem 1.5rem 1.5rem 1.5rem;
-      max-width: 350px;
-      width: 94vw;
-      text-align: center;
-      position: relative;
-      animation: fadein-modal 0.2s;
-    }
-    @keyframes fadein-modal {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .reset-modal-content input[type="email"] {
-      width: 95%;
-      padding: 0.7em;
-      margin: 1em 0 1.2em 0;
-      border: 1px solid #d1d5db;
-      border-radius: 7px;
-      font-size: 1em;
-    }
-    .reset-modal-content button {
-      background: linear-gradient(90deg, #3b82f6 65%, #60a5fa 100%);
-      color: #fff;
-      padding: 0.7em 2.1em;
-      border-radius: 30px;
-      font-weight: 600;
-      font-size: 1em;
-      border: none;
-      outline: none;
-      cursor: pointer;
-      margin-top: 0.2em;
-      margin-bottom: 0.3em;
-      transition: background 0.18s;
-    }
-    .reset-modal-content button:disabled {
-      opacity: 0.7;
-    }
-    .close-reset-modal {
-      position: absolute;
-      top: 10px; right: 18px;
-      font-size: 1.2em;
-      background: none;
-      border: none;
-      color: #888;
-      cursor: pointer;
-    }
-    .reset-feedback {
-      margin-top: 0.4em;
-      color: #2d7ee7;
-      font-size: 1em;
-      font-weight: 600;
-      min-height: 1.2em;
-    }
-    .reset-error {
-      color: #a33;
-      margin-top: 0.5em;
-      font-size: 0.99em;
-      min-height: 1.2em;
-    }
-    @media (max-width: 500px) {
-      .auth-card {padding: 1.2rem 0.3rem;}
-      .reset-modal-content {padding: 1.1rem 0.4rem;}
-    }
-  </style>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/auth.css">
+  <link rel="icon" href="assets/icon-192.png">
 </head>
-<body>
-  <div id="navbar-include"></div>
+<body class="theme-light">
   <main>
     <div class="auth-card">
       <div class="auth-tabs">
@@ -255,16 +55,14 @@
   </main>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="js/supabase.js"></script>
-  <!-- Navbar loader -->
+  <script src="js/theme.js"></script>
   <script>
-    fetch("components/navbar.html")
-      .then(res => res.ok ? res.text() : "")
-      .then(html => { 
-        const navbar = document.getElementById("navbar-include");
-        if (navbar) navbar.innerHTML = html;
-      });
-  </script>
-  <script>
+    // Theme: keep theme in sync
+    if (localStorage.getItem('zooom-theme') === 'dark') {
+      document.body.classList.remove('theme-light');
+      document.body.classList.add('theme-dark');
+    }
+
     // Tab switch logic and tab param from URL
     const showLoginTab = document.getElementById('show-login');
     const showSignupTab = document.getElementById('show-signup');
