@@ -79,6 +79,7 @@
   <script src="js/supabase.js"></script>
   <script src="js/theme.js"></script>
   <script>
+    // Inject navbar and theme
     fetch('components/navbar.html').then(r => r.text()).then(html => {
       document.getElementById('navbar').innerHTML = html;
       if(window.lucide) lucide.createIcons();
@@ -87,6 +88,7 @@
       document.body.classList.remove('theme-light');
       document.body.classList.add('theme-dark');
     }
+
     function showTab(tab) {
       const tabs = ['foryou','following','mentions','hashtags','trending','newusers','notifications','media'];
       tabs.forEach(t=>{
@@ -94,7 +96,246 @@
         document.getElementById('tab-'+t).classList.toggle('active', t===tab);
       });
     }
-    // ... (feed loading logic as in previous message)
+
+    // Efficient FEED LOADING LOGIC using Supabase.js (window.supabase)
+    document.addEventListener('DOMContentLoaded', async () => {
+      // FOR YOU: All recent posts, personalized (could be improved with ML, here just recent for demo)
+      const { data: forYouPosts } = await window.supabase
+        .from('posts')
+        .select('*, profiles:profiles!posts_user_id_fkey(username,display_name,avatar_url)')
+        .order('created_at', { ascending: false })
+        .limit(20);
+      document.getElementById('foryou-feed').innerHTML = forYouPosts && forYouPosts.length
+        ? forYouPosts.map(post => `
+            <div class="feed-post-card" style="margin-bottom:1.2em;">
+              <div style="display:flex;align-items:center;gap:0.7em;">
+                <img src="${post.profiles?.avatar_url || 'assets/avatar.png'}" style="width:38px;height:38px;border-radius:50%;object-fit:cover;">
+                <div>
+                  <b>${post.profiles?.display_name || post.profiles?.username || "User"}</b>
+                  <span style="color:#888;font-size:0.97em;">@${post.profiles?.username || "user"}</span>
+                </div>
+              </div>
+              <a href="thread.html?id=${post.id}" style="text-decoration:none;">
+                <div style="margin-top:0.7em;font-size:1.14em;line-height:1.55;">
+                  <b>${post.title ? post.title : '(no title)'}</b>
+                </div>
+              </a>
+              <div style="color:#888;margin-top:0.4em;font-size:0.97em;">
+                ${new Date(post.created_at).toLocaleString()}
+              </div>
+              ${post.topic ? `<div style="color:#2563eb;margin-top:0.3em;">#${post.topic}</div>` : ""}
+            </div>
+          `).join('')
+        : '<div style="color:#888;">No posts found.</div>';
+
+      // FOLLOWING: Only show posts from users the current user follows
+      let currentUser = await window.getCurrentUser();
+      if (currentUser) {
+        const { data: follows } = await window.supabase
+          .from('follows')
+          .select('following_id')
+          .eq('follower_id', currentUser.id);
+        const followingIds = follows ? follows.map(f => f.following_id) : [];
+        let posts = [];
+        if (followingIds.length) {
+          const { data } = await window.supabase
+            .from('posts')
+            .select('*, profiles:profiles!posts_user_id_fkey(username,display_name,avatar_url)')
+            .in('user_id', followingIds)
+            .order('created_at', { ascending: false })
+            .limit(20);
+          posts = data || [];
+        }
+        document.getElementById('following-feed').innerHTML = posts.length
+          ? posts.map(post => `
+              <div class="feed-post-card" style="margin-bottom:1.2em;">
+                <div style="display:flex;align-items:center;gap:0.7em;">
+                  <img src="${post.profiles?.avatar_url || 'assets/avatar.png'}" style="width:38px;height:38px;border-radius:50%;object-fit:cover;">
+                  <div>
+                    <b>${post.profiles?.display_name || post.profiles?.username || "User"}</b>
+                    <span style="color:#888;font-size:0.97em;">@${post.profiles?.username || "user"}</span>
+                  </div>
+                </div>
+                <a href="thread.html?id=${post.id}" style="text-decoration:none;">
+                  <div style="margin-top:0.7em;font-size:1.14em;line-height:1.55;">
+                    <b>${post.title ? post.title : '(no title)'}</b>
+                  </div>
+                </a>
+                <div style="color:#888;margin-top:0.4em;font-size:0.97em;">
+                  ${new Date(post.created_at).toLocaleString()}
+                </div>
+                ${post.topic ? `<div style="color:#2563eb;margin-top:0.3em;">#${post.topic}</div>` : ""}
+              </div>
+            `).join('')
+          : '<div style="color:#888;">No posts from users you follow.</div>';
+      } else {
+        document.getElementById('following-feed').innerHTML = `<a href="login.html" style="color:#2563eb;">Sign in to see your following feed.</a>`;
+      }
+
+      // MENTIONS: Posts where user is mentioned (simple: @username in body)
+      if (currentUser) {
+        const { data: profile } = await window.supabase
+          .from('profiles')
+          .select('username')
+          .eq('id', currentUser.id)
+          .single();
+        const username = profile?.username;
+        if (username) {
+          const { data: mentionPosts } = await window.supabase
+            .from('posts')
+            .select('*, profiles:profiles!posts_user_id_fkey(username,display_name,avatar_url)')
+            .ilike('body', `%@${username}%`)
+            .order('created_at', { ascending: false })
+            .limit(20);
+          document.getElementById('mentions-feed').innerHTML = mentionPosts && mentionPosts.length
+            ? mentionPosts.map(post => `
+                <div class="feed-post-card" style="margin-bottom:1.2em;">
+                  <div style="display:flex;align-items:center;gap:0.7em;">
+                    <img src="${post.profiles?.avatar_url || 'assets/avatar.png'}" style="width:38px;height:38px;border-radius:50%;object-fit:cover;">
+                    <div>
+                      <b>${post.profiles?.display_name || post.profiles?.username || "User"}</b>
+                      <span style="color:#888;font-size:0.97em;">@${post.profiles?.username || "user"}</span>
+                    </div>
+                  </div>
+                  <a href="thread.html?id=${post.id}" style="text-decoration:none;">
+                    <div style="margin-top:0.7em;font-size:1.14em;line-height:1.55;">
+                      <b>${post.title ? post.title : '(no title)'}</b>
+                    </div>
+                  </a>
+                  <div style="color:#888;margin-top:0.4em;font-size:0.97em;">
+                    ${new Date(post.created_at).toLocaleString()}
+                  </div>
+                  ${post.topic ? `<div style="color:#2563eb;margin-top:0.3em;">#${post.topic}</div>` : ""}
+                </div>
+              `).join('')
+            : '<div style="color:#888;">No recent posts mentioning you.</div>';
+        }
+      } else {
+        document.getElementById('mentions-feed').innerHTML = `<a href="login.html" style="color:#2563eb;">Sign in to see mentions.</a>`;
+      }
+
+      // HASHTAGS: On search
+      document.getElementById('hashtag-search-form').onsubmit = async function(e) {
+        e.preventDefault();
+        const tag = document.getElementById('hashtag-input').value.trim().replace(/^#/, '');
+        if (!tag) return;
+        document.getElementById('hashtags-feed').textContent = "Searching...";
+        const { data: tagPosts } = await window.supabase
+          .from('posts')
+          .select('*, profiles:profiles!posts_user_id_fkey(username,display_name,avatar_url)')
+          .ilike('topic', `%${tag}%`)
+          .order('created_at', { ascending: false })
+          .limit(20);
+        document.getElementById('hashtags-feed').innerHTML = tagPosts && tagPosts.length
+          ? tagPosts.map(post => `
+              <div class="feed-post-card" style="margin-bottom:1.2em;">
+                <div style="display:flex;align-items:center;gap:0.7em;">
+                  <img src="${post.profiles?.avatar_url || 'assets/avatar.png'}" style="width:38px;height:38px;border-radius:50%;object-fit:cover;">
+                  <div>
+                    <b>${post.profiles?.display_name || post.profiles?.username || "User"}</b>
+                    <span style="color:#888;font-size:0.97em;">@${post.profiles?.username || "user"}</span>
+                  </div>
+                </div>
+                <a href="thread.html?id=${post.id}" style="text-decoration:none;">
+                  <div style="margin-top:0.7em;font-size:1.14em;line-height:1.55;">
+                    <b>${post.title ? post.title : '(no title)'}</b>
+                  </div>
+                </a>
+                <div style="color:#888;margin-top:0.4em;font-size:0.97em;">
+                  ${new Date(post.created_at).toLocaleString()}
+                </div>
+                <div style="color:#2563eb;margin-top:0.3em;">#${post.topic}</div>
+              </div>
+            `).join('')
+          : '<div style="color:#888;">No posts with this hashtag.</div>';
+      };
+
+      // TRENDING: Most frequent topics
+      const { data: trending } = await window.supabase
+        .from('trends')
+        .select('*')
+        .order('rank', { ascending: true })
+        .limit(10);
+      document.getElementById('trending-feed').innerHTML = trending && trending.length
+        ? trending.map(t => `<div style="margin-bottom:0.7em;"><b>#${t.topic}</b> <span style="color:#888;">(${t.post_count} posts)</span></div>`).join('')
+        : '<div style="color:#888;">No trending topics.</div>';
+
+      // NEW USERS
+      const { data: users } = await window.supabase
+        .from('profiles')
+        .select('username,display_name,avatar_url,created_at')
+        .order('created_at', { ascending: false })
+        .limit(10);
+      document.getElementById('newusers-feed').innerHTML = users && users.length
+        ? users.map(u => `
+            <div style="display:flex;align-items:center;gap:0.8em;margin-bottom:0.95em;">
+              <img src="${u.avatar_url || 'assets/avatar.png'}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;">
+              <a href="profile.html?user=${encodeURIComponent(u.username)}"><b>${u.display_name || u.username}</b></a>
+              <span style="color:#888;font-size:0.96em;">@${u.username}</span>
+            </div>
+          `).join('')
+        : '<div style="color:#888;">No new users.</div>';
+
+      // NOTIFICATIONS: Only for logged-in user
+      if (currentUser) {
+        const { data: notifications } = await window.supabase
+          .from('notifications')
+          .select('*')
+          .eq('user_id', currentUser.id)
+          .order('created_at', { ascending: false })
+          .limit(20);
+        document.getElementById('notifications-feed').innerHTML = notifications && notifications.length
+          ? notifications.map(n => `
+              <div style="margin-bottom:1em;">
+                <b>${n.type}</b> - <span style="color:#888;">${new Date(n.created_at).toLocaleString()}</span><br>
+                <span style="color:#222;">${n.data ? JSON.stringify(n.data) : ''}</span>
+              </div>
+            `).join('')
+          : '<div style="color:#888;">No notifications.</div>';
+      } else {
+        document.getElementById('notifications-feed').innerHTML = `<a href="login.html" style="color:#2563eb;">Sign in to see notifications.</a>`;
+      }
+
+      // MEDIA: Posts with media_url
+      const { data: mediaPosts } = await window.supabase
+        .from('posts')
+        .select('*, profiles:profiles!posts_user_id_fkey(username,display_name,avatar_url)')
+        .not('media_url','is',null)
+        .order('created_at', { ascending: false })
+        .limit(20);
+      document.getElementById('media-feed').innerHTML = mediaPosts && mediaPosts.length
+        ? mediaPosts.map(post => `
+            <div class="feed-post-card" style="margin-bottom:1.2em;">
+              <div style="display:flex;align-items:center;gap:0.7em;">
+                <img src="${post.profiles?.avatar_url || 'assets/avatar.png'}" style="width:38px;height:38px;border-radius:50%;object-fit:cover;">
+                <div>
+                  <b>${post.profiles?.display_name || post.profiles?.username || "User"}</b>
+                  <span style="color:#888;font-size:0.97em;">@${post.profiles?.username || "user"}</span>
+                </div>
+              </div>
+              <a href="thread.html?id=${post.id}" style="text-decoration:none;">
+                <div style="margin-top:0.7em;font-size:1.14em;line-height:1.55;">
+                  <b>${post.title ? post.title : '(no title)'}</b>
+                </div>
+              </a>
+              <div style="margin:0.8em 0;">
+                <img src="${post.media_url}" style="max-width:90%;border-radius:12px;">
+              </div>
+              <div style="color:#888;margin-top:0.4em;font-size:0.97em;">
+                ${new Date(post.created_at).toLocaleString()}
+              </div>
+              ${post.topic ? `<div style="color:#2563eb;margin-top:0.3em;">#${post.topic}</div>` : ""}
+            </div>
+          `).join('')
+        : '<div style="color:#888;">No posts with media.</div>';
+
+      // LOGOUT
+      document.getElementById('logout-form').onsubmit = async function(e) {
+        e.preventDefault();
+        await window.supabase.auth.signOut();
+        window.location.href = "login.html";
+      };
+    });
   </script>
 </body>
 </html>
