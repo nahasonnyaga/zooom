@@ -23,9 +23,11 @@
       <a href="signup.html">Don't have an account? Sign up</a>
     </div>
   </main>
+  <!-- Supabase core and project-wide client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="js/supabase.js"></script>
   <script>
+    // Navbar and theme
     fetch('components/navbar.html').then(r=>r.text()).then(html=>{
       document.getElementById('navbar').innerHTML = html;
       if(window.lucide) lucide.createIcons();
@@ -34,14 +36,24 @@
       document.body.classList.remove('theme-light');
       document.body.classList.add('theme-dark');
     }
+
+    // Use the global supabase client from js/supabase.js
     document.getElementById('login-form').onsubmit = async function(e) {
       e.preventDefault();
       const email = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value;
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      // Use window.supabase for compatibility with the whole project
+      const { error } = await window.supabase.auth.signInWithPassword({ email, password });
       document.getElementById('login-error').textContent = error ? error.message : "";
       if (!error) window.location.href = "home.html";
     }
+
+    // Listen for auth state changes (optional, for global state sharing)
+    window.addEventListener('zooomAuth', (e) => {
+      // Example: After sign-in, you could redirect or update UI
+      // e.detail.event;  // e.g. "SIGNED_IN"
+      // e.detail.session;
+    });
   </script>
 </body>
 </html>
