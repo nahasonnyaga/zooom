@@ -34,7 +34,6 @@
   </style>
 </head>
 <body class="theme-light">
-  <!-- Unified Top & Bottom Navbars for Interconnected UX -->
   <div id="navbar"></div>
   <main class="post-main">
     <div id="login-required" class="login-required-banner" style="display:none;">
@@ -61,7 +60,6 @@
         </label>
       </div>
       <img id="media-preview" class="post-preview-img" style="display:none;">
-      <!-- Interconnected button for posting, matches bottom menu "post" icon -->
       <button type="submit" id="submit-btn">
         <i data-lucide="plus-circle" style="vertical-align:middle;margin-right:0.5em;"></i>
         Post
@@ -72,9 +70,8 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="js/supabase.js"></script>
   <script src="js/theme.js"></script>
-  <script src="js/post.js"></script>
   <script>
-    // Navbar (top & bottom, interconnected with all files)
+    // Navbar (top & bottom, interconnected)
     fetch('components/navbar.html').then(r=>r.text()).then(html=>{
       document.getElementById('navbar').innerHTML = html;
       if(window.lucide) lucide.createIcons();
@@ -84,35 +81,7 @@
       document.body.classList.remove('theme-light');
       document.body.classList.add('theme-dark');
     }
-
-    // UX: Hide form and show login-required if not logged in
-    async function checkLoginForPost() {
-      const { data } = await supabase.auth.getSession();
-      const user = data.session?.user || null;
-      const form = document.getElementById('post-form');
-      const loginBanner = document.getElementById('login-required');
-      if (!user) {
-        form.setAttribute('aria-disabled', "true");
-        form.style.display = "none";
-        loginBanner.style.display = "flex";
-      } else {
-        form.setAttribute('aria-disabled', "false");
-        form.style.display = "flex";
-        loginBanner.style.display = "none";
-      }
-    }
-    document.addEventListener('DOMContentLoaded', checkLoginForPost);
-
-    // Prevent submitting the post form if not signed in (for extra security)
-    document.getElementById('post-form').addEventListener('submit', async function(e) {
-      const { data } = await supabase.auth.getSession();
-      const user = data.session?.user || null;
-      if (!user) {
-        e.preventDefault();
-        document.getElementById('login-required').style.display = "flex";
-        this.style.display = "none";
-      }
-    });
   </script>
+  <script src="js/post.js"></script>
 </body>
 </html>
