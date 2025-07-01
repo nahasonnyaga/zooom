@@ -1,20 +1,9 @@
-document.addEventListener('DOMContentLoaded', async () => {
-  window.protectPage();
-});
-document.getElementById('post-form').addEventListener('submit', async (e) => {
+document.getElementById('post-form').onsubmit = async (e) => {
   e.preventDefault();
-  const title = document.getElementById('post-title').value;
-  const content = document.getElementById('post-content').value;
-  const user = await window.getCurrentUser();
-  if (!user) {
-    document.getElementById('post-error').innerText = 'You must be logged in.';
-    return;
-  }
-  const { error } = await supabase.from('threads').insert([{
-    title,
-    content,
-    author: user.user_metadata.username || user.email
-  }]);
-  if (error) document.getElementById('post-error').innerText = error.message;
-  else window.location.href = 'index.html';
-});
+  const textarea = document.getElementById('post-content');
+  const content = textarea.value.trim();
+  if (!content) return;
+  const { error } = await supabase.from('posts').insert([{ content }]);
+  if (!error) window.location.href = 'index.html';
+  else document.getElementById('post-error').textContent = error.message;
+};
