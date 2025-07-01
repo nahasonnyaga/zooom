@@ -1,55 +1,36 @@
-/**
- * Linkify hashtags, mentions, and URLs in content.
- * - Mentions (@user) ➔ <a href="profile.html?user=username" class="mention">@user</a>
- * - Hashtags (#topic) ➔ <a href="feed.html#hashtag-topic" class="hashtag">#topic</a>
- * - URLs ➔ <a href="..." class="external-link">...</a>
- * Escapes HTML to prevent XSS.
- * @param {string} text
- * @returns {string} HTML with links
- */
-function linkifyContent(text) {
-  if (!text) return "";
+// js/utils.js
+// Shared utilities for Zooom app
 
-  // Escape HTML to prevent XSS
-  function escapeHTML(str) {
-    return str.replace(/[&<>"']/g, function (m) {
-      return ({
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#39;'
-      })[m];
-    });
+// Example: Listen for auth events and propagate them
+window.supabase?.auth.onAuthStateChange((event, session) => {
+  const evt = new CustomEvent('zooomAuth', { detail: { event, session } });
+  window.dispatchEvent(evt);
+});
+
+// Example: Helper to require login and redirect
+window.requireLogin = async function(redirect = "login.html") {
+  const { data } = await window.supabase.auth.getSession();
+  if (!data?.session?.user) {
+    window.location.href = redirect;
+    return false;
   }
+  return true;
+};
 
-  // First escape any HTML in user input
-  let safe = escapeHTML(text);
+// Example: Get current user profile (returns null if not available)
+window.getCurrentUserProfile = async function() {
+  const { data } = await window.supabase.auth.getSession();
+  const user = data?.session?.user;
+  if (!user) return null;
+  const { data: profile } = await window.supabase
+    .from('profiles')
+    .select('id, username, avatar_url, bio')
+    .eq('id', user.id)
+    .maybeSingle();
+  return profile;
+};
 
-  // Linkify URLs (http(s):// or www.)
-  safe = safe.replace(
-    /(\bhttps?:\/\/[^\s<]+[^\s<\.\,\!\?\)\]\}])|(\bwww\.[^\s<]+[^\s<\.\,\!\?\)\]\}])/gi,
-    function (url) {
-      let fullUrl = url.startsWith('www.') ? 'http://' + url : url;
-      return `<a href="${fullUrl}" class="external-link" target="_blank" rel="noopener">${url}</a>`;
-    }
-  );
-
-  // Linkify mentions (for Supabase, the username is unique, we use "user" param)
-  // Only match word boundaries, not emails
-  safe = safe.replace(
-    /(^|[^a-zA-Z0-9_])@([a-zA-Z0-9_]{1,32})\b/g,
-    '$1<a href="profile.html?user=$2" class="mention">@$2</a>'
-  );
-
-  // Linkify hashtags (route to feed.html with hash for proper X-style UX)
-  safe = safe.replace(
-    /(^|[^a-zA-Z0-9_])#([a-zA-Z0-9_]+)/g,
-    '$1<a href="feed.html#hashtag-$2" class="hashtag">#$2</a>'
-  );
-
-  return safe;
-}
-
-// Optionally: export for use in modules
-// export { linkifyContent };
+// Example: Refresh navbar profile/avatar (optional, to be used in navbar.html if needed)
+window.refreshNavbarProfile = async function() {
+  // Implement as needed in your navbar.html to update avatar, username, etc.
+};
