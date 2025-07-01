@@ -1,57 +1,55 @@
-// js/navbar.js
-// Worldclass Navbar: Avatar, Username, Dropdown, Logout, Notification Dot
-document.addEventListener('DOMContentLoaded', async () => {
-  const navbarUserBtn = document.getElementById('navbarUserBtn');
-  const navbarDropdown = document.getElementById('navbarDropdown');
-  const navbarLogoutBtn = document.getElementById('navbarLogoutBtn');
-  const dropdownUsername = document.getElementById('dropdownUsername');
-  const avatarImgs = document.querySelectorAll('.navbar-avatar-img, .dropdown-avatar');
-  // Dropdown menu logic
-  if (navbarUserBtn && navbarDropdown) {
-    navbarUserBtn.addEventListener('click', function(e) {
+// Responsive worldclass-navbar logic
+let prevScroll = window.scrollY;
+let navbar = null;
+document.addEventListener("DOMContentLoaded", function() {
+  navbar = document.getElementById('mainNavbar');
+  // Dropdown/account logic
+  const userBtn = document.getElementById('navbarUserBtn');
+  const dropdown = document.getElementById('navbarDropdown');
+  if(userBtn && dropdown) {
+    userBtn.addEventListener('click', function(e) {
       e.stopPropagation();
-      const expanded = navbarUserBtn.getAttribute('aria-expanded') === 'true';
-      navbarDropdown.style.display = expanded ? 'none' : 'block';
-      navbarUserBtn.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+      dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
     });
     document.addEventListener('click', function(e) {
-      if (!navbarDropdown.contains(e.target) && e.target !== navbarUserBtn) {
-        navbarDropdown.style.display = 'none';
-        navbarUserBtn.setAttribute('aria-expanded', 'false');
+      if (!dropdown.contains(e.target) && e.target !== userBtn) {
+        dropdown.style.display = 'none';
       }
     });
   }
-  // User info: avatar and username
-  if (typeof supabase !== 'undefined' && supabase.auth) {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      if (dropdownUsername) {
-        dropdownUsername.textContent =
-          user.user_metadata?.username
-            ? '@' + user.user_metadata.username
-            : (user.email ? '@' + user.email.split('@')[0] : '@user');
+  // User avatar & username
+  if(typeof supabase !== 'undefined' && supabase.auth) {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if(user) {
+        document.getElementById('dropdownUsername').textContent =
+          user.user_metadata?.username ? '@'+user.user_metadata.username : '@user';
+        document.querySelectorAll('.navbar-avatar-img, .dropdown-avatar').forEach(img=>{
+          if(user.user_metadata?.avatar_url) img.src = user.user_metadata.avatar_url;
+        });
       }
-      avatarImgs.forEach(img => {
-        if (user.user_metadata && user.user_metadata.avatar_url)
-          img.src = user.user_metadata.avatar_url;
-      });
-    }
+    });
   }
   // Logout
-  if (navbarLogoutBtn) {
-    navbarLogoutBtn.addEventListener('click', async function(e) {
+  const logoutBtn = document.getElementById('navbarLogoutBtn');
+  if (logoutBtn && typeof supabase !== 'undefined') {
+    logoutBtn.addEventListener('click', async function (e) {
       e.preventDefault();
-      if (typeof supabase !== 'undefined' && supabase.auth) {
-        await supabase.auth.signOut();
-        window.location.href = 'login.html';
-      }
+      await supabase.auth.signOut();
+      window.location.href = 'login.html';
     });
   }
-  // Notification dot (window.showNavbarNotifDot(true/false))
+  // Notification dot utility
   window.showNavbarNotifDot = function(show) {
-    const navbarNotifDot = document.getElementById('navbarNotifDot');
-    if (navbarNotifDot) {
-      navbarNotifDot.style.display = show ? 'block' : 'none';
-    }
+    document.getElementById('navbarNotifDot').style.display = show ? 'block' : 'none';
   };
+});
+window.addEventListener("scroll", function() {
+  if(!navbar) return;
+  let currScroll = window.scrollY;
+  if(currScroll > prevScroll && currScroll > 10) {
+    navbar.classList.add("navbar-hide");
+  } else {
+    navbar.classList.remove("navbar-hide");
+  }
+  prevScroll = currScroll;
 });
