@@ -1,3 +1,115 @@
-.dm-card { background: #232323; margin-bottom: 8px; padding: 10px; border-radius: 8px; cursor: pointer;}
-.message-card { background: #292929; margin-bottom: 4px; padding: 8px; border-radius: 6px;}
-.message-card.self { background: #1da1f2; color: #fff; text-align: right;}
+main {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2em 0 4em 0;
+}
+#dm-list {
+  margin-bottom: 2em;
+  border-bottom: 1px solid #e3e7ec;
+  padding-bottom: 1em;
+}
+.dm-user {
+  display: flex;
+  align-items: center;
+  padding: 0.7em 0.5em;
+  cursor: pointer;
+  border-radius: 7px;
+  transition: background 0.12s;
+  gap: 1em;
+}
+.dm-user:hover, .dm-user.active {
+  background: #1da1f20e;
+}
+.dm-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 0.6em;
+  border: 1px solid #b8e1fa;
+}
+.dm-info {
+  flex: 1;
+}
+.dm-user .dm-name {
+  font-weight: 600;
+  font-size: 1.08em;
+  margin-bottom: 2px;
+}
+.dm-user .dm-last {
+  font-size: 0.96em;
+  color: #888;
+}
+#dm-thread {
+  margin-top: 1.5em;
+  min-height: 200px;
+}
+.dm-thread-header {
+  font-weight: 600;
+  margin-bottom: 0.7em;
+  border-bottom: 1px solid #e3e7ec;
+  padding-bottom: 0.5em;
+}
+.dm-message-list {
+  max-height: 330px;
+  overflow-y: auto;
+  margin-bottom: 1em;
+}
+.dm-message {
+  display: flex;
+  align-items: flex-end;
+  margin-bottom: 0.7em;
+  gap: 0.7em;
+}
+.dm-message .dm-avatar {
+  width: 32px;
+  height: 32px;
+  margin: 0;
+  border: 1px solid #b8e1fa;
+}
+.dm-message .dm-bubble {
+  border-radius: 12px;
+  padding: 0.6em 1em;
+  background: #f3f8fc;
+  color: #222;
+  font-size: 1em;
+  max-width: 78vw;
+  word-break: break-word;
+}
+body.theme-dark .dm-message .dm-bubble {
+  background: #232a35;
+  color: #e8f0fe;
+}
+.dm-message.own .dm-bubble {
+  background: #1da1f2;
+  color: #fff;
+}
+.dm-message.own {
+  flex-direction: row-reverse;
+}
+.dm-input-row {
+  display: flex;
+  gap: 0.6em;
+  margin-top: 1em;
+}
+.dm-input-row input[type="text"] {
+  flex: 1;
+  border-radius: 20px;
+  border: 1px solid #b8e1fa;
+  padding: 0.7em 1em;
+  font-size: 1em;
+}
+.dm-input-row button {
+  background: #1da1f2;
+  color: #fff;
+  border: none;
+  border-radius: 18px;
+  padding: 0.7em 1.4em;
+  font-size: 1em;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.18s;
+}
+.dm-input-row button:disabled {
+  opacity: 0.7;
+}
