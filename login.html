@@ -1,45 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Login - Zooom</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="css/main.css" />
-  <link rel="stylesheet" href="css/theme.css" />
-  <link rel="icon" href="assets/icon-192.png" />
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <meta charset="UTF-8">
+  <title>Sign In | Zooom</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="icon" href="assets/logo.png">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/theme.css">
 </head>
 <body class="theme-light">
-  <main style="max-width: 360px; margin: 90px auto;">
-    <h2 style="text-align:center;">Sign in to Zooom</h2>
-    <form id="login-form" autocomplete="on" style="display:flex;flex-direction:column;gap:18px;margin-top:34px;">
-      <input type="email" id="email" placeholder="Email" required style="font-size:1.1em;padding:10px;border-radius:7px;border:1px solid #bbb;">
-      <input type="password" id="password" placeholder="Password" required minlength="6" style="font-size:1.1em;padding:10px;border-radius:7px;border:1px solid #bbb;">
-      <button type="submit" style="background:#1da1f2;color:#fff;padding:12px;font-size:1.1em;border:none;border-radius:7px;cursor:pointer;">Sign In</button>
-      <div id="login-error" class="error" style="min-height:20px;"></div>
+  <div id="navbar"></div>
+  <main style="max-width:400px;margin:3em auto 5em auto;">
+    <h2>Sign In</h2>
+    <form id="login-form" autocomplete="off">
+      <input type="email" id="email" placeholder="Email" required style="width:100%;margin-bottom:1em;">
+      <input type="password" id="password" placeholder="Password" required style="width:100%;margin-bottom:1em;">
+      <button type="submit" style="width:100%;">Sign In</button>
+      <div id="login-error" style="color:#e11d48;margin-top:1em;"></div>
     </form>
-    <p style="text-align:center;margin-top:20px;">No account?
-      <a href="signup.html">Sign up</a>
-    </p>
+    <div style="margin-top:1.5em;">
+      <a href="reset-password.html">Forgot password?</a> <br>
+      <a href="signup.html">Don't have an account? Sign up</a>
+    </div>
   </main>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="js/supabase.js"></script>
   <script>
-    lucide.createIcons();
-    const form = document.getElementById('login-form');
-    const errorDiv = document.getElementById('login-error');
-    form.onsubmit = async (e) => {
+    fetch('components/navbar.html').then(r=>r.text()).then(html=>{
+      document.getElementById('navbar').innerHTML = html;
+      if(window.lucide) lucide.createIcons();
+    });
+    if(localStorage.getItem('zooom-theme')==='dark') {
+      document.body.classList.remove('theme-light');
+      document.body.classList.add('theme-dark');
+    }
+    document.getElementById('login-form').onsubmit = async function(e) {
       e.preventDefault();
-      errorDiv.textContent = '';
-      const email = form.email.value.trim();
-      const password = form.password.value;
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
       const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) {
-        errorDiv.textContent = error.message || "Login failed.";
-      } else {
-        window.location.href = "index.html";
-      }
-    };
+      document.getElementById('login-error').textContent = error ? error.message : "";
+      if (!error) window.location.href = "home.html";
+    }
   </script>
 </body>
 </html>
