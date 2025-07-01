@@ -6,19 +6,22 @@
     <a href="explore.html" class="navbar-link" title="Explore" aria-label="Explore">
       <i class="fa-solid fa-hashtag navbar-icon"></i>
     </a>
+    <a href="explore-users.html" class="navbar-link" title="Users" aria-label="Explore Users">
+      <i class="fa-solid fa-users navbar-icon"></i>
+    </a>
     <a href="post.html" class="navbar-link thread-btn" title="Post" id="threadNavBtn" aria-label="Create Post">
       <i class="fa-solid fa-circle-plus navbar-icon"></i>
     </a>
     <a href="notifications.html" class="navbar-link" title="Notifications" aria-label="Notifications" style="position:relative;">
       <i class="fa-solid fa-bell navbar-icon"></i>
-      <span class="nav-alert-dot" id="navbarNotifDot"></span>
+      <span class="nav-alert-dot" id="navbarNotifDot" style="display:none;"></span>
     </a>
     <a href="profile.html" class="navbar-link" title="Profile" aria-label="Profile">
       <i class="fa-solid fa-circle-user navbar-icon"></i>
     </a>
   </div>
   <div class="navbar-right" id="navbar-right">
-    <button class="navbar-avatar" id="navbarUserBtn" title="Account" aria-haspopup="true" aria-expanded="false" style="border:none;background:none;padding:0;">
+    <button class="navbar-avatar" id="navbarUserBtn" title="Account" aria-haspopup="true" aria-expanded="false" tabindex="0" style="border:none;background:none;padding:0;">
       <img src="assets/avatar.png" alt="User" class="navbar-avatar-img" onerror="this.src='assets/avatar.png'">
     </button>
     <div class="navbar-dropdown" id="navbarDropdown" style="display:none;" role="menu" aria-label="Account Menu">
@@ -40,38 +43,5 @@
   </div>
 </nav>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<script>
-// Hide-on-scroll for bottom navbar
-let prevScroll = window.scrollY;
-let navbar = null;
-document.addEventListener("DOMContentLoaded", function() {
-  navbar = document.getElementById('mainNavbar');
-});
-window.addEventListener("scroll", function() {
-  if(!navbar) return;
-  let currScroll = window.scrollY;
-  if(currScroll > prevScroll && currScroll > 10) {
-    navbar.classList.add("navbar-hide");
-  } else {
-    navbar.classList.remove("navbar-hide");
-  }
-  prevScroll = currScroll;
-});
-
-// Dropdown/account logic (kept minimal and robust)
-document.addEventListener('DOMContentLoaded', function() {
-  const userBtn = document.getElementById('navbarUserBtn');
-  const dropdown = document.getElementById('navbarDropdown');
-  if(userBtn && dropdown) {
-    userBtn.addEventListener('click', function(e) {
-      e.stopPropagation();
-      dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-    });
-    document.addEventListener('click', function(e) {
-      if (!dropdown.contains(e.target) && e.target !== userBtn) {
-        dropdown.style.display = 'none';
-      }
-    });
-  }
-});
-</script>
+<link rel="stylesheet" href="css/navbar.css">
+<script src="js/navbar.js" type="module"></script>
