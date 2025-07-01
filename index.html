@@ -2,26 +2,105 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Zooom - Home</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Zooom</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#1da1f2">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta property="og:title" content="Zooom">
+  <meta property="og:description" content="A world-class, fast social network.">
+  <meta property="og:type" content="website">
+  <meta name="description" content="Zooom is a world-class, fast social network. Connect, share, and engage.">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="assets/icon-192.png">
+  <link rel="apple-touch-icon" href="assets/icon-192.png">
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/feed.css">
+  <link rel="stylesheet" href="css/navbar.css">
+  <link rel="stylesheet" href="css/x-topbar.css">
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+  </script>
 </head>
 <body>
-  <div id="top-navbar"></div>
+  <!-- X-style Topbar: horizontally scrollable, sections as tabs -->
+  <header id="x-topbar" class="x-topbar horizontal-scroll">
+    <button class="x-tab active" data-section="for-you">
+      <img src="assets/home-fill.svg" alt="For You" />
+      <span>For You</span>
+    </button>
+    <button class="x-tab" data-section="following">
+      <img src="assets/users.svg" alt="Following" />
+      <span>Following</span>
+    </button>
+    <button class="x-tab" data-section="mentions">
+      <img src="assets/at-sign.svg" alt="Mentions" />
+      <span>Mentions</span>
+    </button>
+    <button class="x-tab" data-section="hashtags">
+      <img src="assets/hash.svg" alt="Hashtags" />
+      <span>#Hashtags</span>
+    </button>
+    <button class="x-tab" data-section="trending">
+      <img src="assets/trending-up.svg" alt="Trending" />
+      <span>Trending</span>
+    </button>
+    <button class="x-tab" data-section="new-users">
+      <img src="assets/user-plus.svg" alt="New Users" />
+      <span>New Users</span>
+    </button>
+    <button class="x-tab" data-section="notifications">
+      <img src="assets/bell.svg" alt="Notifications" />
+      <span>Notifications</span>
+    </button>
+    <button class="x-tab" data-section="media">
+      <img src="assets/image.svg" alt="Images/Videos" />
+      <span>Media</span>
+    </button>
+  </header>
+
   <main id="feed-container">
-    <!-- Feed will be populated by /js/feed.js -->
+    <!-- Dynamically loaded content based on the selected x-tab -->
   </main>
-  <div id="bottom-navbar"></div>
+
+  <!-- Bottom Navbar: essential actions only, X-style glassy -->
+  <nav id="bottom-navbar" class="navbar navbar-bottom glassy">
+    <a href="index.html" aria-label="Home"><img src="assets/home-fill.svg" alt="Home"></a>
+    <a href="post.html" aria-label="Compose"><img src="assets/plus-circle.svg" alt="Compose"></a>
+    <a href="notifications.html" aria-label="Notifications"><img src="assets/bell.svg" alt="Notifications"></a>
+    <a href="profile.html" aria-label="Profile"><img src="assets/user.svg" alt="Profile"></a>
+  </nav>
+
   <script src="js/supabase.js"></script>
   <script src="js/main.js"></script>
   <script src="js/feed.js"></script>
   <script>
-    // Load navbars
-    fetch('components/navbar.html').then(r=>r.text()).then(t=>{
-      document.getElementById('top-navbar').innerHTML = t.replace('{{position}}', 'top');
-      document.getElementById('bottom-navbar').innerHTML = t.replace('{{position}}', 'bottom');
+    // Tab switching logic
+    document.querySelectorAll('.x-tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.x-tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+        window.loadXSection(this.dataset.section);
+      });
     });
+
+    // Section loading logic (simplified, you should implement per-section loading in js/feed.js or similar)
+    window.loadXSection = function(section) {
+      const feed = document.getElementById('feed-container');
+      feed.innerHTML = '<div class="loader"></div>'; // Show loader
+      // Here you would call the relevant JS to load each section
+      // e.g. loadTrendingFeed(), loadMentions(), loadHashtags(), etc.
+      setTimeout(() => {
+        feed.innerHTML = `<h2 style="text-align:center;color:#1da1f2;margin-top:2em;">${section.replace(/-/g,' ').toUpperCase()} feed coming soon...</h2>`;
+      }, 400);
+    };
+    // Initial load
+    window.loadXSection('for-you');
   </script>
 </body>
 </html>
