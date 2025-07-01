@@ -1,0 +1,4 @@
+.profile-card { background: #232323; padding: 16px; border-radius: 12px; display: flex; gap: 20px; align-items: center;}
+.profile-posts { margin-top: 20px;}
+.profile-post { background: #292929; margin-bottom: 10px; padding: 10px; border-radius: 8px;}
+.profile-post .date { color: #aaa; font-size: 0.85em; }
