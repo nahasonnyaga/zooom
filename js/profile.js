@@ -1,28 +1,82 @@
-async function loadProfile() {
-  // Get profile ID from URL query (?id=) or from session
-  let params = new URLSearchParams(window.location.search);
-  let userId = params.get('id');
-  if (!userId) {
-    const { data: { session } } = await supabase.auth.getSession();
-    userId = session?.user?.id;
+// js/profile.js
+// Loads and renders the user's profile and their posts, using window.supabase and helpers
+
+(async function() {
+  const main = document.getElementById('profile-main');
+  const urlParams = new URLSearchParams(window.location.search);
+  const username = urlParams.get('user');
+
+  // Helper for HTML escaping
+  function esc(s) {
+    return (s||"").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
   }
-  if (!userId) return;
 
-  // Fetch profile
-  const { data: profile } = await supabase.from('profiles').select('*').eq('id', userId).single();
-  const { data: posts } = await supabase.from('posts').select('*').eq('user_id', userId).order('created_at', { ascending: false });
-
-  let html = `<section class="profile-card">
-    <img src="${profile.avatar_url || '/assets/default-avatar.png'}" class="avatar" />
-    <h2>@${profile.username}</h2>
-    <p>${profile.bio ?? ''}</p>
-  </section>
-  <section class="profile-posts"><h3>Posts</h3>`;
-
-  for (const post of posts) {
-    html += `<div class="profile-post">${post.content}<div class="date">${new Date(post.created_at).toLocaleString()}</div></div>`;
+  // Get profile
+  let profile, isCurrentUser = false;
+  if (username) {
+    // Lookup by username in URL param
+    const { data, error } = await window.supabase
+      .from('profiles')
+      .select('*')
+      .eq('username', username)
+      .single();
+    profile = data;
+  } else {
+    // No ?user=, show current user
+    profile = await window.getCurrentUserProfile();
+    isCurrentUser = true;
   }
-  html += '</section>';
-  document.getElementById('profile-main').innerHTML = html;
-}
-document.addEventListener('DOMContentLoaded', loadProfile);
+
+  if (!profile) {
+    main.innerHTML = `<div style="text-align:center;margin:4em 0;color:#e11d48;">User not found.</div>`;
+    return;
+  }
+
+  // Show edit button only for current user viewing own profile
+  if (!username) isCurrentUser = true;
+  else {
+    const current = await window.getCurrentUserProfile();
+    if (current && current.id === profile.id) isCurrentUser = true;
+  }
+
+  // Profile header
+  main.innerHTML = `
+    <section class="profile-header">
+      <img src="${esc(profile.avatar_url) || 'assets/avatar.png'}" class="profile-avatar" style="width:88px;height:88px;border-radius:50%;object-fit:cover;border:2.5px solid #2563eb;">
+      <div class="profile-info">
+        <h1>${esc(profile.display_name) || esc(profile.username)}</h1>
+        <div style="color:#888;font-size:1.05em;">@${esc(profile.username)}</div>
+        <div style="margin:1em 0 1.2em 0;font-size:1.07em;max-width:440px;">${esc(profile.bio) || ""}</div>
+        ${isCurrentUser ? `<a href="edit-profile.html" class="compose-btn" style="font-size:0.99em;">Edit Profile</a>` : ""}
+      </div>
+    </section>
+    <section class="profile-posts">
+      <h2 style="font-size:1.23em;margin:2em 0 1em 0;">Posts</h2>
+      <div id="profile-post-list">Loading...</div>
+    </section>
+  `;
+
+  // Load posts by this user
+  const { data: posts } = await window.supabase
+    .from('posts')
+    .select('*')
+    .eq('user_id', profile.id)
+    .order('created_at', { ascending: false })
+    .limit(30);
+
+  const postList = document.getElementById('profile-post-list');
+  postList.innerHTML = posts && posts.length
+    ? posts.map(post => `
+        <div class="feed-post-card" style="margin-bottom:1.2em;">
+          <a href="thread.html?id=${post.id}" style="text-decoration:none;">
+            <div style="font-size:1.15em;line-height:1.4;"><b>${esc(post.title) || '(no title)'}</b></div>
+          </a>
+          <div style="color:#888;margin-top:0.4em;font-size:0.97em;">
+            ${new Date(post.created_at).toLocaleString()}
+          </div>
+          ${post.topic ? `<div style="color:#2563eb;margin-top:0.3em;">#${esc(post.topic)}</div>` : ""}
+        </div>
+      `).join('')
+    : `<div style="color:#888;">No posts yet.</div>`;
+
+})();
