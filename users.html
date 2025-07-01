@@ -2,37 +2,39 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Users | Zooom Forum</title>
+  <title>Users | Zooom</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Browse users on Zooom.">
-  <link rel="icon" href="assets/logo.png">
   <link rel="stylesheet" href="css/main.css">
-  <link rel="stylesheet" href="css/profile.css">
-  <link rel="stylesheet" href="css/navbar.css">
   <link rel="stylesheet" href="css/theme.css">
 </head>
 <body class="theme-light">
   <div id="navbar"></div>
-  <main>
-    <h1 style="text-align:center; margin-top: 1.5rem;">All Users</h1>
-    <div id="user-list" class="users-list"></div>
+  <main style="max-width:600px;margin:2.5em auto 5em auto;">
+    <h2>All Users</h2>
+    <div id="users-list"></div>
   </main>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="js/supabase.js"></script>
-  <script src="js/theme.js"></script>
-  <script src="js/explore-users.js"></script>
   <script>
-    // Load navbar and theme
-    fetch('components/navbar.html').then(r => r.text()).then(html => {
+    fetch('components/navbar.html').then(r=>r.text()).then(html=>{
       document.getElementById('navbar').innerHTML = html;
       if(window.lucide) lucide.createIcons();
     });
-
-    // Set theme from localStorage
-    if(localStorage.getItem('zooom-theme') === 'dark') {
+    if(localStorage.getItem('zooom-theme')==='dark') {
       document.body.classList.remove('theme-light');
       document.body.classList.add('theme-dark');
     }
+    // Example: Show users
+    (async () => {
+      const { data: users } = await supabase.from('profiles').select('username,display_name,avatar_url').order('created_at',{ascending:false});
+      document.getElementById('users-list').innerHTML = users && users.length
+        ? users.map(u=>`<div style="display:flex;align-items:center;gap:1em;margin-bottom:1.2em;">
+          <img src="${u.avatar_url||'assets/avatar.png'}" style="width:40px;height:40px;border-radius:50%;border:1.5px solid #cce;object-fit:cover;">
+          <a href="profile.html?user=${encodeURIComponent(u.username)}"><b>${u.display_name||u.username}</b></a>
+          <span style="color:#888;font-size:0.97em;">@${u.username}</span>
+        </div>`).join('')
+        : '<div style="color:#888;">No users found.</div>';
+    })();
   </script>
 </body>
 </html>
