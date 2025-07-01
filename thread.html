@@ -9,22 +9,38 @@
   <link rel="stylesheet" href="css/feed.css">
   <link rel="stylesheet" href="css/reply-card.css">
   <link rel="stylesheet" href="css/theme.css">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    main#thread-container {
+      max-width: 580px;
+      margin: 2.5em auto 5em auto;
+      padding: 0 0.7em;
+      min-height: 60vh;
+    }
+    @media (max-width:600px) {
+      main#thread-container {margin:1.1em auto 5em auto;}
+    }
+    .thread-loader {
+      margin: 4em auto 2em auto;
+      text-align: center;
+    }
+  </style>
 </head>
 <body class="theme-light">
-  <div id="top-navbar"></div>
+  <div id="navbar"></div>
   <main id="thread-container">
-    <!-- Thread + replies populated by js/thread.js -->
+    <div class="thread-loader"><span>Loading thread...</span></div>
   </main>
-  <div id="bottom-navbar"></div>
+  <!-- Bottom navbar is injected via #navbar for consistency -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="js/supabase.js"></script>
   <script src="js/theme.js"></script>
   <script src="js/thread.js"></script>
   <script>
-    // Load navigation bars (top/bottom) and theme
-    fetch('components/navbar.html').then(r=>r.text()).then(t=>{
-      document.getElementById('top-navbar').innerHTML = t.replace('{{position}}', 'top');
-      document.getElementById('bottom-navbar').innerHTML = t.replace('{{position}}', 'bottom');
+    // Load unified navigation (top and bottom) for all pages
+    fetch('components/navbar.html').then(r=>r.text()).then(html=>{
+      document.getElementById('navbar').innerHTML = html;
       if (window.lucide) lucide.createIcons();
     });
 
