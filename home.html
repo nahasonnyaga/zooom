@@ -26,6 +26,7 @@
   </style>
 </head>
 <body class="theme-light">
+  <!-- Interconnected Navbar (Top & Bottom) -->
   <div id="navbar"></div>
   <main>
     <div class="feed-tabs">
@@ -84,7 +85,7 @@
   <script src="js/supabase.js"></script>
   <script src="js/theme.js"></script>
   <script>
-    // Navbar/theme
+    // Interconnected Navbar (loads both top & bottom from project-wide component)
     fetch('components/navbar.html').then(r => r.text()).then(html => {
       document.getElementById('navbar').innerHTML = html;
       if(window.lucide) lucide.createIcons();
@@ -116,7 +117,7 @@
         document.getElementById('foryou-feed').innerHTML = `<a href="auth.html?tab=login">Log in</a> to see your personalized feed.`;
         return;
       }
-      // Fetch personalized posts (e.g., recommended by algorithm, here just latest for demo)
+      // Fetch personalized posts (latest for demo)
       const { data: posts } = await supabase.from('posts')
         .select('id,title,body,created_at,topic')
         .order('created_at', { ascending: false }).limit(15);
@@ -155,7 +156,7 @@
         document.getElementById('mentions-feed').innerHTML = `<a href="auth.html?tab=login">Log in</a> to see your mentions.`;
         return;
       }
-      // Example: posts with @username in body (adjust for your actual mentions system)
+      // posts with @username in body (adjust for your actual mentions system)
       const { data: posts } = await supabase.from('posts')
         .select('id,title,body,created_at')
         .ilike('body', `%@${user.user_metadata?.username||user.email.split('@')[0]}%`)
