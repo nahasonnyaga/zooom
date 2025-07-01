@@ -4,27 +4,177 @@
   <meta charset="UTF-8">
   <title>New Post - Zooom</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Compose a new post on Zooom">
+  <link rel="icon" href="assets/logo.png">
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/feed.css">
+  <link rel="stylesheet" href="css/theme.css">
+  <style>
+    body.theme-dark .post-main {
+      background: #181b23;
+      color: #f3f4fb;
+    }
+    .post-main {
+      max-width: 430px;
+      margin: 2.5em auto 0 auto;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 2px 18px #0002;
+      padding: 2.3em 2em 2em 2em;
+      min-height: 380px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+    .post-main h2 {
+      font-size: 1.5em;
+      font-weight: 700;
+      margin-bottom: 1.1em;
+      letter-spacing: -0.5px;
+    }
+    #post-form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 1.3em;
+      align-items: flex-end;
+    }
+    #post-content {
+      width: 100%;
+      min-height: 112px;
+      border-radius: 14px;
+      border: 1.5px solid #dbeafe;
+      font-size: 1.15em;
+      padding: 1.2em 1.2em 1.2em 1.2em;
+      background: #f6f8fd;
+      resize: vertical;
+      box-sizing: border-box;
+      transition: border .15s;
+    }
+    #post-content:focus {
+      border: 2px solid #2563eb;
+      outline: none;
+      background: #fff;
+    }
+    .post-actions-bar {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.8em;
+      margin-top: -0.7em;
+    }
+    .post-topic-select {
+      border: 1.2px solid #c7d7fa;
+      border-radius: 13px;
+      padding: 0.4em 1em;
+      background: #f7faff;
+      font-size: 1em;
+      color: #2563eb;
+    }
+    .post-media-label {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      color: #2563eb;
+      font-size: 1.12em;
+      gap: 0.4em;
+      padding: 0.3em 0.7em 0.3em 0.5em;
+      border-radius: 8px;
+      background: #f3f7ff;
+      transition: background .17s;
+    }
+    .post-media-label:hover {
+      background: #e0e7ff;
+    }
+    #post-media {
+      display: none;
+    }
+    .post-preview-img {
+      display: block;
+      max-width: 94%;
+      max-height: 140px;
+      margin: 0.8em 0 0.2em 0;
+      border-radius: 15px;
+      box-shadow: 0 1px 8px #0002;
+      object-fit: cover;
+    }
+    #post-error {
+      color: #e11d48;
+      font-size: 0.98em;
+      text-align: right;
+      min-height: 1.3em;
+    }
+    #post-form button[type="submit"] {
+      background: linear-gradient(90deg, #2563eb 65%, #60a5fa 100%);
+      color: #fff;
+      border: none;
+      border-radius: 16px;
+      font-weight: 700;
+      font-size: 1.11em;
+      padding: 0.7em 2.1em;
+      cursor: pointer;
+      margin-top: 1.1em;
+      transition: background 0.18s;
+      box-shadow: 0 1px 9px #2563eb10;
+      letter-spacing: 0.1px;
+    }
+    #post-form button[type="submit"]:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    @media (max-width: 600px) {
+      .post-main {padding: 1em 0.5em;}
+      #post-content {font-size: 1em;}
+      .post-actions-bar {flex-direction: column;align-items: stretch;}
+    }
+  </style>
 </head>
-<body>
+<body class="theme-light">
   <div id="top-navbar"></div>
   <main class="post-main">
     <h2>Compose a Post</h2>
-    <form id="post-form">
+    <form id="post-form" autocomplete="off">
       <textarea id="post-content" placeholder="What's happening?" maxlength="500" required></textarea>
-      <button type="submit">Post</button>
+      <div class="post-actions-bar">
+        <select id="post-topic" class="post-topic-select">
+          <option value="">No topic</option>
+          <option value="news">#news</option>
+          <option value="tech">#tech</option>
+          <option value="music">#music</option>
+          <option value="art">#art</option>
+          <option value="sports">#sports</option>
+          <option value="travel">#travel</option>
+          <option value="random">#random</option>
+        </select>
+        <label class="post-media-label" title="Attach image">
+          <i class="fa-solid fa-image"></i> <span>Media</span>
+          <input type="file" id="post-media" accept="image/*">
+        </label>
+      </div>
+      <img id="media-preview" class="post-preview-img" style="display:none;">
+      <button type="submit" id="submit-btn">Post</button>
       <div id="post-error"></div>
     </form>
   </main>
   <div id="bottom-navbar"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/js/all.min.js"></script>
   <script src="js/supabase.js"></script>
+  <script src="js/theme.js"></script>
   <script src="js/post.js"></script>
   <script>
+    // Navbar and theme interconnection
     fetch('components/navbar.html').then(r=>r.text()).then(t=>{
       document.getElementById('top-navbar').innerHTML = t.replace('{{position}}', 'top');
       document.getElementById('bottom-navbar').innerHTML = t.replace('{{position}}', 'bottom');
+      if(window.lucide) lucide.createIcons();
     });
+    if(localStorage.getItem('zooom-theme')==='dark') {
+      document.body.classList.remove('theme-light');
+      document.body.classList.add('theme-dark');
+    }
   </script>
 </body>
 </html>
