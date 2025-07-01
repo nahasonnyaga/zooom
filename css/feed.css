@@ -1,11 +1,11 @@
-#feed { display: flex; flex-direction: column; gap: 1.1rem; }
+#feed-container { display: flex; flex-direction: column; gap: 8px;}
 .thread-card {
-  border: 1.5px solid #e5eaf1;
-  padding: 1.1rem;
-  border-radius: 8px;
-  background: #fff;
-  box-shadow: 0 2px 12px #3b82f510;
-  margin-bottom: 0.5rem;
+  display: flex; gap: 12px; background: #232323;
+  border-radius: 12px; padding: 12px; cursor: pointer;
+  transition: background .2s;
 }
-.thread-card h3 { margin: 0 0 0.3em 0; }
-.thread-card .author { color: #444; font-size: 0.97em; }
+.thread-card:hover { background: #292929; }
+.thread-card .avatar { margin-right: 8px; }
+.thread-card .username { font-weight: bold; }
+.thread-card .date { color: #aaa; font-size: 0.85em; margin-left: 8px; }
+.thread-card p { margin: 8px 0 0 0; }
