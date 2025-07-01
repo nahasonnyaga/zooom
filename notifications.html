@@ -2,22 +2,25 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Notifications | Zooom Forum</title>
+  <title>Notifications - Zooom</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Your notifications on Zooom.">
-  <link rel="icon" href="assets/logo.png">
+  <meta name="description" content="Your latest notifications.">
   <link rel="stylesheet" href="css/main.css">
-  <link rel="stylesheet" href="css/navbar.css">
+  <link rel="stylesheet" href="css/notifications.css">
 </head>
 <body>
-  <div id="navbar"></div>
-  <main id="notifications"></main>
+  <div id="top-navbar"></div>
+  <main>
+    <h2>Notifications</h2>
+    <div id="notifications-list"></div>
+  </main>
+  <div id="bottom-navbar"></div>
   <script src="js/supabase.js"></script>
   <script src="js/notifications.js"></script>
   <script>
-    fetch('components/navbar.html').then(r => r.text()).then(html => {
-      document.getElementById('navbar').innerHTML = html;
-      import('./js/navbar.js');
+    fetch('components/navbar.html').then(r=>r.text()).then(t=>{
+      document.getElementById('top-navbar').innerHTML = t.replace('{{position}}', 'top');
+      document.getElementById('bottom-navbar').innerHTML = t.replace('{{position}}', 'bottom');
     });
   </script>
 </body>
