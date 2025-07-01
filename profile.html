@@ -25,6 +25,7 @@
     fetch('components/navbar.html').then(r=>r.text()).then(html=>{
       document.getElementById('navbar').innerHTML = html;
       if(window.lucide) lucide.createIcons();
+      if(window.refreshNavbarProfile) window.refreshNavbarProfile();
     });
 
     // Apply theme (dark/light) from localStorage for consistency
