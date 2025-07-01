@@ -6,11 +6,6 @@
   <title>Zooom</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#1da1f2">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta property="og:title" content="Zooom">
-  <meta property="og:description" content="A world-class, fast social network.">
-  <meta property="og:type" content="website">
-  <meta name="description" content="Zooom is a world-class, fast social network. Connect, share, and engage.">
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="assets/icon-192.png">
   <link rel="apple-touch-icon" href="assets/icon-192.png">
@@ -20,49 +15,42 @@
   <link rel="stylesheet" href="css/x-topbar.css">
   <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-XXXXXXXXXX');
-  </script>
 </head>
 <body>
-  <!-- Top Navbar: Horizontally scrollable, profile/login/logout on right -->
-  <header id="x-topbar-outer" class="x-topbar-outer">
-    <nav class="x-topbar-scroll horizontal-scroll" id="x-topbar-scroll">
-      <button class="x-tab active" data-section="for-you"><i data-lucide="sparkles"></i><span>For You</span></button>
-      <button class="x-tab" data-section="following"><i data-lucide="users"></i><span>Following</span></button>
-      <button class="x-tab" data-section="mentions"><i data-lucide="at-sign"></i><span>Mentions</span></button>
-      <button class="x-tab" data-section="hashtags"><i data-lucide="hash"></i><span>#Hashtags</span></button>
-      <button class="x-tab" data-section="trending"><i data-lucide="trending-up"></i><span>Trending</span></button>
-      <button class="x-tab" data-section="new-users"><i data-lucide="user-plus"></i><span>New Users</span></button>
-      <button class="x-tab" data-section="notifications"><i data-lucide="bell"></i><span>Notifications</span></button>
-      <button class="x-tab" data-section="media"><i data-lucide="image"></i><span>Media</span></button>
-    </nav>
-    <div class="x-topbar-profile" id="x-topbar-profile">
-      <!-- Populated by JS: profile pic OR login/logout button -->
-      <button id="profile-btn" class="profile-btn" style="display:none">
-        <img id="profile-avatar" src="assets/default-avatar.png" alt="Profile" />
-        <div id="profile-dropdown" class="profile-dropdown">
-          <a href="profile.html"><i data-lucide="user"></i>Profile</a>
-          <a href="settings.html"><i data-lucide="settings"></i>Settings</a>
-          <button id="logout-btn"><i data-lucide="log-out"></i>Logout</button>
-        </div>
-      </button>
-      <button id="login-btn" class="login-btn" style="display:none">
-        <i data-lucide="log-in"></i> Login
-      </button>
+  <!-- TOP NAVBAR -->
+  <header class="x-topbar-outer">
+    <div class="x-topbar-row">
+      <nav class="x-topbar-scroll" id="x-topbar-scroll">
+        <button class="x-tab active" data-section="for-you"><i data-lucide="sparkles"></i><span>For You</span></button>
+        <button class="x-tab" data-section="following"><i data-lucide="users"></i><span>Following</span></button>
+        <button class="x-tab" data-section="mentions"><i data-lucide="at-sign"></i><span>Mentions</span></button>
+        <button class="x-tab" data-section="hashtags"><i data-lucide="hash"></i><span>#Hashtags</span></button>
+        <button class="x-tab" data-section="trending"><i data-lucide="trending-up"></i><span>Trending</span></button>
+        <button class="x-tab" data-section="new-users"><i data-lucide="user-plus"></i><span>New Users</span></button>
+        <button class="x-tab" data-section="notifications"><i data-lucide="bell"></i><span>Notifications</span></button>
+        <button class="x-tab" data-section="media"><i data-lucide="image"></i><span>Media</span></button>
+      </nav>
+      <div class="x-topbar-profile" id="x-topbar-profile">
+        <button id="profile-btn" class="profile-btn" style="display:none">
+          <img id="profile-avatar" src="assets/default-avatar.png" alt="Profile" />
+          <div id="profile-dropdown" class="profile-dropdown">
+            <a href="profile.html"><i data-lucide="user"></i>Profile</a>
+            <a href="settings.html"><i data-lucide="settings"></i>Settings</a>
+            <button id="logout-btn"><i data-lucide="log-out"></i>Logout</button>
+          </div>
+        </button>
+        <button id="login-btn" class="login-btn" style="display:none">
+          <i data-lucide="log-in"></i> Login
+        </button>
+      </div>
     </div>
   </header>
 
   <main id="feed-container">
-    <!-- Content loaded by JS based on selected tab -->
+    <!-- Content here -->
   </main>
 
-  <!-- Bottom Navbar: glassy, thumb-friendly, worldclass -->
+  <!-- BOTTOM NAVBAR -->
   <nav id="bottom-navbar" class="navbar navbar-bottom glassy">
     <a href="index.html" aria-label="Home"><i data-lucide="home"></i></a>
     <a href="post.html" aria-label="Compose"><i data-lucide="plus-circle"></i></a>
@@ -76,7 +64,7 @@
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       lucide.createIcons();
-      // Profile/Login logic
+      // Profile/Login logic (same as previous)
       async function updateProfileNav() {
         let session = null;
         if (typeof supabase !== "undefined") {
