@@ -2,19 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Profile - SupaForum</title>
+  <title>Profile - Zooom</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/profile.css">
 </head>
 <body>
-  <div id="navbar"></div>
-  <main id="profile-container"></main>
+  <div id="top-navbar"></div>
+  <main id="profile-main">
+    <!-- Profile info and posts loaded by js/profile.js -->
+  </main>
+  <div id="bottom-navbar"></div>
   <script src="js/supabase.js"></script>
   <script src="js/profile.js"></script>
   <script>
-    fetch('components/navbar.html').then(r => r.text()).then(html => {
-      document.getElementById('navbar').innerHTML = html;
-    });
-  </script>
-</body>
-</html>
+    fetch('components/navbar.html').then(r
