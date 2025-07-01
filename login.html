@@ -2,50 +2,23 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Login | Zooom Forum</title>
+  <title>Login - Zooom</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Login to Zooom, a worldclass forum built on Supabase.">
-  <link rel="icon" href="assets/logo.png">
   <link rel="stylesheet" href="css/main.css">
-  <link rel="stylesheet" href="css/topmenu.css">
-  <link rel="stylesheet" href="css/navbar.css">
+  <link rel="stylesheet" href="css/auth.css">
 </head>
 <body>
-  <div id="topmenu"></div>
   <main class="auth-main">
-    <form id="loginForm" class="auth-form">
-      <h2>Sign in to Zooom</h2>
-      <label>Email<br><input type="email" name="email" required autocomplete="username"></label>
-      <label>Password<br><input type="password" name="password" required autocomplete="current-password"></label>
-      <button type="submit">Sign In</button>
-      <p><a href="reset-password.html">Forgot password?</a></p>
+    <h1>Login to Zooom</h1>
+    <form id="login-form">
+      <input type="email" id="login-email" placeholder="Email" required>
+      <input type="password" id="login-password" placeholder="Password" required>
+      <button type="submit">Login</button>
+      <div id="login-error"></div>
       <p>Don't have an account? <a href="register.html">Register</a></p>
-      <div class="auth-error" id="loginError"></div>
     </form>
   </main>
-  <div id="navbar"></div>
   <script src="js/supabase.js"></script>
-  <script>
-    fetch('components/topmenu.html').then(r => r.text()).then(html => {
-      document.getElementById('topmenu').innerHTML = html;
-      const script = document.createElement('script');
-      script.src = 'js/theme-topmenu.js';
-      document.body.appendChild(script);
-    });
-    fetch('components/navbar.html').then(r => r.text()).then(html => {
-      document.getElementById('navbar').innerHTML = html;
-    });
-    document.getElementById('loginForm').onsubmit = async (e) => {
-      e.preventDefault();
-      const email = e.target.email.value.trim(), password = e.target.password.value;
-      document.getElementById('loginError').textContent = "";
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) {
-        document.getElementById('loginError').textContent = error.message;
-      } else {
-        window.location.href = "index.html";
-      }
-    }
-  </script>
+  <script src="js/auth.js"></script>
 </body>
 </html>
