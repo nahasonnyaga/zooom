@@ -39,6 +39,12 @@
       flex-direction: column;
       gap: 1.3em;
       align-items: flex-end;
+      opacity: 1;
+      transition: opacity 0.2s;
+    }
+    #post-form[aria-disabled="true"] {
+      opacity: 0.5;
+      pointer-events: none;
     }
     #post-content {
       width: 100%;
@@ -124,6 +130,37 @@
       opacity: 0.6;
       cursor: not-allowed;
     }
+    .login-required-banner {
+      background: #f3f7ff;
+      color: #1e293b;
+      padding: 1.2em 1.2em;
+      border-radius: 12px;
+      text-align: center;
+      margin-bottom: 1.5em;
+      font-size: 1.1em;
+      box-shadow: 0 1px 7px #2563eb13;
+      display: flex;
+      flex-direction: column;
+      gap: 0.7em;
+      align-items: center;
+      width: 100%;
+    }
+    .login-btn {
+      background: linear-gradient(90deg, #2563eb 65%, #60a5fa 100%);
+      color: #fff;
+      border: none;
+      border-radius: 16px;
+      font-weight: 700;
+      font-size: 1em;
+      padding: 0.5em 1.8em;
+      cursor: pointer;
+      margin-top: 0.3em;
+      transition: background 0.18s;
+      box-shadow: 0 1px 8px #2563eb13;
+      letter-spacing: 0.1px;
+      text-decoration: none;
+      display: inline-block;
+    }
     @media (max-width: 600px) {
       .post-main {padding: 1em 0.5em;}
       #post-content {font-size: 1em;}
@@ -134,6 +171,10 @@
 <body class="theme-light">
   <div id="top-navbar"></div>
   <main class="post-main">
+    <div id="login-required" class="login-required-banner" style="display:none;">
+      <div><b>Log in to create a post</b></div>
+      <a href="auth.html?tab=login" class="login-btn">Log in</a>
+    </div>
     <h2>Compose a Post</h2>
     <form id="post-form" autocomplete="off">
       <textarea id="post-content" placeholder="What's happening?" maxlength="500" required></textarea>
@@ -175,6 +216,26 @@
       document.body.classList.remove('theme-light');
       document.body.classList.add('theme-dark');
     }
+
+    // UX: Hide form and show login-required if not logged in
+    async function checkLoginForPost() {
+      const { data } = await supabase.auth.getSession();
+      const user = data.session?.user || null;
+      const form = document.getElementById('post-form');
+      const loginBanner = document.getElementById('login-required');
+      if (!user) {
+        // Hide post form, show banner
+        form.setAttribute('aria-disabled', "true");
+        form.style.display = "none";
+        loginBanner.style.display = "flex";
+      } else {
+        form.setAttribute('aria-disabled', "false");
+        form.style.display = "flex";
+        loginBanner.style.display = "none";
+      }
+    }
+    document.addEventListener('DOMContentLoaded', checkLoginForPost);
+    // Also re-check on auth change (if you use Supabase's onAuthStateChange, add here)
   </script>
 </body>
 </html>
