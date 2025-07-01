@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Home | Zooom Forum</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Your personalized Zooom home.">
+  <link rel="icon" href="assets/logo.png">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/navbar.css">
+  <link rel="stylesheet" href="css/theme.css">
+  <style>
+    .feed-tabs { display: flex; gap: 1.2em; margin-top: 1.5em; justify-content: center; }
+    .feed-tab-btn {
+      padding: 0.6em 1.2em; border-radius: 18px; font-weight: 600; background: #f3f7ff;
+      color: #2b2b2b; border: none; cursor: pointer; font-size: 1.05em; transition: background 0.15s;
+    }
+    .feed-tab-btn.active, .feed-tab-btn:focus { background: #2563eb; color: #fff; }
+    .feed-tab-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .feed-ui-section { max-width: 600px; margin: 2em auto 0 auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 8px #0001; padding: 1.5em 2em; }
+    .feed-ui-section h2 { margin-top: 0; }
+    @media (max-width:650px) {
+      .feed-ui-section { padding: 0.6em 0.1em; }
+      .feed-tabs { flex-wrap: wrap; gap: 0.5em; }
+    }
+  </style>
+</head>
+<body class="theme-light">
+  <div id="navbar"></div>
+  <main>
+    <div class="feed-tabs">
+      <button class="feed-tab-btn active" id="tab-foryou" onclick="showTab('foryou')">For You</button>
+      <button class="feed-tab-btn" id="tab-following" onclick="showTab('following')">Following</button>
+      <button class="feed-tab-btn" id="tab-mentions" onclick="showTab('mentions')">Mentions</button>
+      <button class="feed-tab-btn" id="tab-hashtags" onclick="showTab('hashtags')">#Hashtags</button>
+      <button class="feed-tab-btn" id="tab-trending" onclick="showTab('trending')">Trending</button>
+      <button class="feed-tab-btn" id="tab-newusers" onclick="showTab('newusers')">New Users</button>
+      <button class="feed-tab-btn" id="tab-notifications" onclick="showTab('notifications')">Notifications</button>
+      <button class="feed-tab-btn" id="tab-media" onclick="showTab('media')">Media</button>
+    </div>
+    <section class="feed-ui-section" id="section-foryou">
+      <h2>For You</h2>
+      <div id="foryou-feed">Loading personalized feed...</div>
+    </section>
+    <section class="feed-ui-section" id="section-following" style="display:none;">
+      <h2>Following</h2>
+      <div id="following-feed">Loading posts from users you follow...</div>
+    </section>
+    <section class="feed-ui-section" id="section-mentions" style="display:none;">
+      <h2>Mentions</h2>
+      <div id="mentions-feed">Loading posts where you are mentioned...</div>
+    </section>
+    <section class="feed-ui-section" id="section-hashtags" style="display:none;">
+      <h2>#Hashtags</h2>
+      <form id="hashtag-search-form" style="margin-bottom:1em;">
+        <input type="text" id="hashtag-input" placeholder="Search hashtag..." style="padding:0.5em 1em;border-radius:16px;border:1px solid #cdd6e1;">
+        <button type="submit" class="feed-tab-btn" style="padding:0.5em 1.2em;font-size:0.99em;">Search</button>
+      </form>
+      <div id="hashtags-feed">Enter a hashtag to search posts.</div>
+    </section>
+    <section class="feed-ui-section" id="section-trending" style="display:none;">
+      <h2>Trending</h2>
+      <div id="trending-feed">Loading trending topics...</div>
+    </section>
+    <section class="feed-ui-section" id="section-newusers" style="display:none;">
+      <h2>New Users</h2>
+      <div id="newusers-feed">Loading new users...</div>
+    </section>
+    <section class="feed-ui-section" id="section-notifications" style="display:none;">
+      <h2>Notifications</h2>
+      <div id="notifications-feed">Loading notifications...</div>
+    </section>
+    <section class="feed-ui-section" id="section-media" style="display:none;">
+      <h2>Media</h2>
+      <div id="media-feed">Loading posts with media...</div>
+    </section>
+    <section class="feed-ui-section" style="margin-bottom:2.5em;">
+      <form id="logout-form">
+        <button type="submit" class="feed-tab-btn" style="background:#f43f5e;color:#fff;">Logout</button>
+      </form>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/theme.js"></script>
+  <script>
+    // Navbar/theme
+    fetch('components/navbar.html').then(r => r.text()).then(html => {
+      document.getElementById('navbar').innerHTML = html;
+      if(window.lucide) lucide.createIcons();
+    });
+    if(localStorage.getItem('zooom-theme')==='dark') {
+      document.body.classList.remove('theme-light');
+      document.body.classList.add('theme-dark');
+    }
+
+    // Tabs logic
+    function showTab(tab) {
+      const tabs = ['foryou','following','mentions','hashtags','trending','newusers','notifications','media'];
+      tabs.forEach(t=>{
+        document.getElementById('section-'+t).style.display = t===tab?'block':'none';
+        document.getElementById('tab-'+t).classList.toggle('active', t===tab);
+      });
+    }
+
+    // Helper: get session user
+    async function getSessionUser() {
+      const { data } = await supabase.auth.getSession();
+      return data.session?.user || null;
+    }
+
+    // For You feed
+    async function loadForYouFeed() {
+      const user = await getSessionUser();
+      if (!user) {
+        document.getElementById('foryou-feed').innerHTML = `<a href="auth.html?tab=login">Log in</a> to see your personalized feed.`;
+        return;
+      }
+      // Fetch personalized posts (e.g., recommended by algorithm, here just latest for demo)
+      const { data: posts } = await supabase.from('posts')
+        .select('id,title,body,created_at,topic')
+        .order('created_at', { ascending: false }).limit(15);
+      document.getElementById('foryou-feed').innerHTML = posts && posts.length
+        ? posts.map(p=>`<div class="feed-post-card"><a href="thread.html?id=${p.id}"><b>${p.title||'(no title)'}</b></a><div>${(p.body||'').substring(0,110)}</div><div style="color:#666;font-size:0.92em;">#${p.topic||''} · ${new Date(p.created_at).toLocaleString()}</div></div>`).join('')
+        : '<div style="color:#888;">No posts found.</div>';
+    }
+
+    // Following feed
+    async function loadFollowingFeed() {
+      const user = await getSessionUser();
+      if (!user) {
+        document.getElementById('following-feed').innerHTML = `<a href="auth.html?tab=login">Log in</a> to see posts from users you follow.`;
+        return;
+      }
+      // Get ids of users the current user follows
+      const { data: following } = await supabase.from('follows').select('following_id').eq('follower_id', user.id);
+      const followingIds = (following||[]).map(f=>f.following_id);
+      if (!followingIds.length) {
+        document.getElementById('following-feed').innerHTML = "You're not following anyone yet.";
+        return;
+      }
+      const { data: posts } = await supabase.from('posts')
+        .select('id,title,body,created_at,topic,user_id')
+        .in('user_id', followingIds)
+        .order('created_at', { ascending: false }).limit(20);
+      document.getElementById('following-feed').innerHTML = posts && posts.length
+        ? posts.map(p=>`<div class="feed-post-card"><a href="thread.html?id=${p.id}"><b>${p.title||'(no title)'}</b></a><div>${(p.body||'').substring(0,110)}</div><div style="color:#666;font-size:0.92em;">#${p.topic||''} · ${new Date(p.created_at).toLocaleString()}</div></div>`).join('')
+        : '<div style="color:#888;">No posts found from users you follow.</div>';
+    }
+
+    // Mentions feed
+    async function loadMentionsFeed() {
+      const user = await getSessionUser();
+      if (!user) {
+        document.getElementById('mentions-feed').innerHTML = `<a href="auth.html?tab=login">Log in</a> to see your mentions.`;
+        return;
+      }
+      // Example: posts with @username in body (adjust for your actual mentions system)
+      const { data: posts } = await supabase.from('posts')
+        .select('id,title,body,created_at')
+        .ilike('body', `%@${user.user_metadata?.username||user.email.split('@')[0]}%`)
+        .order('created_at', { ascending: false });
+      document.getElementById('mentions-feed').innerHTML = posts && posts.length
+        ? posts.map(p=>`<div class="feed-post-card"><a href="thread.html?id=${p.id}"><b>${p.title||'(no title)'}</b></a><div>${(p.body||'').substring(0,110)}</div><div style="color:#666;font-size:0.92em;">${new Date(p.created_at).toLocaleString()}</div></div>`).join('')
+        : '<div style="color:#888;">No mentions found.</div>';
+    }
+
+    // Hashtags feed
+    document.getElementById('hashtag-search-form').onsubmit = function(e){
+      e.preventDefault();
+      const tag = document.getElementById('hashtag-input').value.trim().replace(/^#/, '');
+      if (!tag) return;
+      loadHashtagFeed(tag);
+    };
+    async function loadHashtagFeed(tag) {
+      const { data: posts } = await supabase.from('posts')
+        .select('id,title,body,created_at,topic')
+        .eq('topic', tag)
+        .order('created_at',{ascending:false});
+      document.getElementById('hashtags-feed').innerHTML = posts && posts.length
+        ? posts.map(p=>`<div class="feed-post-card"><a href="thread.html?id=${p.id}"><b>${p.title||'(no title)'}</b></a><div>${(p.body||'').substring(0,110)}</div><div style="color:#666;font-size:0.92em;">#${p.topic||''} · ${new Date(p.created_at).toLocaleString()}</div></div>`).join('')
+        : '<div style="color:#888;">No posts found with #'+tag+'.</div>';
+    }
+
+    // Trending feed (from trends table)
+    async function loadTrendingFeed() {
+      const { data: trends } = await supabase.from('trends').select('*').order('rank');
+      document.getElementById('trending-feed').innerHTML = trends && trends.length
+        ? trends.map(trend=>`<div style="margin-bottom:1.1em;"><b>#${trend.topic}</b> <span style="color:#888;">${trend.post_count} posts</span></div>`).join('')
+        : '<div style="color:#888;">No trending topics.</div>';
+    }
+
+    // New Users feed
+    async function loadNewUsersFeed() {
+      const { data: users } = await supabase.from('profiles')
+        .select('id,display_name,username,avatar_url')
+        .order('created_at', { ascending: false })
+        .limit(12);
+      document.getElementById('newusers-feed').innerHTML = users && users.length
+        ? users.map(u=>`<div style="display:flex;align-items:center;gap:0.9em;margin-bottom:1em;">
+          <img src="${u.avatar_url||'assets/avatar.png'}" style="width:40px;height:40px;border-radius:50%;border:1.5px solid #cce;object-fit:cover;">
+          <a href="profile.html?user=${encodeURIComponent(u.username)}"><b>${u.display_name||u.username}</b></a>
+          <span style="color:#888;font-size:0.97em;">@${u.username}</span>
+        </div>`).join('')
+        : '<div style="color:#888;">No new users found.</div>';
+    }
+
+    // Notifications feed (dummy, you can connect to your notifications table)
+    async function loadNotificationsFeed() {
+      const user = await getSessionUser();
+      document.getElementById('notifications-feed').innerHTML = user
+        ? '<div style="color:#888;">No notifications. (Integration needed)</div>'
+        : `<a href="auth.html?tab=login">Log in</a> to see notifications.`;
+    }
+
+    // Media feed (posts with attachments/images)
+    async function loadMediaFeed() {
+      const { data: posts } = await supabase.from('posts')
+        .select('id,title,body,created_at,media_url')
+        .not('media_url','is',null)
+        .order('created_at',{ascending:false})
+        .limit(12);
+      document.getElementById('media-feed').innerHTML = posts && posts.length
+        ? posts.map(p=>`<div class="feed-post-card"><a href="thread.html?id=${p.id}"><b>${p.title||'(no title)'}</b></a>
+          <div>${(p.body||'').substring(0,90)}</div>
+          <div>${p.media_url ? `<img src="${p.media_url}" style="max-width:96%;margin-top:0.6em;border-radius:12px;">` : ''}</div>
+          <div style="color:#666;font-size:0.92em;">${new Date(p.created_at).toLocaleString()}</div>
+        </div>`).join('')
+        : '<div style="color:#888;">No media posts found.</div>';
+    }
+
+    // Load all feeds on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      loadForYouFeed();
+      loadFollowingFeed();
+      loadTrendingFeed();
+      loadNewUsersFeed();
+      loadNotificationsFeed();
+      loadMediaFeed();
+    });
+
+    // Load mentions and hashtags only when tab is opened (for perf)
+    document.getElementById('tab-mentions').onclick = function() {
+      showTab('mentions');
+      loadMentionsFeed();
+    };
+    document.getElementById('tab-hashtags').onclick = function() {
+      showTab('hashtags');
+    };
+
+    // Logout logic
+    document.getElementById('logout-form').onsubmit = async function(e){
+      e.preventDefault();
+      await supabase.auth.signOut();
+      window.location.href = "auth.html?tab=login";
+    }
+  </script>
+</body>
+</html>
