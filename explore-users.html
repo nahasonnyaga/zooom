@@ -9,26 +9,16 @@
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/profile.css">
   <link rel="stylesheet" href="css/navbar.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"><!-- if you use FA icons -->
 </head>
 <body>
   <div id="navbar"></div>
   <main id="user-list"></main>
   <script src="js/supabase.js"></script>
   <script src="js/explore-users.js"></script>
-  <script type="module">
+  <script>
     fetch('components/navbar.html').then(r => r.text()).then(html => {
-      const container = document.getElementById('navbar');
-      container.innerHTML = html;
-      // Re-execute any scripts in the navbar HTML
-      container.querySelectorAll("script").forEach(oldScript => {
-        const newScript = document.createElement('script');
-        if (oldScript.src) newScript.src = oldScript.src;
-        else newScript.textContent = oldScript.textContent;
-        document.body.appendChild(newScript);
-        document.body.removeChild(newScript);
-      });
-      import('./js/navbar.js').catch(() => {});
+      document.getElementById('navbar').innerHTML = html;
+      import('./js/navbar.js');
     });
   </script>
 </body>
