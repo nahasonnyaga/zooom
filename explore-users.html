@@ -2,24 +2,264 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Users | Zooom Forum</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Browse users on Zooom.">
-  <link rel="icon" href="assets/logo.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Explore Users - Zooom</title>
+  <link rel="icon" href="assets/icon-192.png">
   <link rel="stylesheet" href="css/main.css">
-  <link rel="stylesheet" href="css/profile.css">
-  <link rel="stylesheet" href="css/navbar.css">
+  <link rel="stylesheet" href="css/theme.css">
+  <style>
+    .users-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      padding: 1.5rem 0.5rem;
+      justify-content: flex-start;
+    }
+    .user-card {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 1px 8px #0001;
+      padding: 1.1rem 1.2rem 1.1rem 1.2rem;
+      max-width: 260px;
+      min-width: 220px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border: 1.5px solid #ececec;
+      transition: box-shadow 0.15s;
+      margin-bottom: 1rem;
+    }
+    .user-card:hover {
+      box-shadow: 0 4px 16px #0002;
+      border-color: #dbeafe;
+    }
+    .user-avatar {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #e0e0e0;
+      background: #f3f6f9;
+      margin-bottom: 0.8rem;
+    }
+    .user-username {
+      font-weight: 700;
+      font-size: 1.12rem;
+      color: #1c1b22;
+      margin-bottom: 0.2rem;
+    }
+    .user-handle {
+      color: #3b82f6;
+      font-size: 0.99rem;
+      margin-bottom: 0.4rem;
+    }
+    .user-bio {
+      color: #444;
+      font-size: 0.97rem;
+      text-align: center;
+      margin-bottom: 0.7rem;
+      min-height: 2.2em;
+    }
+    .user-meta {
+      color: #666;
+      font-size: 0.88rem;
+      margin-bottom: 0.5rem;
+    }
+    .user-links {
+      display: flex;
+      gap: 0.6rem;
+      margin-bottom: 0.1rem;
+      justify-content: center;
+    }
+    .user-links a {
+      color: #2563eb;
+      font-size: 1.18em;
+      text-decoration: none;
+      border-radius: 50%;
+      padding: 3px;
+      transition: background 0.15s;
+    }
+    .user-links a:hover {
+      background: #e0e7ff;
+    }
+    .user-follow-btn {
+      background: linear-gradient(90deg,#3b82f6 60%,#60a5fa 100%);
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      font-weight: 600;
+      padding: 0.5em 1.2em;
+      margin-top: 0.5em;
+      cursor: pointer;
+      font-size: 1.04em;
+      transition: background 0.13s;
+    }
+    .user-follow-btn:active {
+      background: linear-gradient(90deg,#2563eb 60%,#60a5fa 100%);
+    }
+    @media (max-width:650px) {
+      .users-list {justify-content: center;}
+      .user-card {max-width: 98vw;}
+    }
+  </style>
 </head>
-<body>
+<body class="theme-light">
   <div id="navbar"></div>
-  <main id="user-list"></main>
-  <script src="js/supabase.js"></script>
-  <script src="js/explore-users.js"></script>
+  <main>
+    <h1 style="text-align:center; margin-top: 1.5rem;">Explore Users</h1>
+    <div id="users-list" class="users-list"></div>
+  </main>
   <script>
-    fetch('components/navbar.html').then(r => r.text()).then(html => {
-      document.getElementById('navbar').innerHTML = html;
-      import('./js/navbar.js');
-    });
+    // Load navbar
+    fetch('components/navbar.html')
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById('navbar').innerHTML = html;
+        if(window.lucide) lucide.createIcons();
+      });
+
+    // Set theme from localStorage if present
+    if(localStorage.getItem('zooom-theme') === 'dark') {
+      document.body.classList.remove('theme-light');
+      document.body.classList.add('theme-dark');
+    }
+
+    // FontAwesome icons (minimal CDN, for .fa-* classes)
+    (function loadFontAwesome() {
+      if (!window.FontAwesomeLoaded) {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css';
+        document.head.appendChild(link);
+        window.FontAwesomeLoaded = true;
+      }
+    })();
+
+    // Helper to get current logged in user id
+    async function getSessionUserId() {
+      if(typeof supabase === "undefined") return null;
+      const { data } = await supabase.auth.getSession();
+      return data?.session?.user?.id || null;
+    }
+
+    function renderUsers(users, loggedInUserId, followingIds=[]) {
+      const list = document.getElementById('users-list');
+      list.innerHTML = '';
+      users.forEach(user => {
+        // Supabase structure: profile fields
+        const avatar = user.avatar_url || 'assets/avatar.png';
+        const name = user.display_name || user.username || '';
+        const username = user.username || (user.display_name ? user.display_name.replace(/\s/g, '').toLowerCase() : '');
+        const bio = user.bio || '';
+        const location = user.location || '';
+        const website = user.website;
+        const twitter = user.twitter;
+        const followers = user.followers_count || 0;
+        const following = user.following_count || 0;
+        const threads = user.threads_count || 0;
+        const userId = user.id;
+        card = document.createElement('div');
+        card.className = 'user-card';
+        card.innerHTML = `
+          <img src="${avatar}" class="user-avatar" loading="lazy" alt="${name}" onerror="this.src='assets/avatar.png'">
+          <div class="user-username">${name}</div>
+          <div class="user-handle">@${username}</div>
+          <div class="user-bio">${bio}</div>
+          <div class="user-meta">${location ? `📍 ${location}` : ''}</div>
+          <div class="user-meta">
+            <span title="Followers">👥 <b>${followers}</b></span>
+            &nbsp; | &nbsp;
+            <span title="Following">🔗 <b>${following}</b></span>
+            &nbsp; | &nbsp;
+            <span title="Threads">🧵 <b>${threads}</b></span>
+          </div>
+          <div class="user-links">
+            ${website ? `<a href="${website}" target="_blank" rel="noopener noreferrer" title="Website"><i class="fa-solid fa-link"></i></a>` : ''}
+            ${twitter ? `<a href="https://twitter.com/${twitter}" target="_blank" rel="noopener noreferrer" title="Twitter"><i class="fa-brands fa-x-twitter"></i></a>` : ''}
+            <a href="profile.html?user=${encodeURIComponent(username)}" title="View Profile"><i class="fa-solid fa-user"></i></a>
+            <a href="messages.html?user=${encodeURIComponent(userId)}" title="Send Message"><i class="fa-regular fa-envelope"></i></a>
+          </div>
+          ${userId !== loggedInUserId ? `
+          <button class="user-follow-btn" data-userid="${userId}">
+            ${followingIds.includes(userId) ? "Unfollow" : "Follow"}
+          </button>
+          ` : `
+          <span style="color:#888;font-size:0.95em;margin-top:0.6em;">This is you</span>
+          `}
+        `;
+        list.appendChild(card);
+      });
+
+      // Attach follow/unfollow event handlers
+      document.querySelectorAll('.user-follow-btn').forEach(btn => {
+        btn.onclick = async function() {
+          const targetId = btn.getAttribute('data-userid');
+          if(!loggedInUserId) {
+            window.location.href = "auth.html?tab=login";
+            return;
+          }
+          if(btn.textContent.trim() === "Follow") {
+            // Insert 'follows' row
+            const { error } = await supabase.from('follows').insert({ follower_id: loggedInUserId, following_id: targetId });
+            if(!error) {
+              btn.textContent = "Unfollow";
+              btn.style.background = "linear-gradient(90deg,#2563eb 60%,#60a5fa 100%)";
+            }
+          } else {
+            // Delete 'follows' row
+            const { error } = await supabase.from('follows')
+              .delete()
+              .eq('follower_id', loggedInUserId)
+              .eq('following_id', targetId);
+            if(!error) {
+              btn.textContent = "Follow";
+              btn.style.background = "";
+            }
+          }
+        }
+      });
+    }
+
+    // Load users from Supabase
+    async function fetchAndRenderSupabaseUsers() {
+      // Wait for supabase to be ready
+      if (typeof supabase === "undefined") {
+        setTimeout(fetchAndRenderSupabaseUsers, 100);
+        return;
+      }
+
+      // Get logged in user for follow logic
+      const loggedInUserId = await getSessionUserId();
+
+      // Get everyone except self (sorted by latest)
+      const { data: users, error } = await supabase
+        .from('profiles')
+        .select('id,display_name,username,avatar_url,bio,location,website,twitter,followers_count,following_count,threads_count')
+        .neq('id', loggedInUserId)
+        .order('created_at', { ascending: false });
+
+      // Get who the logged-in user is following (for toggle)
+      let followingIds = [];
+      if(loggedInUserId) {
+        const { data: followingRows } = await supabase
+          .from('follows')
+          .select('following_id')
+          .eq('follower_id', loggedInUserId);
+        followingIds = (followingRows || []).map(f => f.following_id);
+      }
+
+      if (error) {
+        document.getElementById('users-list').innerHTML = `<div style="color:red;">Error loading users: ${error.message}</div>`;
+        return;
+      }
+      renderUsers(users || [], loggedInUserId, followingIds);
+    }
+
+    document.addEventListener('DOMContentLoaded', fetchAndRenderSupabaseUsers);
   </script>
+  <!-- Load Supabase client and your Supabase API helpers -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/theme.js"></script>
 </body>
 </html>
