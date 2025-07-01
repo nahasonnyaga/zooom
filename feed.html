@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Threads 100 Clone - Feed</title>
+  <title>Zooom - Feed</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="css/feed.css">
   <link rel="stylesheet" href="css/main.css">
@@ -86,7 +86,13 @@
   <script>
     fetch('components/navbar.html').then(r=>r.ok ? r.text() : '').then(html=>{
       document.getElementById('navbar-include').innerHTML = html;
+      if (window.lucide) lucide.createIcons();
     });
+    // Theme initialization
+    if(localStorage.getItem('zooom-theme')==='dark') {
+      document.body.classList.remove('theme-light');
+      document.body.classList.add('theme-dark');
+    }
   </script>
 
   <main class="feed" aria-label="Threads feed">
@@ -107,11 +113,21 @@
 
   <!-- Feed rendering logic -->
   <script>
+    // Uses the same tables and structure as the rest of the project (posts, profiles, replies)
     async function renderFeed() {
       const list = document.getElementById('thread-list');
       const emptyMsg = document.querySelector('.feed-empty');
-      // Fetch threads from Supabase
-      const { data: threads, error } = await window.supabaseApi.fetchThreads();
+      // Fetch posts (threads) from Supabase with profiles and replies
+      let { data: threads, error } = await supabase
+        .from('posts')
+        .select(`
+          id, body, created_at, topic, media_url,
+          profiles:profiles!posts_user_id_fkey(display_name,username,avatar_url,id),
+          replies:replies(id,user_id,body,created_at,profiles:profiles!replies_user_id_fkey(display_name,username,avatar_url))
+        `)
+        .order('created_at', { ascending: false })
+        .limit(40);
+
       if (error) {
         list.innerHTML = '<div class="feed-empty">Error loading threads.</div>';
         return;
@@ -123,37 +139,37 @@
       emptyMsg.style.display = "none";
       list.innerHTML = '';
       for (const thread of threads) {
-        let user = thread.user || {};
+        let user = thread.profiles || {};
         let replies = thread.replies || [];
-        // Render media if you have media URLs (not in demo schema, but ready)
+        // Render media
         let mediaHtml = "";
-        if (thread.images || thread.videos) {
-          mediaHtml = renderThreadMedia(thread.images || [], thread.videos || []);
+        if (thread.media_url) {
+          mediaHtml = `<div class="thread-media"><img src="${thread.media_url}" alt="thread image" loading="lazy"></div>`;
         }
-        // Build replies HTML
-        let repliesHtml = replies.map(reply => `
-          <div class="reply-card" tabindex="0" aria-label="Reply by ${reply.user?.email || 'user'}">
+        // Replies preview (show max 1 reply as preview)
+        let repliesHtml = replies.length ? `
+          <div class="reply-card" tabindex="0" aria-label="Reply by ${replies[0].profiles?.username || 'user'}">
             <div style="display:flex;align-items:center;gap:0.5rem;">
-              <img src="assets/avatar.png" alt="${reply.user?.email || 'user'} avatar" style="width:1.5rem;height:1.5rem;border-radius:50%;background:#f2f2f2;">
-              <span style="font-weight:600;color:#374151;">@${reply.user?.email?.split('@')[0] || 'user'}</span>
-              <small style="color:#aaa;margin-left:auto;">${timeAgo(reply.created_at)}</small>
+              <img src="${replies[0].profiles?.avatar_url || 'assets/avatar.png'}" alt="${replies[0].profiles?.username || 'user'} avatar" style="width:1.5rem;height:1.5rem;border-radius:50%;background:#f2f2f2;">
+              <span style="font-weight:600;color:#374151;">@${replies[0].profiles?.username || 'user'}</span>
+              <small style="color:#aaa;margin-left:auto;">${timeAgo(replies[0].created_at)}</small>
             </div>
-            <p style="margin:0.6em 0 0.2em 0;">${reply.content || ''}</p>
+            <p style="margin:0.6em 0 0.2em 0;">${replies[0].body || ''}</p>
           </div>
-        `).join('');
+        ` : '';
         // Thread card HTML
         let threadCard = document.createElement('section');
         threadCard.className = 'thread-card';
         threadCard.tabIndex = 0;
-        threadCard.setAttribute('aria-label', `Thread by ${user.email || 'user'}: ${thread.content}`);
+        threadCard.setAttribute('aria-label', `Thread by ${user.username || 'user'}: ${thread.body}`);
         threadCard.innerHTML = `
           <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.45rem;">
-            <img src="assets/avatar.png" alt="${user.email || 'user'} avatar" style="width:2.2rem;height:2.2rem;border-radius:50%;border:1px solid #eee;background:#f4f4f4;object-fit:cover;">
-            <span style="font-weight:600;color:#3b82f6;">@${user.email?.split('@')[0] || 'user'}</span>
+            <img src="${user.avatar_url || 'assets/avatar.png'}" alt="${user.username || 'user'} avatar" style="width:2.2rem;height:2.2rem;border-radius:50%;border:1px solid #eee;background:#f4f4f4;object-fit:cover;">
+            <span style="font-weight:600;color:#3b82f6;">@${user.username || 'user'}</span>
             <small style="color:#888;margin-left:auto;">${timeAgo(thread.created_at)}</small>
           </div>
           <a href="thread.html?id=${thread.id}" style="text-decoration:none;color:inherit;">
-            <p style="font-size:1.18rem;font-weight:500;margin-top:0.1em;">${thread.content || ''}</p>
+            <p style="font-size:1.18rem;font-weight:500;margin-top:0.1em;">${thread.body || ''}</p>
             ${mediaHtml}
           </a>
           <div class="thread-actions" aria-label="actions">
@@ -171,6 +187,7 @@
         `;
         list.appendChild(threadCard);
       }
+      setupActionButtons();
     }
 
     // Utility: time ago
@@ -183,25 +200,6 @@
       if (diff < 3600) return `${Math.floor(diff/60)}m ago`;
       if (diff < 86400) return `${Math.floor(diff/3600)}h ago`;
       return then.toLocaleDateString();
-    }
-
-    // Thread media rendering (images/videos)
-    function renderThreadMedia(imageUrls = [], videoUrls = []) {
-      let html = '';
-      if (Array.isArray(imageUrls)) {
-        html += imageUrls.map(url =>
-          `<img src="${url}" alt="thread image" width="320" height="180" loading="lazy" style="aspect-ratio:16/9;">`
-        ).join('');
-      }
-      if (Array.isArray(videoUrls)) {
-        html += videoUrls.map(url =>
-          `<video controls width="320" height="180" style="aspect-ratio:16/9;" preload="none">
-             <source src="${url}" type="video/mp4">
-             Your browser does not support the video tag.
-           </video>`
-        ).join('');
-      }
-      return html ? `<div class="thread-media">${html}</div>` : "";
     }
 
     // Interactive actions
@@ -248,24 +246,21 @@
       });
     }
 
-    // Run feed rendering and action setup
-    document.addEventListener('DOMContentLoaded', async function() {
-      await renderFeed();
-      setupActionButtons();
-    });
+    document.addEventListener('DOMContentLoaded', renderFeed);
   </script>
 
   <!-- Notification fetch and render for current user -->
   <script type="module">
     import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
-    const SUPABASE_URL = 'https://kocbcrctlneqqxhxowbk.supabase.co'; // <-- replace with your project URL
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtvY2JjcmN0bG5lcXF4aHhvd2JrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAzNzc5MjksImV4cCI6MjA2NTk1MzkyOX0.pOL7LyfvmDAQ3IP7qzdpwyHzKaXGCJIN_t3jkx2ZoBI'; // <-- replace with your anon key
+    // Set these to your project if not already in js/supabase.js
+    const SUPABASE_URL = window.SUPABASE_URL || 'https://kocbcrctlneqqxhxowbk.supabase.co';
+    const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtvY2JjcmN0bG5lcXF4aHhvd2JrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAzNzc5MjksImV4cCI6MjA2NTk1MzkyOX0.pOL7LyfvmDAQ3IP7qzdpwyHzKaXGCJIN_t3jkx2ZoBI';
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     async function showNotifications() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
-      const { data: notifications, error } = await supabase
+      const { data: notifications } = await supabase
         .from('notifications')
         .select('*')
         .eq('user_id', user.id)
