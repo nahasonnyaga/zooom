@@ -1,5 +1,3 @@
-// js/auth.js
-// Login logic
 document.getElementById('login-form').addEventListener('submit', async (e) => {
   e.preventDefault();
   const email = document.getElementById('email').value;
