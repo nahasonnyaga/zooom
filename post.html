@@ -9,6 +9,9 @@
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/feed.css">
   <link rel="stylesheet" href="css/theme.css">
+  <!-- Lucide + FontAwesome for icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/js/all.min.js"></script>
   <style>
     body.theme-dark .post-main {
       background: #181b23;
@@ -16,7 +19,7 @@
     }
     .post-main {
       max-width: 430px;
-      margin: 2.5em auto 0 auto;
+      margin: 2.7em auto 0 auto;
       background: #fff;
       border-radius: 18px;
       box-shadow: 0 2px 18px #0002;
@@ -169,7 +172,8 @@
   </style>
 </head>
 <body class="theme-light">
-  <div id="top-navbar"></div>
+  <!-- Interconnected Navbars -->
+  <div id="navbar"></div>
   <main class="post-main">
     <div id="login-required" class="login-required-banner" style="display:none;">
       <div><b>Log in to create a post</b></div>
@@ -199,19 +203,19 @@
       <div id="post-error"></div>
     </form>
   </main>
-  <div id="bottom-navbar"></div>
+  <!-- Bottom Navbar is included via #navbar -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/js/all.min.js"></script>
   <script src="js/supabase.js"></script>
   <script src="js/theme.js"></script>
   <script src="js/post.js"></script>
   <script>
-    // Navbar and theme interconnection
-    fetch('components/navbar.html').then(r=>r.text()).then(t=>{
-      document.getElementById('top-navbar').innerHTML = t.replace('{{position}}', 'top');
-      document.getElementById('bottom-navbar').innerHTML = t.replace('{{position}}', 'bottom');
+    // Include the modern navbar, top and bottom, interconnected with all files
+    fetch('components/navbar.html').then(r=>r.text()).then(html=>{
+      document.getElementById('navbar').innerHTML = html;
       if(window.lucide) lucide.createIcons();
     });
+
+    // Set theme from localStorage
     if(localStorage.getItem('zooom-theme')==='dark') {
       document.body.classList.remove('theme-light');
       document.body.classList.add('theme-dark');
@@ -235,7 +239,6 @@
       }
     }
     document.addEventListener('DOMContentLoaded', checkLoginForPost);
-    // Also re-check on auth change (if you use Supabase's onAuthStateChange, add here)
   </script>
 </body>
 </html>
