@@ -28,12 +28,15 @@
   <script src="js/thread.js"></script>
   <script>
     // Inject the unified navbar
-    fetch('components/navbar.html').then(r=>r.text()).then(html=>{
+    fetch('components/navbar.html').then(r => r.text()).then(html => {
       document.getElementById('navbar').innerHTML = html;
       if (window.lucide) lucide.createIcons();
+      // Optionally refresh navbar profile
+      if (window.refreshNavbarProfile) window.refreshNavbarProfile();
     });
-    // Theme
-    if(localStorage.getItem('zooom-theme') === 'dark') {
+
+    // Theme (global logic shared with all pages)
+    if (localStorage.getItem('zooom-theme') === 'dark') {
       document.body.classList.remove('theme-light');
       document.body.classList.add('theme-dark');
     }
