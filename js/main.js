@@ -1,10 +1,7 @@
-// Utility to get current user and protect pages
-window.getCurrentUser = async function() {
-  const { data: { user } } = await supabase.auth.getUser();
-  return user;
-}
-window.protectPage = async function(redirectTo = 'login.html') {
-  const user = await window.getCurrentUser();
-  if (!user) window.location.href = redirectTo;
-  return user;
-}
+document.addEventListener('DOMContentLoaded', async () => {
+  // Redirect to login if not authenticated
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session && !window.location.pathname.endsWith('login.html') && !window.location.pathname.endsWith('register.html')) {
+    window.location.href = 'login.html';
+  }
+});
