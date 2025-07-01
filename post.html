@@ -176,8 +176,8 @@
   <div id="navbar"></div>
   <main class="post-main">
     <div id="login-required" class="login-required-banner" style="display:none;">
-      <div><b>Log in to create a post</b></div>
-      <a href="auth.html?tab=login" class="login-btn">Log in</a>
+      <div><b>Sign in to create a post</b></div>
+      <a href="auth.html?tab=login" class="login-btn">Sign in</a>
     </div>
     <h2>Compose a Post</h2>
     <form id="post-form" autocomplete="off">
@@ -239,6 +239,17 @@
       }
     }
     document.addEventListener('DOMContentLoaded', checkLoginForPost);
+
+    // Extra: Prevent submitting the post form if not signed in (for extra security)
+    document.getElementById('post-form').addEventListener('submit', async function(e) {
+      const { data } = await supabase.auth.getSession();
+      const user = data.session?.user || null;
+      if (!user) {
+        e.preventDefault();
+        document.getElementById('login-required').style.display = "flex";
+        this.style.display = "none";
+      }
+    });
   </script>
 </body>
 </html>
