@@ -1,1 +1,7 @@
-.reply-card { border-top: 1px solid #e0e0e0; margin-top: 1rem; padding: 0.75rem 1rem; background: #f6f8fa; }
+.reply-card {
+  display: flex; gap: 10px; background: #222; border-radius: 10px; padding: 10px 14px;
+}
+.reply-card .avatar { width: 36px; height: 36px;}
+.reply-card .username { font-weight: bold; }
+.reply-card .date { color: #aaa; font-size: 0.8em; margin-left: 6px;}
+.reply-card p { margin: 6px 0 0 0;}
