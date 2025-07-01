@@ -24,6 +24,7 @@
     <section id="tagged" class="feed-section"></section>
   </main>
   <div id="navbar"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="js/supabase.js"></script>
   <script>
     // Load menus
@@ -35,6 +36,8 @@
     });
     fetch('components/navbar.html').then(r => r.text()).then(html => {
       document.getElementById('navbar').innerHTML = html;
+      // Optionally load navbar behavior if needed
+      if (typeof import === "function") import('./js/navbar.js');
     });
   </script>
   <script src="js/feed.js" type="module"></script>
