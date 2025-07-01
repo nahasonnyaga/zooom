@@ -1,76 +1,17 @@
-body {
-  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
-  background: var(--topmenu-bg, #fff);
-  color: var(--topmenu-color, #222);
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-}
-main#main-content {
-  max-width: 640px;
-  margin: 0 auto;
-  padding: 1.1em 0.4em 0.2em 0.4em;
-}
-.feed-section {
-  margin-bottom: 1.8em;
-  padding: 0.7em 0.2em;
-  background: rgba(130,130,130,0.035);
-  border-radius: 11px;
-  box-shadow: 0 1px 4px #0002;
-}
-.feed-section h2 {
-  font-size: 1.25em;
-  margin: 0 0 0.7em 0;
-  color: var(--topmenu-accent, #3b82f6);
-  font-weight: 700;
-}
-.feed-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.7em 1em;
-}
-.mini-user {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.2em;
-  padding: 0.3em 0.2em;
-}
-.mini-user img {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  background: #e0e7ff;
-  border: 1.5px solid #e5eafe;
-  object-fit: cover;
-}
-.mini-user span {
-  font-size: 0.94em;
-  color: #374151;
-}
-.trend-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6em 1em;
-  list-style: none;
+html, body {
   margin: 0; padding: 0;
+  font-family: system-ui, Arial, sans-serif;
+  background: #181818; color: #fff;
 }
-.trend-list li {
-  background: #e0e7ff;
-  color: #3b82f6;
-  font-size: 0.98em;
-  border-radius: 1em;
-  padding: 0.15em 0.8em;
-  font-weight: 600;
-}
-.feed-card {
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 1px 6px #3b82f516;
-  padding: 0.8em 1.1em;
-  margin-bottom: 0.6em;
-}
+main { max-width: 600px; margin: 64px auto 64px auto; padding: 0 16px; }
+a { color: #1da1f2; text-decoration: none; }
+.error { color: #ff5555; }
+.avatar { width: 48px; height: 48px; border-radius: 50%; }
+.navbar { display: flex; justify-content: space-around; align-items: center; background: #222; position: fixed; left: 0; right: 0; z-index: 99;}
+.navbar.top { top: 0; }
+.navbar.bottom { bottom: 0; }
+.navbar img { width: 36px; height: 36px; filter: invert(1);}
 @media (max-width: 700px) {
-  main#main-content { max-width: 99vw; }
-  .feed-section { padding: 0.5em 0.1em; }
+  main { max-width: 100vw; padding: 0 4px; }
+  .navbar img { width: 28px; height: 28px;}
 }
