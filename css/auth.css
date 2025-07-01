@@ -1,14 +1,7 @@
-form {
-  max-width: 350px;
-  margin: 2.5rem auto 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.1rem;
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 2px 12px #3b82f510;
-  padding: 2.2em 1.1em;
-}
-input, button { font-size: 1.04em; }
-button { margin-top: 0.7em; }
-h2 { margin-bottom: 0.5em; }
+.auth-main { max-width: 340px; margin: 90px auto; background: #232323; padding: 24px; border-radius: 12px;}
+.auth-main h1 { margin-top: 0;}
+#login-form, #register-form { display: flex; flex-direction: column; gap: 10px;}
+input[type="email"], input[type="password"], input[type="text"], textarea {
+  padding: 10px; border-radius: 6px; border: none; margin-bottom: 4px;}
+button[type="submit"] { background: #1da1f2; color: #fff; border: none; border-radius: 6px; padding: 10px; font-size: 1em; }
+#error { color: #ff5555; }
