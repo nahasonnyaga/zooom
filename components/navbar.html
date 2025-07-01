@@ -1,35 +1,107 @@
 <!-- TOP NAVBAR (X-style, horizontally scrollable, right-aligned profile/login/out) -->
-<header id="x-topbar-outer" class="x-topbar-outer">
-  <div class="x-topbar-scroll horizontal-scroll" id="x-topbar-scroll">
-    <button class="x-tab active" data-section="for-you"><i data-lucide="sparkles"></i><span>For You</span></button>
-    <button class="x-tab" data-section="following"><i data-lucide="users"></i><span>Following</span></button>
-    <button class="x-tab" data-section="mentions"><i data-lucide="at-sign"></i><span>Mentions</span></button>
-    <button class="x-tab" data-section="hashtags"><i data-lucide="hash"></i><span>#Hashtags</span></button>
-    <button class="x-tab" data-section="trending"><i data-lucide="trending-up"></i><span>Trending</span></button>
-    <button class="x-tab" data-section="new-users"><i data-lucide="user-plus"></i><span>New Users</span></button>
-    <button class="x-tab" data-section="notifications"><i data-lucide="bell"></i><span>Notifications</span></button>
-    <button class="x-tab" data-section="media"><i data-lucide="image"></i><span>Media</span></button>
+<header id="x-topbar-outer" class="x-topbar-outer" style="box-shadow:0 2px 12px #2563eb0a;position:sticky;top:0;z-index:60;">
+  <div class="x-topbar-scroll horizontal-scroll" id="x-topbar-scroll" style="display:flex;overflow-x:auto;gap:0.25em;padding:0.2em 0.3em 0.2em 0.7em;scrollbar-width:thin;background:var(--navbar-bg,#fff);border-bottom:1.5px solid #f0f4fc;">
+    <button class="x-tab" data-section="for-you" onclick="window.location.href='index.html#for-you'" aria-label="For You"><i data-lucide="sparkles"></i><span>For You</span></button>
+    <button class="x-tab" data-section="following" onclick="window.location.href='index.html#following'" aria-label="Following"><i data-lucide="users"></i><span>Following</span></button>
+    <button class="x-tab" data-section="mentions" onclick="window.location.href='index.html#mentions'" aria-label="Mentions"><i data-lucide="at-sign"></i><span>Mentions</span></button>
+    <button class="x-tab" data-section="hashtags" onclick="window.location.href='index.html#hashtags'" aria-label="Hashtags"><i data-lucide="hash"></i><span>#Hashtags</span></button>
+    <button class="x-tab" data-section="trending" onclick="window.location.href='index.html#trending'" aria-label="Trending"><i data-lucide="trending-up"></i><span>Trending</span></button>
+    <button class="x-tab" data-section="new-users" onclick="window.location.href='index.html#new-users'" aria-label="New Users"><i data-lucide="user-plus"></i><span>New Users</span></button>
+    <button class="x-tab" data-section="notifications" onclick="window.location.href='index.html#notifications'" aria-label="Notifications"><i data-lucide="bell"></i><span>Notifications</span></button>
+    <button class="x-tab" data-section="media" onclick="window.location.href='index.html#media'" aria-label="Media"><i data-lucide="image"></i><span>Media</span></button>
+    <a class="compose-btn" href="post.html" title="Compose" aria-label="Compose" style="margin-left:0.7em;background:linear-gradient(90deg,#2563eb 60%,#60a5fa 100%);color:#fff;padding:0.5em 1em;border-radius:1.3em;font-weight:700;display:flex;align-items:center;gap:0.53em;box-shadow:0 1px 8px #2563eb1a;"><i data-lucide="plus-circle" style="height:1.2em;width:1.2em;"></i><span style="font-size:1.08em;letter-spacing:0.01em;">Post</span></a>
   </div>
-  <div class="x-topbar-profile" id="x-topbar-profile">
-    <!-- Populated by JS: profile pic OR login/logout button -->
-    <button id="profile-btn" class="profile-btn" style="display:none">
-      <img id="profile-avatar" src="assets/default-avatar.png" alt="Profile" />
-      <div id="profile-dropdown" class="profile-dropdown">
+  <div class="x-topbar-profile" id="x-topbar-profile" style="display:flex;align-items:center;gap:0.6em;padding-right:1em;">
+    <button id="theme-toggle-btn" class="theme-toggle-btn" title="Toggle theme" style="background:none;border:none;padding:0.1em 0.5em;cursor:pointer;">
+      <i data-lucide="moon"></i>
+    </button>
+    <button id="profile-btn" class="profile-btn" style="display:none;background:none;border:none;position:relative;padding:0.2em 0.4em;cursor:pointer;">
+      <img id="profile-avatar" src="assets/default-avatar.png" alt="Profile" style="width:2.3em;height:2.3em;border-radius:50%;box-shadow:0 1px 6px #2563eb14;">
+      <div id="profile-dropdown" class="profile-dropdown" style="right:0;top:110%;">
         <a href="profile.html"><i data-lucide="user"></i> Profile</a>
         <a href="settings.html"><i data-lucide="settings"></i> Settings</a>
         <button id="logout-btn"><i data-lucide="log-out"></i> Logout</button>
       </div>
     </button>
-    <button id="login-btn" class="login-btn" style="display:none">
+    <button id="login-btn" class="login-btn" style="display:none;background:linear-gradient(90deg,#2563eb 60%,#60a5fa 100%);color:#fff;padding:0.39em 1.25em;border-radius:1.2em;font-weight:600;font-size:1em;box-shadow:0 1px 8px #2563eb1a;border:none;cursor:pointer;">
       <i data-lucide="log-in"></i> Login
     </button>
   </div>
 </header>
 
 <!-- BOTTOM NAVBAR (glassy, large Lucide icons, always visible) -->
-<nav id="bottom-navbar" class="navbar navbar-bottom glassy">
+<nav id="bottom-navbar" class="navbar navbar-bottom glassy" style="backdrop-filter:blur(8px);background:rgba(255,255,255,0.92);border-top:1px solid #e3eafb;">
   <a href="index.html" aria-label="Home"><i data-lucide="home"></i></a>
   <a href="post.html" aria-label="Compose"><i data-lucide="plus-circle"></i></a>
   <a href="notifications.html" aria-label="Notifications"><i data-lucide="bell"></i></a>
   <a href="profile.html" aria-label="Profile"><i data-lucide="user"></i></a>
 </nav>
+<script>
+  // Mark correct tab as active based on URL/hash (for UX consistency)
+  (function() {
+    let hash = location.hash.replace("#","");
+    if (!hash) hash = "for-you";
+    document.querySelectorAll('.x-tab').forEach(tab => {
+      tab.classList.toggle('active', tab.dataset.section === hash);
+    });
+  })();
+  // Profile/login/logout logic: expects supabase.js and lucide loaded
+  document.addEventListener("DOMContentLoaded", () => {
+    if (window.lucide) lucide.createIcons();
+    // Profile/Login logic
+    async function updateProfileNav() {
+      let session = null;
+      if (typeof supabase !== "undefined") {
+        const { data } = await supabase.auth.getSession();
+        session = data.session;
+      }
+      if (session && session.user) {
+        document.getElementById('profile-btn').style.display = '';
+        document.getElementById('login-btn').style.display = 'none';
+        if (supabase) {
+          const { data: profile } = await supabase.from('profiles').select('avatar_url').eq('id', session.user.id).single();
+          document.getElementById('profile-avatar').src = profile?.avatar_url || "assets/default-avatar.png";
+        }
+      } else {
+        document.getElementById('profile-btn').style.display = 'none';
+        document.getElementById('login-btn').style.display = '';
+      }
+      if (window.lucide) lucide.createIcons();
+    }
+    updateProfileNav();
+    // Profile dropdown
+    const btn = document.getElementById('profile-btn');
+    if (btn) {
+      btn.onclick = e => {
+        e.stopPropagation();
+        btn.classList.toggle('open');
+      };
+      document.body.addEventListener('click', () => btn.classList.remove('open'));
+    }
+    // Login button
+    const loginBtn = document.getElementById('login-btn');
+    if (loginBtn) {
+      loginBtn.onclick = () => window.location.href = 'auth.html?tab=login';
+    }
+    // Logout button
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+      logoutBtn.onclick = async () => {
+        await supabase.auth.signOut();
+        window.location.reload();
+      };
+    }
+    // Theme toggle
+    const themeBtn = document.getElementById('theme-toggle-btn');
+    if (themeBtn) {
+      themeBtn.onclick = () => {
+        const body = document.body;
+        const isDark = body.classList.contains('theme-dark');
+        body.classList.toggle('theme-light', isDark);
+        body.classList.toggle('theme-dark', !isDark);
+        localStorage.setItem('zooom-theme', isDark ? 'light' : 'dark');
+        if (window.lucide) lucide.createIcons();
+      };
+    }
+  });
+</script>
