@@ -1,0 +1,5 @@
+#settings-form { display: flex; flex-direction: column; gap: 10px; background: #232323; border-radius: 12px; padding: 16px; max-width: 400px; }
+#settings-form label { font-weight: bold; }
+#settings-form input, #settings-form textarea { width: 100%; padding: 8px; border-radius: 6px; border: none; }
+#settings-form button { background: #1da1f2; color: #fff; border: none; border-radius: 6px; padding: 10px; font-size: 1em; }
+#theme-toggle { margin-top: 20px; background: #2c2c2c; color: #fff; border: none; padding: 10px 16px; border-radius: 6px; }
