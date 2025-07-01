@@ -1,82 +1,69 @@
 // js/profile.js
-// Loads and renders the user's profile and their posts, using window.supabase and helpers
+// Ensures profile.html is fully connected and works with supabase.js, utils.js, and the rest of your app
 
-(async function() {
+document.addEventListener("DOMContentLoaded", async () => {
   const main = document.getElementById('profile-main');
-  const urlParams = new URLSearchParams(window.location.search);
-  const username = urlParams.get('user');
+  main.innerHTML = '<div style="text-align:center;margin:3em 0;">Loading profile...</div>';
 
-  // Helper for HTML escaping
-  function esc(s) {
-    return (s||"").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-  }
-
-  // Get profile
-  let profile, isCurrentUser = false;
-  if (username) {
-    // Lookup by username in URL param
-    const { data, error } = await window.supabase
-      .from('profiles')
-      .select('*')
-      .eq('username', username)
-      .single();
-    profile = data;
-  } else {
-    // No ?user=, show current user
-    profile = await window.getCurrentUserProfile();
-    isCurrentUser = true;
-  }
-
-  if (!profile) {
-    main.innerHTML = `<div style="text-align:center;margin:4em 0;color:#e11d48;">User not found.</div>`;
+  // Get current session/user
+  const { data } = await window.supabase.auth.getSession();
+  const user = data?.session?.user;
+  if (!user) {
+    main.innerHTML = `<div style="text-align:center;margin:3em 0;color:#e11d48;">You must be logged in to view your profile.<br><a href="login.html" style="color:#2563eb;">Sign in</a></div>`;
     return;
   }
 
-  // Show edit button only for current user viewing own profile
-  if (!username) isCurrentUser = true;
-  else {
-    const current = await window.getCurrentUserProfile();
-    if (current && current.id === profile.id) isCurrentUser = true;
+  // Fetch profile data from 'profiles' table
+  let { data: profile, error } = await window.supabase
+    .from('profiles')
+    .select('id, username, avatar_url, bio')
+    .eq('id', user.id)
+    .maybeSingle();
+
+  if (error || !profile) {
+    main.innerHTML = `<div style="text-align:center;margin:3em 0;color:#e11d48;">Could not load profile.</div>`;
+    return;
   }
 
-  // Profile header
+  // Fetch user's posts
+  let { data: posts, error: postError } = await window.supabase
+    .from('posts')
+    .select('id, title, created_at')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: false });
+
+  // Render profile info
   main.innerHTML = `
-    <section class="profile-header">
-      <img src="${esc(profile.avatar_url) || 'assets/avatar.png'}" class="profile-avatar" style="width:88px;height:88px;border-radius:50%;object-fit:cover;border:2.5px solid #2563eb;">
+    <section class="profile-card">
+      <div class="profile-avatar-wrap">
+        <img src="${profile.avatar_url ? profile.avatar_url : 'assets/default-avatar.png'}" alt="avatar" class="profile-avatar">
+      </div>
       <div class="profile-info">
-        <h1>${esc(profile.display_name) || esc(profile.username)}</h1>
-        <div style="color:#888;font-size:1.05em;">@${esc(profile.username)}</div>
-        <div style="margin:1em 0 1.2em 0;font-size:1.07em;max-width:440px;">${esc(profile.bio) || ""}</div>
-        ${isCurrentUser ? `<a href="edit-profile.html" class="compose-btn" style="font-size:0.99em;">Edit Profile</a>` : ""}
+        <h2>@${profile.username || '(no username)'}</h2>
+        <p class="profile-bio">${profile.bio ? escapeHTML(profile.bio) : ''}</p>
+        <div style="margin-top:1.2em;">
+          <a href="settings.html" class="btn-profile">Edit Profile</a>
+          <a href="password-update.html" class="btn-profile">Change Password</a>
+        </div>
       </div>
     </section>
     <section class="profile-posts">
-      <h2 style="font-size:1.23em;margin:2em 0 1em 0;">Posts</h2>
-      <div id="profile-post-list">Loading...</div>
+      <h3 style="margin-top:2em;">Your Posts</h3>
+      ${posts && posts.length ? posts.map(p => `
+        <div class="profile-post-card">
+          <a href="thread.html?id=${encodeURIComponent(p.id)}"><b>${p.title || '(no title)'}</b></a>
+          <div style="color:#888;font-size:0.95em;">${new Date(p.created_at).toLocaleString()}</div>
+        </div>
+      `).join('') : `<div style="color:#888;margin-top:1em;">No posts found.</div>`}
     </section>
   `;
+});
 
-  // Load posts by this user
-  const { data: posts } = await window.supabase
-    .from('posts')
-    .select('*')
-    .eq('user_id', profile.id)
-    .order('created_at', { ascending: false })
-    .limit(30);
-
-  const postList = document.getElementById('profile-post-list');
-  postList.innerHTML = posts && posts.length
-    ? posts.map(post => `
-        <div class="feed-post-card" style="margin-bottom:1.2em;">
-          <a href="thread.html?id=${post.id}" style="text-decoration:none;">
-            <div style="font-size:1.15em;line-height:1.4;"><b>${esc(post.title) || '(no title)'}</b></div>
-          </a>
-          <div style="color:#888;margin-top:0.4em;font-size:0.97em;">
-            ${new Date(post.created_at).toLocaleString()}
-          </div>
-          ${post.topic ? `<div style="color:#2563eb;margin-top:0.3em;">#${esc(post.topic)}</div>` : ""}
-        </div>
-      `).join('')
-    : `<div style="color:#888;">No posts yet.</div>`;
-
-})();
+// Basic HTML escape helper
+function escapeHTML(s) {
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
