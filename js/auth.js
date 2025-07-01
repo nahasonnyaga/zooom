@@ -1,8 +1,8 @@
-document.getElementById('login-form').addEventListener('submit', async (e) => {
+document.getElementById('login-form').onsubmit = async (e) => {
   e.preventDefault();
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
+  const email = document.getElementById('login-email').value;
+  const password = document.getElementById('login-password').value;
   const { error } = await supabase.auth.signInWithPassword({ email, password });
-  if (error) document.getElementById('login-error').innerText = error.message;
-  else window.location.href = 'index.html';
-});
+  document.getElementById('login-error').textContent = error ? error.message : '';
+  if (!error) window.location.href = 'index.html';
+};
