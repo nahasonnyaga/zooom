@@ -21,15 +21,18 @@
   <main id="thread-container">
     <div class="thread-loader"><span>Loading thread...</span></div>
   </main>
+  <!-- Supabase core and project-wide connector -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="js/supabase.js"></script>
   <script src="js/theme.js"></script>
   <script src="js/thread.js"></script>
   <script>
+    // Inject the unified navbar
     fetch('components/navbar.html').then(r=>r.text()).then(html=>{
       document.getElementById('navbar').innerHTML = html;
       if (window.lucide) lucide.createIcons();
     });
+    // Theme
     if(localStorage.getItem('zooom-theme') === 'dark') {
       document.body.classList.remove('theme-light');
       document.body.classList.add('theme-dark');
