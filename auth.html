@@ -10,6 +10,9 @@
   <link rel="icon" href="assets/icon-192.png">
 </head>
 <body class="theme-light">
+  <!-- Optionally include navbar if needed:
+  <div id="navbar"></div>
+  -->
   <main>
     <div class="auth-card">
       <div class="auth-tabs">
@@ -102,12 +105,12 @@
     // Login/Signup handlers with returnTo compatibility
     loginForm.onsubmit = async function(e) {
       e.preventDefault();
-      const email = document.getElementById('login-email').value;
+      const email = document.getElementById('login-email').value.trim();
       const password = document.getElementById('login-password').value;
       const errorDiv = document.getElementById('login-error');
       errorDiv.textContent = '';
       try {
-        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        const { data, error } = await window.supabase.auth.signInWithPassword({ email, password });
         if (error) {
           errorDiv.textContent = error.message;
         } else {
@@ -117,7 +120,7 @@
           }
           // Redirect if returnTo is set
           const returnTo = params.get('returnTo');
-          window.location.href = returnTo ? decodeURIComponent(returnTo) : 'index.html';
+          window.location.href = returnTo ? decodeURIComponent(returnTo) : 'home.html';
         }
       } catch (err) {
         errorDiv.textContent = "Unexpected error. Please try again.";
@@ -126,12 +129,12 @@
 
     signupForm.onsubmit = async function(e) {
       e.preventDefault();
-      const email = document.getElementById('signup-email').value;
+      const email = document.getElementById('signup-email').value.trim();
       const password = document.getElementById('signup-password').value;
       const errorDiv = document.getElementById('signup-error');
       errorDiv.textContent = '';
       try {
-        const { data, error } = await supabase.auth.signUp({ email, password });
+        const { data, error } = await window.supabase.auth.signUp({ email, password });
         if (error) {
           errorDiv.textContent = error.message;
         } else {
@@ -141,7 +144,7 @@
           }
           // Redirect if returnTo is set
           const returnTo = params.get('returnTo');
-          window.location.href = returnTo ? decodeURIComponent(returnTo) : 'index.html';
+          window.location.href = returnTo ? decodeURIComponent(returnTo) : 'home.html';
         }
       } catch (err) {
         errorDiv.textContent = "Unexpected error. Please try again.";
@@ -168,7 +171,7 @@
 
     document.getElementById('reset-form').onsubmit = async function(e) {
       e.preventDefault();
-      const email = document.getElementById('reset-email').value;
+      const email = document.getElementById('reset-email').value.trim();
       const feedbackDiv = document.getElementById('resetFeedback');
       const errorDiv = document.getElementById('resetError');
       const btn = document.getElementById('resetBtn');
@@ -176,7 +179,7 @@
       errorDiv.textContent = '';
       btn.disabled = true;
       try {
-        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        const { error } = await window.supabase.auth.resetPasswordForEmail(email, {
           redirectTo: window.location.origin + '/password-update.html'
         });
         if (error) {
