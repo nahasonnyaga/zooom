@@ -52,7 +52,7 @@ if (!window._zooomAuthListenerAttached) {
  * Helper: Redirect to login page if not authenticated.
  * Call this at the top of protected pages (e.g., post, profile edit).
  */
-window.requireLogin = async function(redirectTo = 'auth.html?tab=login') {
+window.requireLogin = async function(redirectTo = 'login.html') {
   const { data } = await window.supabase.auth.getSession();
   if (!data?.session?.user) {
     window.location.href = redirectTo;
