@@ -1,55 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Zooom Forum</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Welcome to Zooom Forum">
-  <link rel="icon" href="assets/logo.png">
-  <link rel="stylesheet" href="css/main.css">
-  <link rel="stylesheet" href="css/theme.css">
-  <style>
-    .welcome {text-align:center;margin:5em auto 2em auto;}
-    .welcome h1 {font-size:2.3em;}
-    .welcome a {margin:1em 0.7em;display:inline-block;}
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Zooom - Feed</title>
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/feed.css" />
 </head>
-<body class="theme-light">
-  <div id="navbar"></div>
-  <div class="welcome">
-    <h1>Welcome to Zooom Forum</h1>
-    <p>Discuss, connect, and share. Your space for trending conversations.</p>
-    <a class="compose-btn" href="signup.html" id="signup-link">Sign Up</a>
-    <a class="compose-btn" href="login.html" id="login-link">Sign In</a>
-    <a class="compose-btn" href="home.html" id="home-link">Go to Home</a>
-  </div>
-  <!-- Supabase core and project-wide connector -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<body>
+  <!-- Top Navbar -->
+  <div id="navbar-top"></div>
+
+  <main id="main-feed" class="feed-container">
+    <!-- Feed will be loaded here -->
+    <div id="feed-list"></div>
+  </main>
+
+  <!-- Bottom Navbar -->
+  <div id="navbar-bottom"></div>
+
+  <!-- Modals/Overlays -->
+  <div id="modal-root"></div>
+
+  <!-- Templates (hidden) -->
+  <template id="thread-card-template">
+    <!-- This will be filled with /components/thread-card.html -->
+  </template>
+  <template id="reply-card-template">
+    <!-- This will be filled with /components/reply-card.html -->
+  </template>
+
+  <!-- JS: Supabase config first -->
   <script src="js/supabase.js"></script>
+  <!-- JS: Core logic -->
+  <script src="js/main.js"></script>
+  <script src="js/feed.js"></script>
+
   <script>
-    // Inject navbar
-    fetch('components/navbar.html').then(r=>r.text()).then(html=>{
-      document.getElementById('navbar').innerHTML = html;
-      if(window.lucide) lucide.createIcons();
-    });
-
-    // Theme
-    if(localStorage.getItem('zooom-theme')==='dark') {
-      document.body.classList.remove('theme-light');
-      document.body.classList.add('theme-dark');
+    // Navbar loading (top and bottom)
+    async function loadComponent(id, url) {
+      const res = await fetch(url);
+      document.getElementById(id).innerHTML = await res.text();
     }
+    loadComponent('navbar-top', 'components/navbar.html');
+    loadComponent('navbar-bottom', 'components/navbar.html');
 
-    // Efficient UX: if logged in, hide Sign In/Sign Up and highlight Home
-    (async () => {
-      if (!window.supabase) return; // Ensure supabase.js loaded
-      const user = await window.getCurrentUser?.();
-      if (user) {
-        document.getElementById('signup-link').style.display = 'none';
-        document.getElementById('login-link').style.display = 'none';
-        document.getElementById('home-link').textContent = "Go to your Feed";
-        document.getElementById('home-link').classList.add('active');
-      }
-    })();
+    // Template loading for thread and reply cards
+    async function loadTemplate(templateId, url) {
+      const res = await fetch(url);
+      const template = document.getElementById(templateId);
+      template.innerHTML = await res.text();
+    }
+    loadTemplate('thread-card-template', 'components/thread-card.html');
+    loadTemplate('reply-card-template', 'components/reply-card.html');
   </script>
 </body>
 </html>
