@@ -1,5 +1,4 @@
-// js/profile.js
-// Ensures profile.html is fully connected and works with supabase.js, utils.js, and the rest of your app
+// js/profile.js - Loads user profile and posts for Zooom
 
 document.addEventListener("DOMContentLoaded", async () => {
   const main = document.getElementById('profile-main');
