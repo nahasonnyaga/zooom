@@ -10,7 +10,7 @@
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body class="theme-light">
-  <!-- Unified Top & Bottom Navbars for Interconnected UX -->
+  <!-- Unified Navbar for Interconnected UX -->
   <div id="navbar"></div>
   <main id="profile-main">
     <!-- Profile info and posts loaded by js/profile.js -->
@@ -21,7 +21,7 @@
   <script src="js/profile.js"></script>
   <script src="js/utils.js"></script>
   <script>
-    // Inject modern, interconnected navbars
+    // Inject modern, interconnected navbar
     fetch('components/navbar.html').then(r=>r.text()).then(html=>{
       document.getElementById('navbar').innerHTML = html;
       if(window.lucide) lucide.createIcons();
